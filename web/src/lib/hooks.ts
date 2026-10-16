@@ -26,7 +26,9 @@ export function usePoll<T>(
   const [loading, setLoading] = useState(true);
   const [tick, setTick] = useState(0);
   const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
+  useEffect(() => {
+    fetcherRef.current = fetcher;
+  });
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
 

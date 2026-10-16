@@ -2,7 +2,6 @@
 
 import { ColorType, type ChartOptions, type DeepPartial } from "lightweight-charts";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 export interface ChartColors {
   dark: boolean;
@@ -58,10 +57,10 @@ export function chartColors(dark: boolean): ChartColors {
 }
 
 export function useChartColors(): ChartColors {
+  // Charts are only created inside effects (after hydration), by which point
+  // next-themes has resolved the theme; until then we default to dark.
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  return chartColors(!mounted || resolvedTheme !== "light");
+  return chartColors(resolvedTheme !== "light");
 }
 
 export function baseChartOptions(c: ChartColors): DeepPartial<ChartOptions> {

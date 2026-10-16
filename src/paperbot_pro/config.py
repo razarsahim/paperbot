@@ -21,6 +21,9 @@ class ProSettings:
     taker_fee_default: float = 0.0006      # used only if metadata lacks fees
     slippage_rate: float = 0.0005
     max_spread_pct: float = 0.003
+    atr_stop_multiplier: float = 2.0
+    reward_risk: float = 2.0
+    min_notional_usd: float = 5.0
     exchanges: tuple[str, ...] = ("bybit", "okx", "binanceusdm", "krakenfutures")
     quote_currencies: tuple[str, ...] = ("USDT", "USD")
     universe_size: int = 20
@@ -74,6 +77,8 @@ class ProSettings:
             raise ValueError("Hype loss cap cannot exceed the hype sleeve")
         if self.taker_fee_default < 0 or self.slippage_rate < 0 or not 0 < self.max_spread_pct < 0.02:
             raise ValueError("Invalid cost assumptions")
+        if self.atr_stop_multiplier <= 0 or self.reward_risk <= 0 or self.min_notional_usd <= 0:
+            raise ValueError("Invalid stop/target/notional parameters")
         if self.scan_interval_seconds < 60 or self.universe_size > 50:
             raise ValueError("Invalid cadence or universe size")
         if self.candle_timeframe != "1h" or self.timeframe_ms != 3_600_000:
