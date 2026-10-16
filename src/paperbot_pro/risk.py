@@ -61,6 +61,8 @@ class RiskGovernor:
 
     def _evaluate(self, planned: dict, equity: float) -> Verdict:
         sleeve = planned["sleeve"]
+        if self.db.get("manual_pause"):
+            return Verdict(False, "manually paused: run `propaper resume` to re-enable entries")
         # Check live equity against the anchors as well as the sticky flags:
         # a breach must gate entries in the SAME cycle, before update_locks
         # has persisted it at cycle end.

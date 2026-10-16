@@ -88,6 +88,19 @@ def test_overview_equity_does_not_double_count_settled_funding(tmp_path):
     assert pos['unrealized_pnl_usd'] == pytest.approx(-2.0)
 
 
+def test_free_margin_excludes_watch_only_hype_and_manual_pause_surfaces(tmp_path):
+    from paperbot_pro.store import ProStore
+    cfg = make_cfg(tmp_path)
+    body = TestClient(create_app(cfg)).get('/api/overview').json()
+    assert body['free_margin_usd'] == pytest.approx(900.0)  # hype $100 is watch-only
+    store = ProStore(cfg.db_path, cfg)
+    store.set('manual_pause', True)
+    store.close()
+    body = TestClient(create_app(cfg)).get('/api/overview').json()
+    assert body['risk']['trading_enabled'] is False
+    assert 'paused' in body['risk']['pause_reason'].lower()
+
+
 def test_sse_stream_emits_initial_overview_event(tmp_path):
     client = TestClient(create_app(make_cfg(tmp_path)))
     with client.stream('GET', '/api/events?limit=1') as response:

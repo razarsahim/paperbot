@@ -99,6 +99,7 @@ class ProEngine:
                 self.db.conn.execute(
                     "INSERT INTO kv(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
                     ("hype_cumulative_loss_usd", json.dumps(loss)))
+        self.db.set(f"last_exit:{pos['symbol']}", now_ms)  # re-entry cooldown anchor
         self.db.audit("warning" if event.pnl_usd < 0 else "info", "trade",
                       f"SIMULATED EXIT ({event.reason}) {pos['symbol']} @ "
                       f"{event.exit_price:.6g}; net P&L {event.pnl_usd:+.2f}", ts_ms=now_ms)
@@ -269,6 +270,15 @@ class ProEngine:
                 continue
             self.db.set(seen_key, latest_bar)
             summary["signals"] += 1
+            last_exit = self.db.get(f"last_exit:{symbol}")
+            if last_exit is not None and latest_bar + self.cfg.timeframe_ms <= last_exit:
+                # Backtest parity: the signal bar was already in progress (or
+                # closed) when the last exit happened — no same-bar revenge
+                # re-entry; wait for a bar that closes after the exit.
+                self.db.log_signal(now_ms, symbol, signal.action, False,
+                                   "re-entry cooldown: signal bar closed before the last exit",
+                                   signal.reason)
+                continue
             if tick_age > self.cfg.price_fresh_seconds:
                 self.db.log_signal(now_ms, symbol, signal.action, False,
                                    f"quote stale ({tick_age:.0f}s old): no entry on stale data",

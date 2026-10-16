@@ -67,6 +67,8 @@ def main():
                                     "writes the validation artifact required for auto-entry")
     sub.add_parser("hype-refresh", help="Refresh the WATCH-ONLY hype radar from public pools data")
     sub.add_parser("status", help="Print the simulated portfolio overview")
+    sub.add_parser("pause", help="Manually block NEW simulated entries (exits keep running)")
+    sub.add_parser("resume", help="Lift a manual pause")
     args = parser.parse_args()
     cfg = ProSettings.from_env()
     from .store import ProStore
@@ -78,7 +80,16 @@ def main():
         return
     store = ProStore(cfg.db_path, cfg)
     try:
-        if args.command == "universe":
+        if args.command == "pause":
+            store.set("manual_pause", True)
+            store.audit("warning", "risk", "manual pause ENABLED: no new simulated entries")
+            print("Paused: no new simulated entries. Open positions keep stop/target/"
+                  "liquidation monitoring. `propaper resume` to re-enable.")
+        elif args.command == "resume":
+            store.set("manual_pause", False)
+            store.audit("info", "risk", "manual pause lifted")
+            print("Resumed: entries re-enabled (subject to all risk gates).")
+        elif args.command == "universe":
             refresh_universe_and_instruments(store, cfg)
         elif args.command == "status":
             from .api import compute_overview

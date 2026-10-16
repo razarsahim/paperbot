@@ -157,6 +157,53 @@ def test_missing_quote_side_blocks_entry_without_crashing(tmp_path):
     assert any('quote' in (s['reject_reason'] or '') for s in store.signals())
 
 
+def double_reclaim_series():
+    """reclaim_series plus a second dip+reclaim so bar 93 signals again."""
+    from paperbot.strategy import ema
+    rows = reclaim_series()                      # signal on bar 91
+    closes = [r[4] for r in rows]
+    e20 = ema(closes, 20)[-1]
+    n = len(rows)
+    dip2 = e20 - 2.5
+    rows.append([n * H, rows[-1][4], rows[-1][4] + 0.2, dip2 - 0.5, dip2, 10.0])
+    closes2 = [r[4] for r in rows]
+    e20b = ema(closes2, 20)[-1]
+    reclaim2 = e20b + 3.0
+    rows.append([(n + 1) * H, dip2, reclaim2 + 0.5, dip2 - 0.2, reclaim2, 10.0])
+    return rows
+
+
+def test_no_reentry_on_bar_that_closed_before_the_exit(tmp_path):
+    """Backtest parity: after a stop-out/liquidation, a signal from a bar that
+    had already closed BEFORE the exit must not re-enter; only a bar closing
+    after the exit may."""
+    cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
+    rows_open = reclaim_series()                      # bars 0..91
+    now1 = rows_open[-1][0] + H + 1000
+    engine = ProEngine(store, cfg, market=FakeMarket(rows_open, last=rows_open[-1][4]))
+    assert engine.run_cycle(now_ms=now1)['opened'] == 1
+    pos = store.position(SYMBOL)
+
+    rows_again = double_reclaim_series()              # bar 93 signals again
+    now2 = rows_again[-1][0] + H + 1000
+    crash = FakeMarket(rows_again, last=pos['liq_price_est'] * 0.9)
+    summary = ProEngine(store, cfg, market=crash).run_cycle(now_ms=now2)
+    assert summary['closed'] == 1
+    assert summary['opened'] == 0, 'revenge re-entry on a pre-exit bar'
+    assert store.position(SYMBOL) is None
+    assert any('re-entry cooldown' in (s['reject_reason'] or '') for s in store.signals())
+
+
+def test_manual_pause_blocks_entries_and_shows_reason(tmp_path):
+    cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
+    store.set('manual_pause', True)
+    rows = reclaim_series()
+    now = rows[-1][0] + H + 1000
+    summary = ProEngine(store, cfg, market=FakeMarket(rows, last=rows[-1][4])).run_cycle(now_ms=now)
+    assert summary['opened'] == 0
+    assert any('paused' in (s['reject_reason'] or '').lower() for s in store.signals())
+
+
 def test_cycle_skips_symbol_on_feed_failure_without_fabricating(tmp_path):
     cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
 

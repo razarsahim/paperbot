@@ -88,6 +88,8 @@ def compute_overview(store: ProStore, cfg: ProSettings) -> dict:
         pause = "TOTAL DRAWDOWN PAUSE: manual review required"
     elif locked_daily:
         pause = "Daily loss lockout until next UTC day"
+    elif store.get("manual_pause"):
+        pause = "Manually paused: run `propaper resume` to re-enable entries"
     elif not gate_ok:
         pause = gate_reason
     else:
@@ -96,7 +98,8 @@ def compute_overview(store: ProStore, cfg: ProSettings) -> dict:
         "mode": "PAPER", "ts_ms": int(time.time() * 1000),
         "equity_usd": equity, "cash_usd": cash_core + cash_hype,
         "margin_used_usd": margin_used,
-        "free_margin_usd": cash_core + cash_hype,
+        # Watch-only hype cash is NOT deployable margin.
+        "free_margin_usd": cash_core + (0.0 if cfg.hype_watch_only else cash_hype),
         "exposure_notional_usd": sum(p["notional_usd"] for p in positions),
         "daily_pnl_usd": equity - day_start,
         "total_pnl_usd": equity - initial,
