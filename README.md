@@ -37,7 +37,14 @@ Before paper-running, download **real** public spot data to do an initial histor
 ```bash
 paperbot fetch-history --csv data/real_kraken_btc_gbp.csv
 paperbot backtest --csv data/real_kraken_btc_gbp.csv
+paperbot walkforward --csv data/real_kraken_btc_gbp.csv --windows 3
 ```
+
+`walkforward` runs a frozen-parameter rolling out-of-sample evaluation:
+chronological non-overlapping windows, each scored with only pre-window
+history, compared against cost-adjusted buy-and-hold and the no-trade
+baseline, labelled with dates and data provenance. With only ~30 days of
+Kraken history the sample is far too small to conclude anything.
 
 The downloaded file gets a `.metadata.json` companion with its provenance. Because ~30 days of data is far too short for strong validation, treat this as a **smoke test**, not evidence that the method is profitable. Do not optimize based on the synthetic example or repeatedly tweak indicators until a small backtest looks good.
 
@@ -102,6 +109,23 @@ export PAPERBOT_SLIPPAGE_RATE=0.001
 
 See `.env.example`. **The CLI does not auto-load `.env`;** `export` the values or use Docker Compose, which reads `.env`.
 
+### Alerts and reliability
+
+Every `paperbot once`/`run` tick appends noteworthy events (simulated
+entries/exits, drawdown locks, wide spreads, feed failures/recovery) to
+`state/alerts.jsonl`. Optionally set `PAPERBOT_WEBHOOK_URL` (a private
+webhook you own; the JSON body includes `text`/`content` fields) and/or
+`PAPERBOT_DESKTOP_NOTIFY=1` for macOS notifications. Alert delivery
+failures are printed to stderr and never interrupt the engine.
+
+During feed outages `paperbot run` backs off exponentially (capped at 15
+minutes), alerts after 3 consecutive failures and again on recovery, and
+never fabricates data. The engine persists per-tick mark-to-market equity
+snapshots (`equity_history`), and after a restart or outage it emits a
+`MONITORING GAP` event if an open position's stop went unobserved for more
+than `PAPERBOT_MONITOR_GAP_SECONDS` (default 300) — a reminder that
+realized losses can exceed the planned risk when nobody was watching.
+
 `PAPERBOT_EXCHANGE` is restricted to public spot-data providers `kraken`, `coinbase` and `bitstamp`; verify `PAPERBOT_SYMBOL` really trades there. Use separate `--db` paths when changing the exchange/symbol. The database records the market symbol; other environment changes (fees, risk, start balance) don't rewrite previous simulated trades.
 
 The supplied risk parameter is a **planned** loss limit, not a guarantee: overnight price gaps, spread widening, missed polls, liquidity and outages can cause larger realized losses even in the model. Lockouts prevent *new* simulated entries; they do not force-close an existing position.
@@ -113,8 +137,8 @@ Stop `paperbot run` with Ctrl+C (or stop the Docker service). The next start loa
 ## Limits and next steps
 
 - Live strategy execution and Kraken connectivity have **not been exercised in the build environment** (no internet and CCXT was not installed there); run `paperbot once` on your Mac to verify actual read-only market data.
-- The dashboard only shows stored cash, an open-position record, and closed realized P&L; it does **not** yet persist a mark-to-market equity curve, and cumulative realised P&L charts ignore mark-to-market movements.
-- No alert integration or live execution; adding live execution is expressly out of scope.
+- The dashboard shows a persisted mark-to-market equity curve, drawdown from the running peak, trade statistics and recent alerts; databases created by older versions fall back to realised-P&L-only charts until the updated engine runs.
+- No live execution; adding live execution is expressly out of scope.
 - No guaranteed uptime or high-availability failover. Cloud deployment, market data resilience, and realistic execution modelling require more engineering.
 - Tests and a synthetic example are software checks, **not evidence of profitability**. Evaluate a representative out-of-sample history before drawing conclusions, and account for strategy overfitting.
 
