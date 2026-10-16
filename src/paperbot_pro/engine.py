@@ -104,17 +104,23 @@ class ProEngine:
                       f"{event.exit_price:.6g}; net P&L {event.pnl_usd:+.2f}", ts_ms=now_ms)
 
     def apply_funding_due(self, pos: dict, now_ms: int, rate: float | None,
-                          mark: float, last_check_ms: int) -> int:
-        """Apply funding for each 8h boundary in (last_check, now]. Idempotent
-        via the funding_events primary key, so restarts never double-apply.
-        Uses the currently observed rate for boundaries inside the window —
-        an approximation (historical per-boundary rates are not refetched)."""
+                          mark: float) -> int:
+        """Apply funding for each 8h boundary since the position's OWN anchor
+        (its latest applied funding event, else its open time). Outages and
+        restarts therefore retro-charge every missed boundary exactly once —
+        idempotent via the funding_events primary key. Uses the currently
+        observed rate for all pending boundaries (approximation: historical
+        per-boundary rates are not refetched)."""
         if rate is None:
             self.db.audit("warning", "data",
                           f"funding rate unavailable for {pos['symbol']}; "
                           "funding NOT applied this window", ts_ms=now_ms)
             return 0
-        first = (last_check_ms // FUNDING_INTERVAL_MS + 1) * FUNDING_INTERVAL_MS
+        row = self.db.conn.execute(
+            "SELECT MAX(funding_ts_ms) FROM funding_events WHERE position_id=?",
+            (pos["id"],)).fetchone()
+        anchor_ms = row[0] if row and row[0] is not None else pos["opened_ms"]
+        first = (anchor_ms // FUNDING_INTERVAL_MS + 1) * FUNDING_INTERVAL_MS
         applied = 0
         boundary = first
         cash_key = "cash_core" if pos["sleeve"] == "core" else "cash_hype"
@@ -148,7 +154,7 @@ class ProEngine:
                 total += unrealized_pnl(p["side"], p["entry_price"], mark, p["qty"])
         return total
 
-    def _manage_open_positions(self, market, now_ms: int, last_funding_check: int,
+    def _manage_open_positions(self, market, now_ms: int,
                                marks: dict, summary: dict) -> None:
         """Monitor EVERY open position, independent of current universe
         membership or eligibility: a coin dropping out of the top-20 must
@@ -190,7 +196,7 @@ class ProEngine:
                 rate = funding.get("fundingRate") if funding else None
             except Exception:
                 rate = None
-            self.apply_funding_due(pos, now_ms, rate, float(last), last_funding_check)
+            self.apply_funding_due(pos, now_ms, rate, float(last))
             observed = float(bid if pos["side"] == "long" and bid else
                              ask if pos["side"] == "short" and ask else last)
             sign = 1 if pos["side"] == "long" else -1
@@ -218,8 +224,7 @@ class ProEngine:
         indicators: dict[str, dict] = {}
         sources_ok, sources_fail = 0, 0
         summary = {"scanned": 0, "signals": 0, "opened": 0, "closed": 0, "errors": 0}
-        last_funding_check = int(self.db.get("last_funding_check_ms", now_ms - 1))
-        self._manage_open_positions(market, now_ms, last_funding_check, marks, summary)
+        self._manage_open_positions(market, now_ms, marks, summary)
         for inst in instruments:
             symbol, exchange = inst["symbol"], inst["exchange"]
             try:
@@ -312,7 +317,6 @@ class ProEngine:
         self.db.set("marks", marks)
         self.db.set("asset_indicators", indicators)
         self.db.set("last_scan_ms", now_ms)
-        self.db.set("last_funding_check_ms", now_ms)
         self.db.set("data_sources", [
             {"name": "exchange market data", "ok": sources_fail == 0,
              "last_ok_ms": now_ms if sources_ok else None,

@@ -58,11 +58,10 @@ def test_liquidation_never_takes_more_than_committed_capital(tmp_path):
 
 def test_funding_applied_once_per_boundary_even_across_restart(tmp_path):
     engine, store, cfg = make(tmp_path)
-    pos, plan = opened(engine, store, cfg)
+    pos, plan = opened(engine, store, cfg)  # opened at 12:00 UTC
     cash_before = float(store.get('cash_core'))
-    # 16:00 UTC boundary falls between last check (12h) and now (17h)
-    n1 = engine.apply_funding_due(pos, now_ms=17 * H, rate=0.0001, mark=100.0,
-                                  last_check_ms=12 * H)
+    # 16:00 UTC boundary falls between position open (12h) and now (17h)
+    n1 = engine.apply_funding_due(pos, now_ms=17 * H, rate=0.0001, mark=100.0)
     assert n1 == 1
     cash_mid = float(store.get('cash_core'))
     expected = 0.0001 * 100.0 * pos['qty']
@@ -70,11 +69,29 @@ def test_funding_applied_once_per_boundary_even_across_restart(tmp_path):
 
     engine2, store2, cfg2 = make(tmp_path)  # simulated restart, same DB
     pos2 = store2.position(SPEC.symbol)
-    n2 = engine2.apply_funding_due(pos2, now_ms=17 * H, rate=0.0001, mark=100.0,
-                                   last_check_ms=12 * H)
+    n2 = engine2.apply_funding_due(pos2, now_ms=17 * H, rate=0.0001, mark=100.0)
     assert n2 == 0  # idempotent: same boundary never applied twice
     assert float(store2.get('cash_core')) == pytest.approx(cash_mid)
     assert pos2['funding_paid_usd'] == pytest.approx(expected)
+
+
+def test_outage_spanning_boundaries_charges_all_missed_funding(tmp_path):
+    """P1 fix: missed 8h boundaries during an outage are charged on the next
+    cycle from the position's OWN anchor, never forfeited by a global clock."""
+    engine, store, cfg = make(tmp_path)
+    pos, plan = opened(engine, store, cfg)          # opened 12:00 UTC
+    n1 = engine.apply_funding_due(pos, now_ms=17 * H, rate=0.0001, mark=100.0)
+    assert n1 == 1                                   # 16:00 applied
+    # simulate a 20h outage: next cycle only at 37h -> boundaries 24h and 32h missed
+    engine2, store2, cfg2 = make(tmp_path)
+    pos2 = store2.position(SPEC.symbol)
+    n2 = engine2.apply_funding_due(pos2, now_ms=37 * H, rate=0.0001, mark=100.0)
+    assert n2 == 2                                   # both retro-charged exactly once
+    assert store2.position(SPEC.symbol)['funding_paid_usd'] == pytest.approx(
+        3 * 0.0001 * 100.0 * plan.qty)
+    rows = list(store2.conn.execute(
+        'SELECT funding_ts_ms FROM funding_events ORDER BY funding_ts_ms'))
+    assert [r[0] for r in rows] == [16 * H, 24 * H, 32 * H]
 
 
 def test_auto_entry_gate_blocks_without_validation_artifact(tmp_path):
