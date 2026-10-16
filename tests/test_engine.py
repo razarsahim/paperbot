@@ -154,6 +154,27 @@ def test_daily_lock_sticks_until_next_utc_day(tmp_path, monkeypatch):
     assert bot.db.position() is not None
 
 
+def test_tick_records_marked_equity_snapshot(tmp_path):
+    bot = make(tmp_path)
+    now = 120 * 3_600_000 + 5_000
+    bot.tick(candles(), Quote(100.0, 100.1, now), now)
+    rows = bot.db.equity_history()
+    assert len(rows) == 1
+    assert rows[0]['ts_ms'] == now
+    assert rows[0]['bid'] == pytest.approx(100.0)
+    assert rows[0]['equity'] == pytest.approx(1000.0)
+
+    bot._enter(100, 1.0, now + 60_000, 120 * 3_600_000, 'TEST')
+    pos = bot.db.position()
+    later = now + 120_000
+    bot.tick(candles(), Quote(101.0, 101.1, later), later)
+    rows = bot.db.equity_history()
+    assert len(rows) == 2
+    expected = float(bot.db.get('balance')) + pos['qty'] * 101.0
+    assert rows[-1]['equity'] == pytest.approx(expected)
+    assert rows[-1]['position_qty'] == pytest.approx(pos['qty'])
+
+
 def test_settings_invalid_risk_rejected():
     with pytest.raises(ValueError):
         replace(Settings(), risk_per_trade=0.20).validate()

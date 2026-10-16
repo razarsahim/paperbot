@@ -19,6 +19,10 @@ class Store:
                 stop REAL NOT NULL, initial_stop REAL NOT NULL, target REAL NOT NULL,
                 initial_r REAL NOT NULL, signal_bar_ms INTEGER NOT NULL,
                 reason TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS equity_history (
+                ts_ms INTEGER PRIMARY KEY, bid REAL NOT NULL,
+                equity REAL NOT NULL, cash REAL NOT NULL,
+                position_qty REAL NOT NULL DEFAULT 0);
             CREATE TABLE IF NOT EXISTS trades (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 entry_ms INTEGER NOT NULL, exit_ms INTEGER NOT NULL,
@@ -51,6 +55,16 @@ class Store:
     def position(self):
         row = self.conn.execute("SELECT * FROM position WHERE id=1").fetchone()
         return dict(row) if row else None
+
+    def record_equity(self, ts_ms: int, bid: float, equity: float, cash: float, position_qty: float):
+        self.conn.execute(
+            "INSERT OR REPLACE INTO equity_history(ts_ms, bid, equity, cash, position_qty) VALUES(?,?,?,?,?)",
+            (ts_ms, bid, equity, cash, position_qty))
+
+    def equity_history(self, limit=100_000):
+        return [dict(row) for row in self.conn.execute(
+            "SELECT * FROM (SELECT * FROM equity_history ORDER BY ts_ms DESC LIMIT ?) ORDER BY ts_ms",
+            (limit,))]
 
     def trades(self, limit=1000):
         return [dict(row) for row in self.conn.execute(

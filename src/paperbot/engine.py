@@ -106,8 +106,13 @@ class PaperEngine:
             elif quote.bid >= pos["target"]:
                 events.append(self._exit(quote.bid, now_ms, "TARGET"))
                 exited_this_tick = True
-        locks = self._lockouts(self.equity(quote.bid), now_ms)
+        equity_now = self.equity(quote.bid)
+        locks = self._lockouts(equity_now, now_ms)
         events.extend(locks)
+        pos_after_exits = self.db.position()
+        with self.db.conn:
+            self.db.record_equity(now_ms, quote.bid, equity_now, float(self.db.get("balance")),
+                                  pos_after_exits["qty"] if pos_after_exits else 0.0)
         if len(closed_bars) < self.cfg.min_bars:
             events.append("NO SIGNAL: insufficient historical data")
             return events
