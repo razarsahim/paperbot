@@ -22,9 +22,9 @@ def test_settings_validation_rejects_unsafe_values():
 
 def test_store_initializes_sleeves_and_lock_state(tmp_path):
     store, cfg = make(tmp_path)
-    assert store.get('cash_core') == pytest.approx(900.0)
-    assert store.get('cash_hype') == pytest.approx(100.0)
-    assert store.get('peak_equity') == pytest.approx(1000.0)
+    assert store.get('cash_core') == pytest.approx(750.0)
+    assert store.get('cash_hype') == pytest.approx(0.0)
+    assert store.get('peak_equity') == pytest.approx(750.0)
     assert store.get('locked_total') is False
     assert store.get('locked_daily') is False
     assert store.open_positions() == []

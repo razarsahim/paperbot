@@ -34,8 +34,8 @@ def test_overview_sources_real_state_and_legacy_bridge(tmp_path):
     client = TestClient(create_app(make_cfg(tmp_path)))
     body = client.get('/api/overview').json()
     assert body['mode'] == 'PAPER'
-    assert body['equity_usd'] == 1000.0
-    assert body['sleeves']['core']['balance_usd'] == 900.0
+    assert body['equity_usd'] == 750.0
+    assert body['sleeves']['core']['balance_usd'] == 750.0
     assert body['sleeves']['hype']['watch_only'] is True
     assert body['legacy']['symbol'] == 'BTC/GBP'
     assert body['legacy']['cash_gbp'] == 995.0
@@ -78,11 +78,11 @@ def test_overview_equity_does_not_double_count_settled_funding(tmp_path):
                funding_paid_usd, planned_risk_usd, planned_risk_pct, sleeve, opened_ms,
                signal_bar_ms, rationale) VALUES('X/USDT:USDT','long',10,1,100,10,100,95,
                95,110,90.5,0.06,2.0,5,0.005,'core',0,0,'T')""")
-    store.set('cash_core', 900.0 - 10.0 - 0.06 - 2.0)  # margin+fee+settled funding out
+    store.set('cash_core', 750.0 - 10.0 - 0.06 - 2.0)  # margin+fee+settled funding out
     store.set('marks', {'X/USDT:USDT': 100.0})         # mark at entry: gross unrealized 0
     store.close()
     body = TestClient(create_app(cfg)).get('/api/overview').json()
-    assert body['equity_usd'] == pytest.approx(1000.0 - 0.06 - 2.0)
+    assert body['equity_usd'] == pytest.approx(750.0 - 0.06 - 2.0)
     # the per-position view may still show funding-adjusted unrealized PnL
     pos = TestClient(create_app(cfg)).get('/api/positions').json()[0]
     assert pos['unrealized_pnl_usd'] == pytest.approx(-2.0)
@@ -92,7 +92,7 @@ def test_free_margin_excludes_watch_only_hype_and_manual_pause_surfaces(tmp_path
     from paperbot_pro.store import ProStore
     cfg = make_cfg(tmp_path)
     body = TestClient(create_app(cfg)).get('/api/overview').json()
-    assert body['free_margin_usd'] == pytest.approx(900.0)  # hype $100 is watch-only
+    assert body['free_margin_usd'] == pytest.approx(750.0)  # hype sleeve retired to the Lab
     store = ProStore(cfg.db_path, cfg)
     store.set('manual_pause', True)
     store.close()

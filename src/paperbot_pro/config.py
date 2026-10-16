@@ -6,9 +6,13 @@ import os
 
 @dataclass(frozen=True)
 class ProSettings:
-    starting_balance_usd: float = 1000.0
-    core_sleeve_usd: float = 900.0
-    hype_sleeve_usd: float = 100.0
+    # 2026-10-17 restructure: aggregate $1,000 = main $750 (this config) +
+    # Extreme Lab $250 (paperbot_pro.lab, own DB). The old $100 hype sleeve
+    # is retired into the Lab's allocation to avoid double-counting; the
+    # hype RADAR remains as a watch-only data feature.
+    starting_balance_usd: float = 750.0
+    core_sleeve_usd: float = 750.0
+    hype_sleeve_usd: float = 0.0
     leverage: float = 10.0                 # simulated isolated margin only
     risk_per_trade: float = 0.005          # of TOTAL equity, core sleeve
     max_open_positions: int = 3
@@ -16,7 +20,7 @@ class ProSettings:
     max_daily_loss: float = 0.02           # sticky until next UTC day
     max_total_drawdown: float = 0.05       # pause-for-review
     hype_risk_per_trade: float = 0.0025
-    hype_cumulative_loss_cap_usd: float = 30.0
+    hype_cumulative_loss_cap_usd: float = 0.0
     hype_watch_only: bool = True
     taker_fee_default: float = 0.0006      # used only if metadata lacks fees
     slippage_rate: float = 0.0005

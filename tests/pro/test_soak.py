@@ -79,4 +79,4 @@ def test_three_day_soak_with_outage_and_restart(tmp_path):
     assert trade['funding_usd'] == pytest.approx(sum(
         r[0] for r in store.conn.execute('SELECT amount_usd FROM funding_events')))
     cash = float(store.get('cash_core'))
-    assert cash == pytest.approx(900.0 + trade['net_pnl_usd'])
+    assert cash == pytest.approx(750.0 + trade['net_pnl_usd'])

@@ -79,7 +79,7 @@ def test_cycle_opens_then_liquidation_closes_and_books_trade(tmp_path):
     assert summary['opened'] == 1, store.signals()
     pos = store.position(SYMBOL)
     assert pos is not None and pos['side'] == 'long'
-    assert pos['planned_risk_usd'] <= 1000 * cfg.risk_per_trade + 1e-9
+    assert pos['planned_risk_usd'] <= 750 * cfg.risk_per_trade + 1e-9
     assert len(store.equity_history()) == 1
 
     crash = FakeMarket(rows, last=pos['liq_price_est'] * 0.9)  # gap through liq
