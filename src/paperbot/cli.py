@@ -12,6 +12,7 @@ from .backtest import backtest
 from .config import Settings
 from .engine import PaperEngine
 from .market import PublicSpotMarket, load_csv
+from .notify import FailureTracker, Notifier, dispatch_events
 from .store import Store
 
 
@@ -33,20 +34,54 @@ def single_instance(db_path: str):
         yield
 
 
-def run_once(db_path: str, cfg: Settings):
-    market = PublicSpotMarket(cfg.exchange, cfg.symbol, cfg.timeframe)
+def run_once(db_path: str, cfg: Settings, notifier: Notifier | None = None, market=None):
+    if market is None:
+        market = PublicSpotMarket(cfg.exchange, cfg.symbol, cfg.timeframe)
     bars, quote = market.snapshot()
     store = Store(db_path, cfg.starting_balance, cfg.symbol)
     try:
-        events = PaperEngine(store, cfg).tick(bars, quote, int(time.time() * 1000))
-        equity = PaperEngine(store, cfg).equity(quote.bid)
+        engine = PaperEngine(store, cfg)
+        events = engine.tick(bars, quote, int(time.time() * 1000))
+        equity = engine.equity(quote.bid)
         print(f"{stamp()} PAPER ONLY {cfg.symbol} bid={quote.bid:.2f} equity={equity:.2f}")
         for event in events:
             print("  ", event)
         if not events:
             print("   No new action")
+        if notifier is not None:
+            dispatch_events(notifier, events)
     finally:
         store.close()
+
+
+def run_loop(db_path: str, cfg: Settings, notifier: Notifier,
+             market_factory=None, sleep=time.sleep, iterations: int | None = None):
+    """Poll until stopped. Feed failures back off exponentially (capped at
+    15 min), alert after a streak, and alert again on recovery — failures are
+    printed, never hidden, and no synthetic data is substituted."""
+    if market_factory is None:
+        market_factory = lambda: PublicSpotMarket(cfg.exchange, cfg.symbol, cfg.timeframe)
+    market = None
+    tracker = FailureTracker(threshold=3)
+    done = 0
+    while iterations is None or done < iterations:
+        done += 1
+        try:
+            if market is None:
+                market = market_factory()
+            run_once(db_path, cfg, notifier, market)
+        except Exception as exc:
+            print(f"{stamp()} SAFE ERROR (no new position): {type(exc).__name__}: {exc}",
+                  file=sys.stderr, flush=True)
+            if tracker.record_failure(str(exc)):
+                notifier.send("error", "FEED FAILURE",
+                              f"{tracker.streak} consecutive failed polls; latest: {exc}",
+                              key="feed-failure")
+            sleep(min(cfg.interval_seconds * 2 ** min(tracker.streak, 5), 900))
+            continue
+        if tracker.record_success():
+            notifier.send("info", "FEED RECOVERED", "public market data polling restored")
+        sleep(cfg.interval_seconds)
 
 
 def main():
@@ -110,19 +145,14 @@ def main():
         finally:
             store.close()
         return
+    notifier = Notifier.from_env(str(Path(args.db).expanduser().parent))
     with single_instance(args.db):
         if args.command == "once":
-            run_once(args.db, cfg)
+            run_once(args.db, cfg, notifier)
         else:
             print("PAPER ONLY; Ctrl+C to stop polling. No exchange keys or order permissions.", flush=True)
             try:
-                while True:
-                    try:
-                        run_once(args.db, cfg)
-                    except Exception as exc:
-                        print(f"{stamp()} SAFE ERROR (no new position): {type(exc).__name__}: {exc}",
-                              file=sys.stderr, flush=True)
-                    time.sleep(cfg.interval_seconds)
+                run_loop(args.db, cfg, notifier)
             except KeyboardInterrupt:
                 print("Stopped.")
 

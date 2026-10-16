@@ -99,6 +99,14 @@ class PaperEngine:
             events.append("WIDE SPREAD: new entries disabled; existing paper exits use bid")
         exited_this_tick = False
         pos = self.db.position()
+        last_tick_ms = self.db.get("last_tick_ms")
+        with self.db.conn:
+            self.db.set("last_tick_ms", now_ms)
+        if (pos is not None and last_tick_ms is not None
+                and now_ms - last_tick_ms > self.cfg.monitor_gap_seconds * 1000):
+            events.append(
+                f"MONITORING GAP: open position's stop unobserved for "
+                f"{(now_ms - last_tick_ms) // 1000}s; realized loss can exceed the plan")
         if pos is not None:
             if quote.bid <= pos["stop"]:
                 events.append(self._exit(quote.bid, now_ms, "STOP (gap/slippage possible)"))

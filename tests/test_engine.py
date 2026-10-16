@@ -175,6 +175,24 @@ def test_tick_records_marked_equity_snapshot(tmp_path):
     assert rows[-1]['position_qty'] == pytest.approx(pos['qty'])
 
 
+def test_monitoring_gap_with_open_position_alerts_on_restart(tmp_path, monkeypatch):
+    """After an outage/restart, an open position whose stop went unobserved
+    for longer than monitor_gap_seconds must raise a MONITORING GAP event."""
+    bot = make(tmp_path)
+    from paperbot.strategy import Signal
+    monkeypatch.setattr('paperbot.engine.evaluate', lambda bars: Signal(False, 1, 'FAKE'))
+    bot._enter(100, 1.0, 118 * 3_600_000, 117 * 3_600_000, 'TEST')
+    now1 = 120 * 3_600_000 + 5_000
+    result = bot.tick(candles(120), Quote(100.0, 100.1, now1), now1)
+    assert not any('MONITORING GAP' in e for e in result)
+    now2 = now1 + 3 * 3_600_000  # 3h outage
+    result = bot.tick(candles(123), Quote(100.0, 100.1, now2), now2)
+    assert any('MONITORING GAP' in e for e in result)
+    now3 = now2 + 60_000  # normal 1-minute cadence resumes: no false alert
+    result = bot.tick(candles(123), Quote(100.0, 100.1, now3), now3)
+    assert not any('MONITORING GAP' in e for e in result)
+
+
 def test_settings_invalid_risk_rejected():
     with pytest.raises(ValueError):
         replace(Settings(), risk_per_trade=0.20).validate()

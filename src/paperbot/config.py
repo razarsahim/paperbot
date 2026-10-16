@@ -22,6 +22,7 @@ class Settings:
     entry_window_minutes: int = 10
     interval_seconds: int = 60
     min_bars: int = 85
+    monitor_gap_seconds: int = 300  # alert if an open position's stop went unobserved this long
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -32,7 +33,7 @@ class Settings:
             "fee_rate": float, "slippage_rate": float,
             "max_spread_pct": float, "atr_stop_multiplier": float,
             "reward_risk": float, "entry_window_minutes": int,
-            "interval_seconds": int,
+            "interval_seconds": int, "monitor_gap_seconds": int,
         }
         updates = {}
         for name, cast in allowed.items():
@@ -65,3 +66,5 @@ class Settings:
             raise ValueError("Invalid spread limit")
         if not 1 <= self.entry_window_minutes <= 15 or self.interval_seconds < 10:
             raise ValueError("Invalid timing parameters")
+        if not 60 <= self.monitor_gap_seconds <= 86_400:
+            raise ValueError("monitor_gap_seconds must be 60..86400")
