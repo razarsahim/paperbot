@@ -11,9 +11,11 @@ dependencies = ["ccxt>=4.4,<5", "streamlit>=1.40,<2", "pandas>=2.0,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]
+pro = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "httpx>=0.27,<1"]
 
 [project.scripts]
 paperbot = "paperbot.cli:main"
+propaper = "paperbot_pro.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
