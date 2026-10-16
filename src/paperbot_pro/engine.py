@@ -191,6 +191,7 @@ class ProEngine:
                 self.db.audit("warning", "data",
                               f"{pos['symbol']}: exit checks using STALE quote "
                               f"({tick_age:.0f}s old)", ts_ms=now_ms)
+            summary["quotes_ok"] += 1
             marks[pos["symbol"]] = float(last)
             try:
                 funding, _ = market.funding_rate(meta["exchange"], pos["symbol"])
@@ -224,7 +225,8 @@ class ProEngine:
         marks: dict[str, float] = dict(self.db.get("marks", {}) or {})
         indicators: dict[str, dict] = {}
         sources_ok, sources_fail = 0, 0
-        summary = {"scanned": 0, "signals": 0, "opened": 0, "closed": 0, "errors": 0}
+        summary = {"scanned": 0, "signals": 0, "opened": 0, "closed": 0, "errors": 0,
+                   "quotes_ok": 0}
         self._manage_open_positions(market, now_ms, marks, summary)
         for inst in instruments:
             symbol, exchange = inst["symbol"], inst["exchange"]
@@ -250,19 +252,26 @@ class ProEngine:
                 self.db.audit("warning", "data", f"{symbol}: incomplete candle/quote data; skipped",
                               ts_ms=now_ms)
                 continue
+            summary["quotes_ok"] += 1
             marks[symbol] = float(last)
             spread_pct = ((ask - bid) / ask) if (bid and ask and ask > 0) else None
             # ------- signal generation on NEW closed bar only -------
             latest_bar = closed[-1].timestamp
             seen_key = f"last_signal_bar:{symbol}"
             signal = generate_signal(closed, self.params)
+            try:  # TTL-cached (10 min): bounded extra calls for display honesty
+                funding_info, _ = market.funding_rate(exchange, symbol)
+                display_funding = funding_info.get("fundingRate") if funding_info else None
+            except Exception:
+                display_funding = None
             indicators[inst["cg"]] = {
                 "trend": "up" if signal.indicators.get("ema20", 0) > signal.indicators.get("ema50", 0)
                          else "down" if signal.indicators else "flat",
                 "rsi": signal.indicators.get("rsi"),
                 "atr_pct": (signal.atr / float(last) * 100) if signal.atr else None,
                 "signal": signal.action, "mark_price": float(last),
-                "funding_rate": None, "spread_pct": spread_pct * 100 if spread_pct else None,
+                "funding_rate": display_funding,
+                "spread_pct": spread_pct * 100 if spread_pct else None,
                 "data_age_s": candle_age,
             }
             summary["scanned"] += 1
@@ -320,10 +329,18 @@ class ProEngine:
         equity_now = self.equity(marks)
         self.governor.update_locks(equity_now, now_ms)
         positions = self.db.open_positions()
-        margin_used = sum(p["margin_usd"] for p in positions)
-        unreal = equity_now - float(self.db.get("cash_core")) - float(self.db.get("cash_hype")) - margin_used
-        self.db.record_equity(now_ms, equity_now, float(self.db.get("cash_core")),
-                              float(self.db.get("cash_hype")), margin_used, unreal)
+        if positions and summary["quotes_ok"] == 0:
+            # Total feed outage while holding: marks are frozen, so an equity
+            # snapshot would fabricate a data point. The audit log carries the
+            # outage; the equity history keeps an honest gap instead.
+            self.db.audit("warning", "data",
+                          "equity snapshot skipped: no fresh quotes this cycle",
+                          ts_ms=now_ms)
+        else:
+            margin_used = sum(p["margin_usd"] for p in positions)
+            unreal = equity_now - float(self.db.get("cash_core")) - float(self.db.get("cash_hype")) - margin_used
+            self.db.record_equity(now_ms, equity_now, float(self.db.get("cash_core")),
+                                  float(self.db.get("cash_hype")), margin_used, unreal)
         self.db.set("marks", marks)
         self.db.set("asset_indicators", indicators)
         self.db.set("last_scan_ms", now_ms)

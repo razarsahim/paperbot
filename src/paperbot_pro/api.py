@@ -128,7 +128,8 @@ def create_app(cfg: ProSettings) -> FastAPI:
     store = ProStore(cfg.db_path, cfg)
     app = FastAPI(title="PaperBot Pro (PAPER ONLY)", docs_url="/api/docs")
     app.add_middleware(CORSMiddleware,
-                       allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+                       allow_origins=[f"http://{host}:{port}" for host in
+                                      ("localhost", "127.0.0.1") for port in (3000, 3001)],
                        allow_methods=["GET"], allow_headers=["*"])
 
     @app.get("/api/health")

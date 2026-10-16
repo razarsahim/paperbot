@@ -24,11 +24,13 @@ export function StatTile({
   return (
     <Card className="gap-1 rounded-xl border-border/60 bg-card/60 px-4 py-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+        <span className="flex min-w-0 items-center gap-1.5 truncate text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
           {icon}
-          {label}
+          <span className="truncate">{label}</span>
         </span>
-        <SourceBadge source={source} />
+        <span className="shrink-0">
+          <SourceBadge source={source} />
+        </span>
       </div>
       {loading ? (
         <Skeleton className="h-7 w-28" />

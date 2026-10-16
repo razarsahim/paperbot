@@ -35,12 +35,20 @@ export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ?? "http://127.0.0.1:8777";
 
 const TIMEOUT_MS = 4000;
+// Candle requests hit the exchange on a cold cache and can take far longer
+// than local DB reads; a short timeout would silently strand the page on
+// DEMO until the next poll.
+const CANDLES_TIMEOUT_MS = 15000;
 
-async function getJson<T>(path: string, fallback: T): Promise<ApiResult<T>> {
+async function getJson<T>(
+  path: string,
+  fallback: T,
+  timeoutMs: number = TIMEOUT_MS
+): Promise<ApiResult<T>> {
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       cache: "no-store",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as T;
@@ -96,7 +104,8 @@ export function getCandles(
   const q = new URLSearchParams({ symbol, tf, limit: String(limit) });
   return getJson<CandleResponse>(
     `/api/candles?${q.toString()}`,
-    mockCandles(symbol, tf, limit)
+    mockCandles(symbol, tf, limit),
+    CANDLES_TIMEOUT_MS
   );
 }
 

@@ -20,7 +20,7 @@ import { fmtPct, fmtUsd, pnlClass } from "@/lib/format";
 import { usePoll } from "@/lib/hooks";
 
 const VALIDATION_STATEMENT =
-  "Backtest evidence is NEGATIVE so far: −2.69% on 11 trades, PF 0.16, 0/3 profitable walk-forward windows. Simulated results never predict future performance.";
+  "Validation evidence to date is NEGATIVE/UNPROVEN (see the live report line below for current numbers). Simulated results never predict future performance.";
 
 export default function AnalyticsPage() {
   const { data, source, loading } = usePoll(getAnalytics, 60_000);

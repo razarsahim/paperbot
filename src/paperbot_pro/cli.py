@@ -63,8 +63,13 @@ def main():
     sub.add_parser("universe", help="Refresh top-20 universe and perp instrument eligibility")
     sub.add_parser("scan-once", help="One bounded scan/manage cycle, then exit")
     sub.add_parser("run", help="Continuous paper engine (universe daily, scan per interval)")
-    sub.add_parser("validate", help="Run per-market perp backtests on real public candles; "
-                                    "writes the validation artifact required for auto-entry")
+    validate = sub.add_parser("validate",
+                              help="Run per-market perp backtests on real public candles; "
+                                   "writes the validation artifact required for auto-entry")
+    validate.add_argument("--days", type=int, default=None,
+                          help="Paginate this many days of history (e.g. 730); default ~40 days")
+    validate.add_argument("--markets", type=int, default=None,
+                          help="Limit to the top N eligible markets")
     sub.add_parser("hype-refresh", help="Refresh the WATCH-ONLY hype radar from public pools data")
     sub.add_parser("status", help="Print the simulated portfolio overview")
     sub.add_parser("pause", help="Manually block NEW simulated entries (exits keep running)")
@@ -97,7 +102,8 @@ def main():
         elif args.command == "validate":
             from .marketdata import shared_marketdata
             from .validation import run_validation
-            report = run_validation(store, cfg, shared_marketdata(cfg))
+            report = run_validation(store, cfg, shared_marketdata(cfg),
+                                    days=args.days, max_markets=args.markets)
             print(json.dumps({k: report[k] for k in ("summary", "combined", "warnings")}, indent=2))
             print(f"artifact written: {cfg.validation_report_path}")
         elif args.command == "hype-refresh":

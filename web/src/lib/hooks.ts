@@ -67,6 +67,18 @@ export function useFetchOnce<T>(
  * `overview` events; if the stream errors it silently falls back to the
  * 10s polling that is always running underneath.
  */
+/** Ticking clock for staleness displays; updates every `intervalMs`. */
+export function useNow(intervalMs = 15_000): number {
+  // 0 until mounted: callers treat that as "not stale yet". Date.now() must
+  // not run during (pre)render — Next's static prerenderer rejects it.
+  const [now, setNow] = useState<number>(0);
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+  return now;
+}
+
 export function useOverview(): Loadable<Overview> {
   const base = usePoll(getOverview, 10_000);
   const [sse, setSse] = useState<Overview | null>(null);

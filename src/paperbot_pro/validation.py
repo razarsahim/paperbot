@@ -12,7 +12,7 @@ from pathlib import Path
 from paperbot.models import Candle
 from .config import ProSettings
 from .perp import ContractSpec, funding_cost, liquidation_price, plan_entry, realized_pnl
-from .scanner import StrategyParams, generate_signal
+from .scanner import StrategyParams, generate_signal, signal_series
 
 FUNDING_INTERVAL_MS = 8 * 3_600_000
 DEFAULT_FUNDING_RATE = 0.0001  # ~0.01%/8h, a typical positive rate; approximation
@@ -63,6 +63,7 @@ def perp_backtest(bars: list[Candle], cfg: ProSettings, spec: ContractSpec,
     on all venues — documented approximation, conservative for longs)."""
     cfg.validate()
     params = params or StrategyParams()
+    signals = signal_series(bars, params)  # signals[i] uses bars[0..i] only
     equity = cfg.starting_balance_usd
     peak, max_dd = equity, 0.0
     position: dict | None = None
@@ -114,7 +115,7 @@ def perp_backtest(bars: list[Candle], cfg: ProSettings, spec: ContractSpec,
             locked_daily = True
         if position is not None or exited or locked_total or locked_daily:
             continue
-        signal = generate_signal(bars[:i], params)  # previous bars only
+        signal = signals[i - 1]  # previous bar's signal only: no look-ahead
         if signal.action is None:
             continue
         price = candle.open  # next-bar-open execution
@@ -209,6 +210,37 @@ def auto_entry_gate(cfg: ProSettings) -> tuple[bool, str]:
     return True, ""
 
 
+def _buy_hold_pct(bars: list[Candle], cfg: ProSettings, spec: ContractSpec) -> float:
+    entry = bars[0].open * (1 + spec.taker_fee + cfg.slippage_rate)
+    exit_ = bars[-1].close * (1 - spec.taker_fee - cfg.slippage_rate)
+    return (exit_ / entry - 1) * 100
+
+
+def _regime_results(bars: list[Candle], cfg: ProSettings, spec: ContractSpec) -> list[dict]:
+    """Independent per-calendar-year runs: each regime starts fresh at the
+    configured balance with only pre-regime warmup history. Answers 'how did
+    the frozen strategy behave in different market regimes' without one bad
+    year's lockout silencing the rest."""
+    by_year: dict[str, list[int]] = {}
+    for i, bar in enumerate(bars):
+        year = datetime.fromtimestamp(bar.timestamp / 1000, timezone.utc).strftime("%Y")
+        by_year.setdefault(year, []).append(i)
+    out = []
+    for year, idx in sorted(by_year.items()):
+        start, end = idx[0], idx[-1] + 1
+        segment = bars[max(0, start - cfg.min_bars):end]
+        if len(segment) < cfg.min_bars + 50 or end - start < 100:
+            continue
+        result = perp_backtest(segment, cfg, spec)
+        out.append({"period": year, "bars": end - start,
+                    "trades": len(result["trades"]),
+                    "net_return_pct": result["net_return_pct"],
+                    "max_drawdown_pct": result["max_drawdown_pct"],
+                    "win_rate_pct": result["win_rate_pct"],
+                    "buy_hold_return_pct": _buy_hold_pct(bars[start:end], cfg, spec)})
+    return out
+
+
 def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
                      cfg: ProSettings) -> dict:
     markets = []
@@ -220,6 +252,9 @@ def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
                         "max_drawdown_pct": result["max_drawdown_pct"],
                         "win_rate_pct": result["win_rate_pct"],
                         "profit_factor": result["profit_factor"],
+                        "locked_total": result["locked_total"],
+                        "buy_hold_return_pct": _buy_hold_pct(bars, cfg, spec),
+                        "regimes": _regime_results(bars, cfg, spec),
                         "first_bar": bars[0].iso, "last_bar": bars[-1].iso})
     total_trades = sum(m["trades"] for m in markets)
     profitable = sum(1 for m in markets if m["net_return_pct"] > 0)
@@ -230,6 +265,8 @@ def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
         "1.5% combined risk) are NOT modeled in the aggregate; treat combined "
         "figures as an upper bound on activity.",
         f"Funding approximated at a constant {DEFAULT_FUNDING_RATE:.4%}/8h.",
+        "Strategy parameters are FROZEN (never fitted to this data); no "
+        "optimization was performed against any holdout.",
     ]
     if total_trades < 30 * max(1, len(markets)) / 3:
         warnings.append(f"Small sample: {total_trades} trades across {len(markets)} markets.")
@@ -248,17 +285,29 @@ def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
             "markets": markets,
             "combined": {"total_trades": total_trades, "markets_profitable": profitable,
                          "mean_return_pct": mean_ret},
+            "benchmarks": {"cash_return_pct": 0.0,
+                           "note": "buy-and-hold shown per market/regime with round-trip costs"},
             "warnings": warnings, "summary": summary}
 
 
-def run_validation(store, cfg: ProSettings, market, out_path: str | None = None) -> dict:
-    """Download real public candles for every eligible instrument and write
-    the validation artifact. Requires network."""
+def run_validation(store, cfg: ProSettings, market, out_path: str | None = None,
+                   days: int | None = None, max_markets: int | None = None) -> dict:
+    """Download real public candles for eligible instruments and write the
+    validation artifact. days=None keeps the quick ~40-day single-call mode;
+    days=N paginates multi-year history (bounded calls). Requires network."""
     instruments = [dict(r) for r in store.conn.execute(
-        "SELECT * FROM instruments WHERE eligible=1")]
+        "SELECT i.* FROM instruments i JOIN universe u USING(coingecko_id) "
+        "WHERE i.eligible=1 ORDER BY u.rank")]
+    if max_markets:
+        instruments = instruments[:max_markets]
     data = {}
     for inst in instruments:
-        raw, _age = market.candles(inst["exchange"], inst["symbol"], cfg.candle_timeframe, 1000)
+        if days:
+            raw = market.candles_paginated(inst["exchange"], inst["symbol"],
+                                           cfg.candle_timeframe, days)
+        else:
+            raw, _age = market.candles(inst["exchange"], inst["symbol"],
+                                       cfg.candle_timeframe, 1000)
         bars = [Candle(int(x[0]), *[float(v) for v in x[1:6]]) for x in raw]
         bars = [b for b in bars if b.timestamp + cfg.timeframe_ms <= time.time() * 1000]
         if len(bars) >= cfg.min_bars + 20:
@@ -266,8 +315,11 @@ def run_validation(store, cfg: ProSettings, market, out_path: str | None = None)
                                 inst["tick_size"], inst["lot_size"])
             data[inst["symbol"]] = (bars, spec)
     report = validate_markets(data, cfg)
-    report["data_provenance"] = {"source": "ccxt public fetch_ohlcv",
+    report["data_provenance"] = {"source": "ccxt public fetch_ohlcv"
+                                           + (" (paginated)" if days else ""),
+                                 "requested_days": days,
                                  "timeframe": cfg.candle_timeframe,
+                                 "bars_per_market": {s: len(b) for s, (b, _) in data.items()},
                                  "markets": len(data), "no_live_execution": True}
     path = Path(out_path or cfg.validation_report_path)
     path.parent.mkdir(parents=True, exist_ok=True)

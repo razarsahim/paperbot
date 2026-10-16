@@ -33,25 +33,43 @@ class ProSignal:
     indicators: dict
 
 
+def signal_series(bars: list[Candle], params: StrategyParams) -> list[ProSignal]:
+    """Signal at every index i, computed from bars[0..i] only — identical to
+    generate_signal(bars[:i+1]) for every i (EMA/ATR/RSI are cumulative, so
+    full-series indicator values at index i equal the prefix values). One
+    O(n) pass instead of O(n^2), which multi-year backtests require."""
+    closes = [c.close for c in bars]
+    fast = ema(closes, params.ema_fast)
+    slow = ema(closes, params.ema_slow)
+    volatility_arr = atr(bars, params.atr_period)
+    strength_arr = rsi(closes, params.rsi_period)
+    out: list[ProSignal] = []
+    for i in range(len(bars)):
+        if i + 1 < params.min_bars:
+            out.append(ProSignal(None, 0.0, "Insufficient history", {}))
+            continue
+        f0, f1, s0, vol = fast[i], fast[i - 1], slow[i], volatility_arr[i]
+        if any(v is None for v in (f0, f1, s0, vol)) or vol <= 0:
+            out.append(ProSignal(None, 0.0, "Indicators warming up", {}))
+            continue
+        strength = strength_arr[i]
+        snapshot = {"close": closes[i], "ema20": round(f0, 6), "ema50": round(s0, 6),
+                    "atr": round(vol, 6),
+                    "rsi": round(strength, 2) if strength is not None else None}
+        long_setup = f0 > s0 and closes[i - 1] <= f1 and closes[i] > f0
+        short_setup = f0 < s0 and closes[i - 1] >= f1 and closes[i] < f0
+        if long_setup:
+            out.append(ProSignal("long", vol, "EMA20>EMA50, close reclaims EMA20 from below", snapshot))
+        elif short_setup and params.allow_short:
+            out.append(ProSignal("short", vol, "EMA20<EMA50, close rejects EMA20 from above", snapshot))
+        elif short_setup:
+            out.append(ProSignal(None, vol, "Short setup present but shorts disabled", snapshot))
+        else:
+            out.append(ProSignal(None, vol, "No qualifying setup", snapshot))
+    return out
+
+
 def generate_signal(closed_bars: list[Candle], params: StrategyParams) -> ProSignal:
     if len(closed_bars) < params.min_bars:
         return ProSignal(None, 0.0, "Insufficient history", {})
-    closes = [c.close for c in closed_bars]
-    fast = ema(closes, params.ema_fast)
-    slow = ema(closes, params.ema_slow)
-    volatility = atr(closed_bars, params.atr_period)[-1]
-    strength = rsi(closes, params.rsi_period)[-1]
-    f0, f1, s0 = fast[-1], fast[-2], slow[-1]
-    if any(v is None for v in (f0, f1, s0, volatility)) or volatility <= 0:
-        return ProSignal(None, 0.0, "Indicators warming up", {})
-    snapshot = {"close": closes[-1], "ema20": round(f0, 6), "ema50": round(s0, 6),
-                "atr": round(volatility, 6), "rsi": round(strength, 2) if strength is not None else None}
-    long_setup = f0 > s0 and closes[-2] <= f1 and closes[-1] > f0
-    short_setup = f0 < s0 and closes[-2] >= f1 and closes[-1] < f0
-    if long_setup:
-        return ProSignal("long", volatility, "EMA20>EMA50, close reclaims EMA20 from below", snapshot)
-    if short_setup and params.allow_short:
-        return ProSignal("short", volatility, "EMA20<EMA50, close rejects EMA20 from above", snapshot)
-    if short_setup:
-        return ProSignal(None, volatility, "Short setup present but shorts disabled", snapshot)
-    return ProSignal(None, volatility, "No qualifying setup", snapshot)
+    return signal_series(closed_bars, params)[-1]

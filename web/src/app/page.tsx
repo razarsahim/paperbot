@@ -19,10 +19,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAnalytics, getHealth } from "@/lib/api";
 import { fmtNum, fmtPct, fmtUsd, pnlClass, timeAgo } from "@/lib/format";
-import { useOverview, usePoll } from "@/lib/hooks";
+import { useNow, useOverview, usePoll } from "@/lib/hooks";
 
 export default function OverviewPage() {
   const { data: ov, source, loading } = useOverview();
+  const now = useNow();
   const health = usePoll(getHealth, 15_000);
   const analytics = usePoll(getAnalytics, 60_000);
 
@@ -38,6 +39,11 @@ export default function OverviewPage() {
         <span className="text-xs text-muted-foreground">
           {ov ? `updated ${timeAgo(ov.ts_ms)}` : "loading…"}
         </span>
+        {ov && source === "live" && now > 0 && now - ov.ts_ms > 90_000 && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-300">
+            <TriangleAlert className="size-3" /> data stale — engine or API not updating
+          </span>
+        )}
       </div>
 
       {paused && risk && (
@@ -89,7 +95,9 @@ export default function OverviewPage() {
           source={source}
           loading={loading}
           value={fmtPct(ov ? -ov.max_drawdown_pct : null, 1)}
-          valueClassName="text-red-600 dark:text-red-400"
+          valueClassName={
+            ov && ov.max_drawdown_pct > 0 ? "text-red-600 dark:text-red-400" : undefined
+          }
         />
         <StatTile
           label="Risk utilisation"

@@ -78,6 +78,30 @@ class MarketData:
             f"ticker:{exchange}:{symbol}", ttl_seconds=20,
             fetch=lambda: self.client(exchange).fetch_ticker(symbol))
 
+    def candles_paginated(self, exchange: str, symbol: str, tf: str, days: int,
+                          max_calls: int = 80) -> list[list]:
+        """Multi-year PUBLIC history via since-pagination, bounded by
+        max_calls. Deduped and sorted; returns whatever the venue actually
+        has (no gap-filling, no fabrication)."""
+        if tf not in ALLOWED_TF:
+            raise ValueError(f"timeframe must be one of {ALLOWED_TF}")
+        tf_ms = {"5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400}[tf] * 1000
+        client = self.client(exchange)
+        now_ms = int(time.time() * 1000)
+        since = now_ms - days * 86_400_000
+        seen: dict[int, list] = {}
+        for _ in range(max_calls):
+            batch = client.fetch_ohlcv(symbol, tf, since=int(since), limit=1000)
+            if not batch:
+                break
+            for row in batch:
+                seen[int(row[0])] = row
+            newest = int(batch[-1][0])
+            if newest + tf_ms >= now_ms or len(batch) < 2:
+                break
+            since = newest + tf_ms
+        return [seen[ts] for ts in sorted(seen)]
+
     def funding_rate(self, exchange: str, symbol: str):
         def fetch():
             client = self.client(exchange)
