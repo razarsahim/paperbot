@@ -1,4 +1,29 @@
-# Crypto PaperBot — BTC/GBP, no leverage
+# Crypto PaperBot — legacy BTC/GBP spot engine + PaperBot Pro
+
+**Paper trading only, in both engines.** Nothing in this repository can place a real order: there is no API-key handling, no private endpoints and no trade methods.
+
+## PaperBot Pro (multi-asset SIMULATED 10x perps + web dashboard)
+
+PaperBot Pro simulates isolated-margin perpetuals on a top-20 crypto universe with a virtual $1,000 ($900 core + $100 watch-only hype sleeve). Leverage, funding and liquidation exist **only inside the local simulator**, parameterised by real public contract metadata; assets without verifiable metadata are NOT ELIGIBLE. Current validation evidence is **negative** (see `state/validation_report.json`); automatic paper entries stay disabled until you both run `propaper validate` and set `PAPERBOT_PRO_AUTO_ENTRY=1`.
+
+Run locally on macOS (three terminals, same venv):
+
+```bash
+python3 -m pip install -e '.[dev,pro]'
+python3 -m pytest -q                      # 93 tests must pass
+
+propaper universe                          # top-20 + perp eligibility (public data)
+propaper hype-refresh                      # WATCH-ONLY hype radar
+propaper validate                          # per-market perp backtests -> artifact
+propaper scan-once                         # one bounded scan/manage cycle
+propaper run                               # terminal 1: autonomous paper engine
+propaper api                               # terminal 2: read-only API on 127.0.0.1:8777
+cd web && npm install && npm run dev       # terminal 3: dashboard on localhost:3000
+```
+
+The API and dashboard are read-only and unauthenticated: keep them on localhost. The legacy spot engine below is unchanged and uses its own database.
+
+# Legacy engine: BTC/GBP, no leverage
 
 **Paper trading only.** This bot cannot place real orders. It has no API-key handling or exchange trade methods. It reads public spot market data, applies an illustrative, unvalidated strategy, simulates entries/exits, stores simulated positions and trades in SQLite, and shows a local dashboard.
 

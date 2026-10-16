@@ -62,28 +62,28 @@ Base `http://127.0.0.1:8777`. All GET, read-only. Key routes:
 
 ### Phase A (audit, snapshot, plan, mock UI)
 - [x] A1 Audit + DB backup (`backups/2026-10-16/paper.sqlite`, verified tables/counts) + this plan.
-- [ ] A2 CLAUDE.md scope rewrite (new authority; preserve all no-real-money rails). Commit.
-- [ ] A3 Scaffold `web/` via agent against the frozen API contract with typed mock fallbacks badged DEMO; `npm run build` must pass.
+- [x] A2 CLAUDE.md scope rewrite (new authority; preserve all no-real-money rails). Commit.
+- [x] A3 `web/` scaffolded via agent: Next.js 16 + shadcn + lightweight-charts, 9 pages, DEMO/LIVE-SIM badging; `npm run build` + eslint + all-routes-200 verified.
 
 ### Phase B (read-only bridge to EXISTING engine)
-- [ ] B1 FastAPI app exposing legacy spot engine data (overview.legacy, legacy trades/equity) from `state/paper.sqlite` `mode=ro` + `/api/health` + SSE heartbeat; TestClient tests; commit.
+- [x] B1 FastAPI with legacy bridge (mode=ro), /api/health, SSE (+?limit for tests); TestClient tests; boot smoke against real DBs.
 
 ### Phase C (top-20 universe + market data + scanner)
-- [ ] C1 universe.py TDD with recorded CoinGecko fixtures: stablecoin category exclusion, wrapped dedup (e.g. WBTC/WETH/stETH collapse), top-20 selection, retained-on-failure refresh, membership diff log.
-- [ ] C2 instrument resolution TDD: ccxt market dicts (fixtures) → eligible iff linear perp with maint-margin + fees + precision; NOT_ELIGIBLE reasons recorded.
-- [ ] C3 marketdata.py with TTL cache + staleness; scanner signal generation on closed candles only; signals + rejections persisted. Live smoke `propaper universe && propaper scan-once`.
+- [x] C1 universe.py TDD: category-based exclusion, top-20, failure keeps previous, membership diff log.
+- [x] C2 instrument resolution TDD: eligible only with real metadata (incl. tier-1 maintenance margin); NOT_ELIGIBLE reasons. Live: 16/20 eligible on bybit.
+- [x] C3 marketdata TTL cache (stale-with-age on outage); closed-candle scanner (long + mirrored short, params frozen/reproducible). Live scan: 16 markets, 2 signals, 0 opened (gated).
 
 ### Phase D (hype radar, watch-only)
-- [ ] D1 hype module: trending/new-pool ingestion (CoinGecko trending + GeckoTerminal new pools public), scoring with evidence list, hard WATCH_ONLY status without verified perp market; $100 sleeve ledger reserved; API + UI wiring.
+- [x] D1 hype.py: GeckoTerminal trending pools, deterministic evidence-based scoring, hard rejects, honeypot risk always disclosed, never ELIGIBLE. Live: 20 tokens, all WATCH_ONLY/REJECTED. (New-pool per-chain sweep beyond trending: pending.)
 
 ### Phase E (perp simulator + risk governor + gated automation)
-- [ ] E1 perp.py TDD: isolated-margin entry (fees, slippage), liquidation estimate `liq = entry*(1 - 1/L + mmr)` long / `entry*(1 + 1/L - mmr)` short (approximation, documented), gap-through-stop fills at observed price, liquidation-beats-stop when both gapped, margin-bounded loss.
-- [ ] E2 funding application idempotency across restarts (funding_events keyed by position+funding_ts).
-- [ ] E3 risk.py TDD: 0.5% sizing incl. fees/slippage, 3-slot cap, 1.5% combined planned risk, sticky daily 2% / total 5% locks, sleeve isolation, margin availability, dup-entry prevention.
-- [ ] E4 engine loop: scan → approve → simulate; auto-entry refuses without `state/validation_report.json`; pause status prominent in /api/overview.
-- [ ] E5 validation.py: per-market + combined walk-forward with perp costs on real downloaded candles; writes the report artifact with honest warnings.
+- [x] E1 perp.py TDD (9 tests): sizing with costs, liq-first gaps, observed-price stop fills, target never better, margin-bounded loss.
+- [x] E2 funding idempotent across restarts (funding_events PK; test proves single application).
+- [x] E3 risk.py TDD (8 tests): all caps/locks/sleeves + every verdict logged.
+- [x] E4 engine run_cycle with gates; pause reason in /api/overview; offline integration tests.
+- [x] E5 validation.py + `propaper validate`; LIVE artifact: 16 markets, 265 trades, 5/16 profitable, mean −1.74% — NEGATIVE/UNPROVEN. (True multi-market portfolio-level concurrency simulation: pending; warned in report.)
 
 ### Phase F (integration, security, E2E)
-- [ ] F1 Full pytest suite (existing 40 preserved + new), `npm run build`, API+web boot smoke, security grep (no credentials/order calls), README-Pro run instructions, built-vs-pending report.
+- [x] F1 93 tests green (40 legacy preserved), web build green, live API E2E against populated DB, security grep clean, README-Pro added. Pending: visual browser review of live dashboard, multi-day soak of `propaper run`.
 
 Each task: failing test → implement → full suite → commit (TDD per superpowers:test-driven-development).

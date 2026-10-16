@@ -110,6 +110,8 @@ def main():
                     try:
                         if time.time() - last_universe > cfg.universe_refresh_hours * 3600:
                             refresh_universe_and_instruments(store, cfg)
+                            from .hype import refresh_hype
+                            refresh_hype(store, cfg, _http_get)
                             last_universe = time.time()
                         summary = engine.run_cycle()
                         print(f"{time.strftime('%H:%M:%S')} scan {summary}", flush=True)
