@@ -51,8 +51,8 @@ def seed(tmp_path, auto_entry, with_artifact):
             "INSERT INTO instruments VALUES('testcoin','fake',?,1,NULL,0.0006,0.005,0.1,0.001,1000)",
             (SYMBOL,))
     if with_artifact:
-        with open(cfg.validation_report_path, 'w') as f:
-            json.dump({'summary': 'offline test artifact'}, f)
+        from tests.pro.conftest import write_valid_artifact
+        write_valid_artifact(cfg)
     return cfg, store
 
 

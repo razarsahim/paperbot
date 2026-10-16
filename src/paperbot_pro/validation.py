@@ -16,6 +16,24 @@ from .scanner import StrategyParams, generate_signal
 
 FUNDING_INTERVAL_MS = 8 * 3_600_000
 DEFAULT_FUNDING_RATE = 0.0001  # ~0.01%/8h, a typical positive rate; approximation
+ARTIFACT_VERSION = 2
+
+
+def params_fingerprint(cfg: ProSettings) -> str:
+    """Identity of everything that defines the validated strategy: signal
+    parameters plus the risk/cost model. A change to any of these invalidates
+    prior validation artifacts for auto-entry gating."""
+    import hashlib
+    identity = {
+        "strategy": StrategyParams().describe(),
+        "leverage": cfg.leverage,
+        "atr_stop_multiplier": cfg.atr_stop_multiplier,
+        "reward_risk": cfg.reward_risk,
+        "risk_per_trade": cfg.risk_per_trade,
+        "slippage_rate": cfg.slippage_rate,
+        "timeframe": cfg.candle_timeframe,
+    }
+    return hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()[:16]
 
 
 def _exit_check(side: str, position: dict, candle: Candle, cfg: ProSettings,
@@ -152,6 +170,45 @@ def perp_backtest(bars: list[Candle], cfg: ProSettings, spec: ContractSpec,
             "locked_total": locked_total}
 
 
+def auto_entry_gate(cfg: ProSettings) -> tuple[bool, str]:
+    """Single authority for the auto-entry gate, shared by engine and API.
+    Requires: settings flag; a parseable v2 artifact whose parameter
+    fingerprint matches the running config; non-empty market coverage;
+    freshness; and an explicit acknowledgement flag when the validated
+    outcome is NEGATIVE."""
+    from pathlib import Path
+    if not cfg.auto_entry:
+        return False, "auto-entry disabled in settings"
+    path = Path(cfg.validation_report_path)
+    if not path.exists():
+        return False, "validation report missing: run `propaper validate` first"
+    try:
+        artifact = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        return False, f"validation report unreadable ({type(exc).__name__}): re-run `propaper validate`"
+    if artifact.get("artifact_version") != ARTIFACT_VERSION or \
+            artifact.get("params_fingerprint") != params_fingerprint(cfg):
+        return False, ("validation artifact does not match current strategy parameters: "
+                       "re-run `propaper validate`")
+    if not artifact.get("markets"):
+        return False, "validation artifact covers no markets: re-run `propaper validate`"
+    try:
+        generated = datetime.fromisoformat(artifact["generated_at_utc"])
+        if generated.tzinfo is None:
+            generated = generated.replace(tzinfo=timezone.utc)
+    except (KeyError, ValueError, TypeError):
+        return False, "validation artifact has no valid timestamp: re-run `propaper validate`"
+    age_days = (datetime.now(timezone.utc) - generated).total_seconds() / 86_400
+    if age_days > cfg.validation_max_age_days:
+        return False, (f"validation artifact is stale ({age_days:.0f} days old, max "
+                       f"{cfg.validation_max_age_days}): re-run `propaper validate`")
+    if artifact.get("outcome", "NEGATIVE") == "NEGATIVE" and not cfg.accept_negative_validation:
+        return False, ("validated outcome is NEGATIVE: set "
+                       "PAPERBOT_PRO_ACCEPT_NEGATIVE_VALIDATION=1 to trade anyway "
+                       "(simulation only)")
+    return True, ""
+
+
 def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
                      cfg: ProSettings) -> dict:
     markets = []
@@ -177,12 +234,16 @@ def validate_markets(data: dict[str, tuple[list[Candle], ContractSpec]],
     if total_trades < 30 * max(1, len(markets)) / 3:
         warnings.append(f"Small sample: {total_trades} trades across {len(markets)} markets.")
     mean_ret = (sum(m["net_return_pct"] for m in markets) / len(markets)) if markets else 0.0
+    outcome = "NEGATIVE" if profitable <= len(markets) / 2 else "MIXED"
     summary = (f"{len(markets)} markets, {total_trades} trades, "
                f"{profitable}/{len(markets)} profitable, mean return "
                f"{mean_ret:+.2f}% — "
-               f"{'NEGATIVE/UNPROVEN' if profitable <= len(markets) / 2 else 'mixed'} evidence; "
+               f"{'NEGATIVE/UNPROVEN' if outcome == 'NEGATIVE' else 'mixed'} evidence; "
                "not predictive.")
-    return {"generated_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    return {"artifact_version": ARTIFACT_VERSION,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "params_fingerprint": params_fingerprint(cfg),
+            "outcome": outcome,
             "strategy_params": StrategyParams().describe(),
             "markets": markets,
             "combined": {"total_trades": total_trades, "markets_profitable": profitable,

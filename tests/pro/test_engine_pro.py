@@ -81,8 +81,8 @@ def test_auto_entry_gate_blocks_without_validation_artifact(tmp_path):
     engine, store, cfg = make(tmp_path, auto_entry=True)
     allowed, reason = engine.auto_entry_allowed()
     assert allowed is False and 'validation' in reason
-    with open(cfg.validation_report_path, 'w') as f:
-        json.dump({'summary': 'test'}, f)
+    from tests.pro.conftest import write_valid_artifact
+    write_valid_artifact(cfg)
     allowed, reason = engine.auto_entry_allowed()
     assert allowed is True
 

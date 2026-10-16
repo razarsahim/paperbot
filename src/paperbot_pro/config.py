@@ -39,7 +39,9 @@ class ProSettings:
     db_path: str = "state/paperbot_pro.sqlite"
     legacy_db_path: str = "state/paper.sqlite"
     validation_report_path: str = "state/validation_report.json"
-    auto_entry: bool = False  # even when True, a validation report is required
+    validation_max_age_days: int = 30
+    auto_entry: bool = False  # even when True, a matching validation artifact is required
+    accept_negative_validation: bool = False  # extra explicit opt-in when evidence is negative
 
     @classmethod
     def from_env(cls) -> "ProSettings":
@@ -50,6 +52,8 @@ class ProSettings:
             "max_total_drawdown": float, "leverage": float,
             "scan_interval_seconds": int, "api_port": int,
             "db_path": str, "legacy_db_path": str, "auto_entry": lambda v: v == "1",
+            "accept_negative_validation": lambda v: v == "1",
+            "validation_max_age_days": int,
         }
         updates = {}
         for name, cast in casts.items():

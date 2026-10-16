@@ -48,8 +48,8 @@ def test_auto_entry_gated_on_validation_artifact(tmp_path):
     body = client.get('/api/overview').json()
     assert body['risk']['trading_enabled'] is False
     assert 'validation' in (body['risk']['pause_reason'] or '').lower()
-    with open(cfg.validation_report_path, 'w') as f:
-        json.dump({'generated_at': '2026-10-16', 'windows': []}, f)
+    from tests.pro.conftest import write_valid_artifact
+    write_valid_artifact(cfg)
     body = TestClient(create_app(cfg)).get('/api/overview').json()
     assert body['risk']['trading_enabled'] is True
     assert body['risk']['pause_reason'] is None

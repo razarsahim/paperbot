@@ -32,11 +32,8 @@ class ProEngine:
 
     # ---------------- gating ----------------
     def auto_entry_allowed(self) -> tuple[bool, str]:
-        if not self.cfg.auto_entry:
-            return False, "auto-entry disabled in settings"
-        if not Path(self.cfg.validation_report_path).exists():
-            return False, "validation report missing: run `propaper validate` first"
-        return True, ""
+        from .validation import auto_entry_gate
+        return auto_entry_gate(self.cfg)
 
     # ---------------- position lifecycle ----------------
     def open_from_plan(self, spec: ContractSpec, plan: PlannedEntry, rationale: str,

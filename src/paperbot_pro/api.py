@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 from paperbot.report import drawdown_series, trade_stats
 from .config import ProSettings
 from .store import ProStore
+from .validation import auto_entry_gate
 
 
 def _read_legacy(path: str) -> dict | None:
@@ -82,15 +83,13 @@ def compute_overview(store: ProStore, cfg: ProSettings) -> dict:
     combined_risk = sum(p["planned_risk_usd"] for p in positions)
     locked_daily = bool(store.get("locked_daily"))
     locked_total = bool(store.get("locked_total"))
-    validated = Path(cfg.validation_report_path).exists()
+    gate_ok, gate_reason = auto_entry_gate(cfg)
     if locked_total:
         pause = "TOTAL DRAWDOWN PAUSE: manual review required"
     elif locked_daily:
         pause = "Daily loss lockout until next UTC day"
-    elif not cfg.auto_entry:
-        pause = "Auto-entry disabled in settings (simulation observes only)"
-    elif not validated:
-        pause = "Validation report missing: run `propaper validate` before automation"
+    elif not gate_ok:
+        pause = gate_reason
     else:
         pause = None
     return {
@@ -144,7 +143,7 @@ def create_app(cfg: ProSettings) -> FastAPI:
                            "last_tick_ms": legacy_tick},
                 "pro": {"running": bool(last_scan and now - last_scan < cfg.scan_interval_seconds * 3000),
                         "last_scan_ms": last_scan,
-                        "auto_entry_enabled": cfg.auto_entry and Path(cfg.validation_report_path).exists()},
+                        "auto_entry_enabled": auto_entry_gate(cfg)[0]},
             },
             "data_sources": sources,
         }
