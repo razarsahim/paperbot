@@ -76,8 +76,9 @@ def score_token(token: dict) -> dict:
         explanation = "Rejected: " + "; ".join(hard_reject)
         score = min(score, 25.0)
     else:
+        age_text = f"{age:.0f}h" if age is not None else "unknown"
         explanation = (f"Observed on-chain activity (liquidity ${liq:,.0f}, volume ${vol:,.0f}, "
-                       f"age {age:.0f}h). WATCH ONLY: no verified perp market exists and hype "
+                       f"age {age_text}). WATCH ONLY: no verified perp market exists and hype "
                        "is not evidence of future growth.")
     return {"status": status, "score": round(min(score, 100.0), 1), "flags": flags,
             "evidence": evidence, "explanation": explanation}

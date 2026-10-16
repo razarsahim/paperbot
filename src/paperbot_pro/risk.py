@@ -61,9 +61,14 @@ class RiskGovernor:
 
     def _evaluate(self, planned: dict, equity: float) -> Verdict:
         sleeve = planned["sleeve"]
-        if self.db.get("locked_total"):
+        # Check live equity against the anchors as well as the sticky flags:
+        # a breach must gate entries in the SAME cycle, before update_locks
+        # has persisted it at cycle end.
+        peak = max(float(self.db.get("peak_equity", equity)), equity)
+        if self.db.get("locked_total") or equity <= peak * (1 - self.cfg.max_total_drawdown):
             return Verdict(False, "TOTAL DRAWDOWN PAUSE: manual review required")
-        if self.db.get("locked_daily"):
+        day_start = float(self.db.get("day_start_equity", equity))
+        if self.db.get("locked_daily") or equity <= day_start * (1 - self.cfg.max_daily_loss):
             return Verdict(False, "daily loss lockout until next UTC day")
         if sleeve == "hype":
             if self.cfg.hype_watch_only:

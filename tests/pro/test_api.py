@@ -1,4 +1,5 @@
 import json
+import pytest
 from dataclasses import replace
 from fastapi.testclient import TestClient
 from paperbot.store import Store
@@ -62,6 +63,29 @@ def test_empty_collections_and_404(tmp_path):
     assert client.get('/api/universe').json()['stale'] is True
     assert client.get('/api/trades/999').status_code == 404
     assert client.get('/api/settings').json()['leverage'] == 10.0
+
+
+def test_overview_equity_does_not_double_count_settled_funding(tmp_path):
+    """Review I1: funding is settled from cash when applied; overview equity
+    must use gross unrealized, not subtract funding a second time."""
+    from paperbot_pro.store import ProStore
+    cfg = make_cfg(tmp_path)
+    store = ProStore(cfg.db_path, cfg)
+    with store.conn:
+        store.conn.execute(
+            """INSERT INTO positions(symbol, side, leverage, qty, entry_price, margin_usd,
+               notional_usd, stop, initial_stop, target, liq_price_est, entry_fee_usd,
+               funding_paid_usd, planned_risk_usd, planned_risk_pct, sleeve, opened_ms,
+               signal_bar_ms, rationale) VALUES('X/USDT:USDT','long',10,1,100,10,100,95,
+               95,110,90.5,0.06,2.0,5,0.005,'core',0,0,'T')""")
+    store.set('cash_core', 900.0 - 10.0 - 0.06 - 2.0)  # margin+fee+settled funding out
+    store.set('marks', {'X/USDT:USDT': 100.0})         # mark at entry: gross unrealized 0
+    store.close()
+    body = TestClient(create_app(cfg)).get('/api/overview').json()
+    assert body['equity_usd'] == pytest.approx(1000.0 - 0.06 - 2.0)
+    # the per-position view may still show funding-adjusted unrealized PnL
+    pos = TestClient(create_app(cfg)).get('/api/positions').json()[0]
+    assert pos['unrealized_pnl_usd'] == pytest.approx(-2.0)
 
 
 def test_sse_stream_emits_initial_overview_event(tmp_path):

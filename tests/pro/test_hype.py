@@ -36,6 +36,12 @@ def test_missing_contract_rejected_as_unverifiable():
     assert any('unverifiable' in f.lower() for f in result['flags'])
 
 
+def test_unknown_pool_age_scores_without_crashing():
+    result = score_token(candidate(pool_age_hours=None))
+    assert result['status'] in ('WATCH_ONLY', 'REJECTED')
+    assert result['explanation']
+
+
 def test_geckoterminal_pool_mapping():
     pool = {"attributes": {
         "name": "WIF / SOL", "address": "poolAddr",

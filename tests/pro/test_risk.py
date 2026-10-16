@@ -76,6 +76,17 @@ def test_total_drawdown_pause_requires_manual_reset(tmp_path):
     assert store.get('locked_total') is True            # survives equity recovery
 
 
+def test_breach_rejects_entry_within_same_cycle_before_locks_persisted(tmp_path):
+    """Review I3: a mid-cycle equity breach must gate entries immediately,
+    not only after update_locks runs at cycle end."""
+    gov, store, cfg = make(tmp_path)
+    gov.update_locks(equity=1000.0, now_ms=12 * H)   # anchors day_start/peak
+    verdict = gov.approve(planned(), equity=975.0, now_ms=12 * H + 60_000)
+    assert not verdict.approved and 'daily' in verdict.reason.lower()
+    verdict = gov.approve(planned(), equity=940.0, now_ms=12 * H + 60_000)
+    assert not verdict.approved and 'review' in verdict.reason.lower()
+
+
 def test_hype_sleeve_watch_only_and_loss_cap(tmp_path):
     gov, store, cfg = make(tmp_path)
     hype = dict(planned('PEPE/USDT:USDT', risk_usd=2.0, margin_usd=10.0), sleeve='hype')

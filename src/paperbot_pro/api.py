@@ -52,18 +52,23 @@ def _marks(store: ProStore) -> dict:
     return store.get("marks", {}) or {}
 
 
-def _unrealized(pos: dict, mark: float | None) -> float | None:
+def _unrealized(pos: dict, mark: float | None, include_funding: bool = True) -> float | None:
+    """Per-position display subtracts funding already paid; portfolio equity
+    must NOT (funding is settled from cash when applied — double-count bug
+    found in review)."""
     if mark is None:
         return None
     direction = 1 if pos["side"] == "long" else -1
-    return direction * (mark - pos["entry_price"]) * pos["qty"] - pos["funding_paid_usd"]
+    gross = direction * (mark - pos["entry_price"]) * pos["qty"]
+    return gross - pos["funding_paid_usd"] if include_funding else gross
 
 
 def compute_overview(store: ProStore, cfg: ProSettings) -> dict:
     positions = store.open_positions()
     marks = _marks(store)
     margin_used = sum(p["margin_usd"] for p in positions)
-    unrealized = sum((_unrealized(p, marks.get(p["symbol"])) or 0.0) for p in positions)
+    unrealized = sum((_unrealized(p, marks.get(p["symbol"]), include_funding=False) or 0.0)
+                     for p in positions)
     cash_core = float(store.get("cash_core"))
     cash_hype = float(store.get("cash_hype"))
     equity = cash_core + cash_hype + margin_used + unrealized

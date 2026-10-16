@@ -94,6 +94,69 @@ def test_cycle_opens_then_liquidation_closes_and_books_trade(tmp_path):
     assert summary2['signals'] == 0
 
 
+def opened_position(tmp_path):
+    cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
+    rows = reclaim_series()
+    now = rows[-1][0] + H + 1000
+    engine = ProEngine(store, cfg, market=FakeMarket(rows, last=rows[-1][4]))
+    assert engine.run_cycle(now_ms=now)['opened'] == 1
+    return cfg, store, rows, now
+
+
+def test_position_still_managed_after_leaving_universe(tmp_path):
+    """CRITICAL (review C1): a universe refresh or eligibility flip must not
+    orphan an open position — stops/liquidation stay enforced."""
+    cfg, store, rows, now = opened_position(tmp_path)
+    pos = store.position(SYMBOL)
+    with store.conn:
+        store.conn.execute("DELETE FROM universe")
+        store.conn.execute("UPDATE instruments SET eligible=0")
+    crash = FakeMarket(rows, last=pos['liq_price_est'] * 0.9)
+    summary = ProEngine(store, cfg, market=crash).run_cycle(now_ms=now + 60_000)
+    assert summary['closed'] == 1
+    assert store.position(SYMBOL) is None
+    assert store.trades()[0]['exit_reason'] == 'LIQUIDATION'
+
+
+def test_position_without_instrument_metadata_alerts_unmonitored(tmp_path):
+    cfg, store, rows, now = opened_position(tmp_path)
+    with store.conn:
+        store.conn.execute("DELETE FROM universe")
+        store.conn.execute("DELETE FROM instruments")
+    summary = ProEngine(store, cfg, market=FakeMarket(rows, last=1.0)).run_cycle(now_ms=now + 60_000)
+    assert store.position(SYMBOL) is not None  # cannot price it, must not guess
+    assert any('UNMONITORED' in a['message'] for a in store.audit_log())
+
+
+def test_stale_ticker_blocks_new_entries(tmp_path):
+    """Review I2: entries must not be priced from stale quotes."""
+    cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
+    rows = reclaim_series()
+    now = rows[-1][0] + H + 1000
+
+    class StaleMarket(FakeMarket):
+        def ticker(self, exchange, symbol):
+            data, _ = super().ticker(exchange, symbol)
+            return data, cfg.price_fresh_seconds + 60.0
+    summary = ProEngine(store, cfg, market=StaleMarket(rows, last=rows[-1][4])).run_cycle(now_ms=now)
+    assert summary['opened'] == 0
+    sig = store.signals()[0]
+    assert sig['approved'] is False and 'stale' in sig['reject_reason'].lower()
+
+
+def test_missing_quote_side_blocks_entry_without_crashing(tmp_path):
+    cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
+    rows = reclaim_series()
+    now = rows[-1][0] + H + 1000
+
+    class NoAskMarket(FakeMarket):
+        def ticker(self, exchange, symbol):
+            return {'bid': self.last - 0.05, 'ask': None, 'last': self.last}, 0.0
+    summary = ProEngine(store, cfg, market=NoAskMarket(rows, last=rows[-1][4])).run_cycle(now_ms=now)
+    assert summary['opened'] == 0
+    assert any('quote' in (s['reject_reason'] or '') for s in store.signals())
+
+
 def test_cycle_skips_symbol_on_feed_failure_without_fabricating(tmp_path):
     cfg, store = seed(tmp_path, auto_entry=True, with_artifact=True)
 

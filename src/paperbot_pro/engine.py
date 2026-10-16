@@ -151,8 +151,66 @@ class ProEngine:
                 total += unrealized_pnl(p["side"], p["entry_price"], mark, p["qty"])
         return total
 
+    def _manage_open_positions(self, market, now_ms: int, last_funding_check: int,
+                               marks: dict, summary: dict) -> None:
+        """Monitor EVERY open position, independent of current universe
+        membership or eligibility: a coin dropping out of the top-20 must
+        never orphan its stop/liquidation monitoring (review finding C1)."""
+        for pos in self.db.open_positions():
+            meta = self.db.conn.execute(
+                "SELECT exchange, taker_fee FROM instruments WHERE symbol=?",
+                (pos["symbol"],)).fetchone()
+            if meta is None:
+                summary["errors"] += 1
+                self.db.audit("error", "risk",
+                              f"POSITION UNMONITORED: no instrument metadata for "
+                              f"{pos['symbol']}; cannot price exits — manual attention needed",
+                              ts_ms=now_ms)
+                continue
+            try:
+                ticker, tick_age = market.ticker(meta["exchange"], pos["symbol"])
+            except Exception as exc:
+                summary["errors"] += 1
+                self.db.audit("error", "risk",
+                              f"POSITION UNMONITORED this tick: {pos['symbol']} quote failed "
+                              f"({type(exc).__name__}: {exc})", ts_ms=now_ms)
+                continue
+            bid, ask = ticker.get("bid"), ticker.get("ask")
+            last = ticker.get("last") or (bid and ask and (bid + ask) / 2)
+            if last is None:
+                summary["errors"] += 1
+                self.db.audit("error", "risk",
+                              f"POSITION UNMONITORED this tick: {pos['symbol']} quote empty",
+                              ts_ms=now_ms)
+                continue
+            if tick_age > self.cfg.price_fresh_seconds:
+                self.db.audit("warning", "data",
+                              f"{pos['symbol']}: exit checks using STALE quote "
+                              f"({tick_age:.0f}s old)", ts_ms=now_ms)
+            marks[pos["symbol"]] = float(last)
+            try:
+                funding, _ = market.funding_rate(meta["exchange"], pos["symbol"])
+                rate = funding.get("fundingRate") if funding else None
+            except Exception:
+                rate = None
+            self.apply_funding_due(pos, now_ms, rate, float(last), last_funding_check)
+            observed = float(bid if pos["side"] == "long" and bid else
+                             ask if pos["side"] == "short" and ask else last)
+            sign = 1 if pos["side"] == "long" else -1
+            with self.db.conn:
+                self.db.conn.execute(
+                    "UPDATE positions SET mfe_price = CASE WHEN ?*? > ?*mfe_price THEN ? ELSE mfe_price END, "
+                    "mae_price = CASE WHEN ?*? < ?*mae_price THEN ? ELSE mae_price END WHERE id=?",
+                    (sign, observed, sign, observed, sign, observed, sign, observed, pos["id"]))
+            pos = self.db.position(pos["symbol"])
+            event = check_exit(pos, observed, self.cfg, meta["taker_fee"])
+            if event is not None:
+                self.close_position(pos, event, now_ms)
+                summary["closed"] += 1
+
     def run_cycle(self, now_ms: int | None = None) -> dict:
-        """One bounded pass over all eligible instruments. Returns a summary."""
+        """One bounded pass: manage ALL open positions first, then scan the
+        eligible universe for new signals. Returns a summary."""
         now_ms = now_ms if now_ms is not None else int(time.time() * 1000)
         market = self.market or shared_marketdata(self.cfg)
         instruments = [dict(r) for r in self.db.conn.execute(
@@ -164,6 +222,7 @@ class ProEngine:
         sources_ok, sources_fail = 0, 0
         summary = {"scanned": 0, "signals": 0, "opened": 0, "closed": 0, "errors": 0}
         last_funding_check = int(self.db.get("last_funding_check_ms", now_ms - 1))
+        self._manage_open_positions(market, now_ms, last_funding_check, marks, summary)
         for inst in instruments:
             symbol, exchange = inst["symbol"], inst["exchange"]
             try:
@@ -190,27 +249,6 @@ class ProEngine:
                 continue
             marks[symbol] = float(last)
             spread_pct = ((ask - bid) / ask) if (bid and ask and ask > 0) else None
-            pos = self.db.position(symbol)
-            if pos is not None:
-                try:
-                    funding, _ = market.funding_rate(exchange, symbol)
-                    rate = funding.get("fundingRate") if funding else None
-                except Exception:
-                    rate = None
-                self.apply_funding_due(pos, now_ms, rate, float(last), last_funding_check)
-                observed = float(bid if pos["side"] == "long" and bid else
-                                 ask if pos["side"] == "short" and ask else last)
-                sign = 1 if pos["side"] == "long" else -1
-                with self.db.conn:
-                    self.db.conn.execute(
-                        "UPDATE positions SET mfe_price = CASE WHEN ?*? > ?*mfe_price THEN ? ELSE mfe_price END, "
-                        "mae_price = CASE WHEN ?*? < ?*mae_price THEN ? ELSE mae_price END WHERE id=?",
-                        (sign, observed, sign, observed, sign, observed, sign, observed, pos["id"]))
-                pos = self.db.position(symbol)
-                event = check_exit(pos, observed, self.cfg, inst["taker_fee"])
-                if event is not None:
-                    self.close_position(pos, event, now_ms)
-                    summary["closed"] += 1
             # ------- signal generation on NEW closed bar only -------
             latest_bar = closed[-1].timestamp
             seen_key = f"last_signal_bar:{symbol}"
@@ -229,7 +267,17 @@ class ProEngine:
                 continue
             self.db.set(seen_key, latest_bar)
             summary["signals"] += 1
-            if spread_pct is not None and spread_pct > self.cfg.max_spread_pct:
+            if tick_age > self.cfg.price_fresh_seconds:
+                self.db.log_signal(now_ms, symbol, signal.action, False,
+                                   f"quote stale ({tick_age:.0f}s old): no entry on stale data",
+                                   signal.reason)
+                continue
+            entry_quote = ask if signal.action == "long" else bid
+            if entry_quote is None or spread_pct is None:
+                self.db.log_signal(now_ms, symbol, signal.action, False,
+                                   "quote missing bid/ask side: no entry", signal.reason)
+                continue
+            if spread_pct > self.cfg.max_spread_pct:
                 self.db.log_signal(now_ms, symbol, signal.action, False,
                                    f"spread {spread_pct:.4%} too wide", signal.reason)
                 continue
@@ -241,7 +289,7 @@ class ProEngine:
             spec = ContractSpec(symbol, inst["taker_fee"], inst["maint_margin_rate"],
                                 inst["tick_size"], inst["lot_size"])
             equity_now = self.equity(marks)
-            plan = plan_entry(signal.action, float(ask if signal.action == "long" else bid),
+            plan = plan_entry(signal.action, float(entry_quote),
                               signal.atr, spec, self.cfg, equity_now,
                               float(self.db.get("cash_core")), self.cfg.risk_per_trade)
             if not plan.ok:
