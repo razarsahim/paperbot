@@ -1,0 +1,116 @@
+from __future__ import annotations
+import argparse
+import csv
+from contextlib import contextmanager
+from datetime import datetime, timezone
+import json
+import os
+import sys
+import time
+from pathlib import Path
+from .backtest import backtest
+from .config import Settings
+from .engine import PaperEngine
+from .market import PublicSpotMarket, load_csv
+from .store import Store
+
+
+def stamp():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+@contextmanager
+def single_instance(db_path: str):
+    # fcntl is built into macOS / Linux; avoid simultaneous engine writers.
+    import fcntl
+    path = Path(db_path).expanduser().with_suffix(".lock")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        try:
+            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RuntimeError("Another engine is running against this database") from exc
+        yield
+
+
+def run_once(db_path: str, cfg: Settings):
+    market = PublicSpotMarket(cfg.exchange, cfg.symbol, cfg.timeframe)
+    bars, quote = market.snapshot()
+    store = Store(db_path, cfg.starting_balance, cfg.symbol)
+    try:
+        events = PaperEngine(store, cfg).tick(bars, quote, int(time.time() * 1000))
+        equity = PaperEngine(store, cfg).equity(quote.bid)
+        print(f"{stamp()} PAPER ONLY {cfg.symbol} bid={quote.bid:.2f} equity={equity:.2f}")
+        for event in events:
+            print("  ", event)
+        if not events:
+            print("   No new action")
+    finally:
+        store.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Spot-only crypto paper bot: NO real trades")
+    parser.add_argument("--db", default="state/paper.sqlite", help="Virtual portfolio SQLite path")
+    sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("once", help="Process one public-market snapshot and exit")
+    sub.add_parser("run", help="Poll continuously while this process stays running")
+    sub.add_parser("status", help="Show saved simulated portfolio and trade log")
+    download = sub.add_parser("fetch-history", help="Fetch public spot OHLCV history, no orders")
+    download.add_argument("--csv", default="data/real_kraken_btc_gbp.csv")
+    download.add_argument("--limit", type=int, default=720)
+    back = sub.add_parser("backtest", help="Run candle-accurate (not tick-accurate) offline test")
+    back.add_argument("--csv", required=True, help="Candle CSV with ms timestamps and OHLCV")
+    args = parser.parse_args()
+    cfg = Settings.from_env()
+    if args.command == "fetch-history":
+        market = PublicSpotMarket(cfg.exchange, cfg.symbol, cfg.timeframe)
+        candles = market.historical(args.limit)
+        out = Path(args.csv)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with out.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["timestamp", "open", "high", "low", "close", "volume"])
+            for b in candles:
+                writer.writerow([b.timestamp, b.open, b.high, b.low, b.close, b.volume])
+        provenance = {"exchange": cfg.exchange, "symbol": cfg.symbol,
+            "market_type": "spot", "timeframe": cfg.timeframe,
+            "retrieved_at_utc": stamp(), "number_of_closed_candles": len(candles),
+            "first_bar_utc": candles[0].iso, "last_bar_utc": candles[-1].iso,
+            "source": "ccxt public fetch_ohlcv", "no_live_execution": True}
+        Path(str(out) + ".metadata.json").write_text(json.dumps(provenance, indent=2))
+        print(f"Saved {len(candles)} real PUBLIC spot candles to {out} (see .metadata.json).")
+        return
+    if args.command == "backtest":
+        result = backtest(load_csv(args.csv), cfg)
+        print(json.dumps(result.summary(), indent=2))
+        return
+    if args.command == "status":
+        store = Store(args.db, cfg.starting_balance, cfg.symbol)
+        try:
+            print(json.dumps({"mode": "PAPER ONLY", "symbol": cfg.symbol,
+                "virtual_cash": store.get("balance"), "position": store.position(),
+                "total_drawdown_locked": store.get("locked_total"),
+                "closed_trades": store.trades(100)}, indent=2))
+        finally:
+            store.close()
+        return
+    with single_instance(args.db):
+        if args.command == "once":
+            run_once(args.db, cfg)
+        else:
+            print("PAPER ONLY; Ctrl+C to stop polling. No exchange keys or order permissions.", flush=True)
+            try:
+                while True:
+                    try:
+                        run_once(args.db, cfg)
+                    except Exception as exc:
+                        print(f"{stamp()} SAFE ERROR (no new position): {type(exc).__name__}: {exc}",
+                              file=sys.stderr, flush=True)
+                    time.sleep(cfg.interval_seconds)
+            except KeyboardInterrupt:
+                print("Stopped.")
+
+
+if __name__ == "__main__":
+    main()

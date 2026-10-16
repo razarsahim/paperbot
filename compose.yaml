@@ -1,0 +1,20 @@
+services:
+  paper-engine:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./state:/app/state
+    env_file:
+      - path: .env
+        required: false
+  dashboard:
+    build: .
+    command: ["streamlit", "run", "dashboard.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ./state:/app/state
+    env_file:
+      - path: .env
+        required: false
