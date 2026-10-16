@@ -1,201 +1,523 @@
 "use client";
 
+import { useRef, useState } from "react";
 import {
-  Minus,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Radar,
-  TrendingDown,
-  TrendingUp,
-  TriangleAlert,
+  Search,
+  RefreshCw,
 } from "lucide-react";
-import { cn } from "cn";
-import { SourceBadge } from "@/components/source-badge";
-import { EmptyState } from "@/components/empty-state";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ScannerAnalysis } from "@/components/scanner-analysis";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { getUniverse } from "@/lib/api";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { getHealth, getSignals, getUniverse } from "@/lib/api";
 import {
   fmtCompactUsd,
+  fmtDateTime,
   fmtNum,
   fmtPct,
   fmtPrice,
   pnlClass,
-  timeAgo,
 } from "@/lib/format";
 import { usePoll } from "@/lib/hooks";
-import type { UniverseAsset } from "@/lib/types";
+import {
+  defaultFilters,
+  selectAssets,
+  trendLabel,
+  type ScannerFilters,
+  type SortKey,
+} from "@/lib/scanner";
 
-function TrendIcon({ trend }: { trend: UniverseAsset["trend"] }) {
-  if (trend === "up") return <TrendingUp className="size-4 text-emerald-600 dark:text-emerald-400" />;
-  if (trend === "down") return <TrendingDown className="size-4 text-red-600 dark:text-red-400" />;
-  return <Minus className="size-4 text-muted-foreground" />;
-}
-
-function SignalBadge({ signal }: { signal: UniverseAsset["signal"] }) {
-  if (signal === "long")
-    return <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">LONG</Badge>;
-  if (signal === "short")
-    return <Badge className="bg-red-500/15 text-red-600 dark:text-red-400">SHORT</Badge>;
-  return <span className="text-xs text-muted-foreground">—</span>;
-}
+const getDecisionLog = () => getSignals(200);
+const columns: [SortKey, string][] = [
+  ["rank", "#"],
+  ["symbol", "Asset"],
+  ["price_usd", "Price · USD"],
+  ["change_24h_pct", "24h change"],
+  ["market_cap_usd", "Market cap"],
+  ["volume_24h_usd", "24h volume"],
+  ["rsi", "RSI"],
+  ["atr_pct", "ATR %"],
+  ["funding_rate", "Funding"],
+  ["spread_pct", "Spread"],
+];
 
 export default function ScannerPage() {
-  const { data, source, loading } = usePoll(getUniverse, 30_000);
-
+  const universe = usePoll(getUniverse, 30_000);
+  const health = usePoll(getHealth, 30_000);
+  const signals = usePoll(getDecisionLog, 30_000);
+  const [filters, setFilters] = useState<ScannerFilters>(defaultFilters);
+  const [sort, setSort] = useState<SortKey>("rank");
+  const [descending, setDescending] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+  const trigger = useRef<HTMLButtonElement | null>(null);
+  const data = universe.source === "live" ? universe.data : null;
+  const assets = data?.assets ?? [];
+  const rows = selectAssets(assets, filters, sort, descending);
+  const asset = assets.find((a) => a.coingecko_id === selected);
+  const scan =
+    health.source === "live" ? health.data?.engines.pro.last_scan_ms : null;
+  const candidates = assets.filter(
+    (a) => a.signal === "long" || a.signal === "short",
+  ).length;
+  function filter(key: keyof ScannerFilters, value: string) {
+    setFilters((f) => ({ ...f, [key]: value }));
+  }
+  function refresh() {
+    universe.refresh();
+    health.refresh();
+    signals.refresh();
+  }
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-lg font-semibold">Scanner — Top 20 universe</h1>
-        <SourceBadge source={source} />
-        <span className="text-xs text-muted-foreground">
-          {data?.updated_at_ms ? `universe updated ${timeAgo(data.updated_at_ms)}` : ""}
-        </span>
-      </div>
-
-      {data?.stale && (
-        <div className="flex items-center gap-2 rounded-xl border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300">
-          <TriangleAlert className="size-4 shrink-0" />
-          Universe data is STALE — the engine defaults to no new simulated trades until feeds recover.
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="mb-1 text-[10px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+            Market intelligence / Public data
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Market scanner{" "}
+            <span className="ml-2 align-middle text-xs font-normal text-muted-foreground">
+              TOP 20
+            </span>
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Explore the universe. Inspect the evidence.
+          </p>
         </div>
+        <Button variant="outline" onClick={refresh}>
+          <RefreshCw className="size-4" />
+          Refresh data
+        </Button>
+      </div>
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        {[
+          [
+            "Universe",
+            data ? `${assets.length} assets` : "—",
+            "Dynamically selected by the engine",
+          ],
+          [
+            "Instrument coverage",
+            data ? `${assets.filter((a) => a.eligible).length} eligible` : "—",
+            "Verified contract metadata",
+          ],
+          [
+            "Strategy candidates",
+            data ? String(candidates) : "—",
+            "Candidates are not approved entries",
+          ],
+          [
+            "Paper auto-entry",
+            health.source === "live" && health.data
+              ? health.data.engines.pro.auto_entry_enabled
+                ? "Enabled"
+                : "Disabled"
+              : "Unknown",
+            "Read-only dashboard",
+          ],
+        ].map(([label, value, note]) => (
+          <div key={label} className="rounded-xl border bg-card/50 p-4">
+            <p className="text-xs text-muted-foreground">{label}</p>
+            <p className="mt-2 text-xl font-semibold tracking-tight tabular-nums">
+              {value}
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">{note}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-6 gap-y-2 rounded-lg border px-4 py-3 text-xs text-muted-foreground">
+        <span>
+          <span
+            className={`mr-2 inline-block size-1.5 rounded-full ${data ? "bg-emerald-500" : "bg-amber-500"}`}
+          />
+          {data
+            ? "API connected · stored snapshots"
+            : universe.loading
+              ? "Connecting…"
+              : "API unavailable"}
+        </span>
+        <span>
+          Market snapshot:{" "}
+          <strong className="font-medium text-foreground">
+            {fmtDateTime(data?.updated_at_ms)}
+          </strong>
+        </span>
+        <span>
+          Scanner evaluated:{" "}
+          <strong className="font-medium text-foreground">
+            {fmtDateTime(scan)}
+          </strong>
+        </span>
+        <span>Times in your local timezone</span>
+      </div>
+      {data?.stale && (
+        <p
+          role="status"
+          className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300"
+        >
+          Market snapshot is stale. Displayed prices are historical snapshots;
+          the engine independently checks data before any simulated entry.
+        </p>
       )}
-
-      <Card className="py-0">
-        <CardContent className="px-0">
-          {loading || !data ? (
-            <div className="space-y-2 p-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-9 w-full" />
-              ))}
+      {health.source === "live" &&
+        health.data &&
+        !health.data.engines.pro.running && (
+          <p className="text-sm text-amber-700 dark:text-amber-300">
+            Scanner cycle is overdue or unavailable. Indicators and candidates
+            may be out of date.
+          </p>
+        )}
+      <section
+        className="overflow-hidden rounded-xl border bg-card/30"
+        aria-label="Cryptocurrency universe"
+      >
+        <div className="flex flex-wrap items-end gap-3 border-b p-4">
+          <label className="min-w-48 flex-1">
+            <span className="mb-1.5 block text-xs text-muted-foreground">
+              Find an asset
+            </span>
+            <div className="relative">
+              <Search className="absolute top-3 left-3 size-4 text-muted-foreground" />
+              <input
+                className="h-10 w-full rounded-md border bg-background pr-3 pl-9 text-sm"
+                placeholder="Search name or symbol…"
+                value={filters.search}
+                onChange={(e) => filter("search", e.target.value)}
+              />
             </div>
-          ) : data.assets.length === 0 ? (
-            <div className="p-4">
-              <EmptyState icon={Radar} title="No universe data" description="The scanner has not produced a universe snapshot yet." />
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table className="text-xs">
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-10">#</TableHead>
-                    <TableHead>Asset</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-right">24h %</TableHead>
-                    <TableHead className="text-right">Mcap</TableHead>
-                    <TableHead className="text-right">Volume</TableHead>
-                    <TableHead className="text-center">Trend</TableHead>
-                    <TableHead className="text-right">ATR%</TableHead>
-                    <TableHead className="text-right">RSI</TableHead>
-                    <TableHead className="text-center">Signal</TableHead>
-                    <TableHead className="text-center">Eligibility</TableHead>
-                    <TableHead className="text-right">Funding</TableHead>
-                    <TableHead className="text-right">Spread</TableHead>
-                    <TableHead className="text-right">Data age</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.assets.map((a) => (
-                    <TableRow key={a.coingecko_id} className={cn(!a.eligible && "opacity-70")}>
-                      <TableCell className="text-muted-foreground tabular-nums">{a.rank}</TableCell>
-                      <TableCell>
-                        <span className="font-semibold">{a.symbol}</span>{" "}
-                        <span className="hidden text-muted-foreground lg:inline">{a.name}</span>
-                      </TableCell>
-                      <TableCell className="text-right font-medium tabular-nums">{fmtPrice(a.price_usd)}</TableCell>
-                      <TableCell className={cn("text-right tabular-nums", pnlClass(a.change_24h_pct))}>
-                        {fmtPct(a.change_24h_pct, 2, true)}
-                      </TableCell>
-                      <TableCell className="text-right text-muted-foreground tabular-nums">{fmtCompactUsd(a.market_cap_usd)}</TableCell>
-                      <TableCell className="text-right text-muted-foreground tabular-nums">{fmtCompactUsd(a.volume_24h_usd)}</TableCell>
-                      <TableCell className="text-center"><span className="inline-flex justify-center"><TrendIcon trend={a.trend} /></span></TableCell>
-                      <TableCell className="text-right tabular-nums">{a.atr_pct === null ? "—" : fmtNum(a.atr_pct, 1)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{a.rsi === null ? "—" : fmtNum(a.rsi, 1)}</TableCell>
-                      <TableCell className="text-center"><SignalBadge signal={a.signal} /></TableCell>
-                      <TableCell className="text-center">
-                        {a.eligible ? (
-                          <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
-                            eligible
-                          </Badge>
+          </label>
+          {(
+            [
+              [
+                "trend",
+                "Trend",
+                [
+                  ["all", "All trends"],
+                  ["Uptrend", "Uptrend"],
+                  ["Downtrend", "Downtrend"],
+                  ["Flat", "Flat"],
+                  ["Unavailable", "Unavailable"],
+                ],
+              ],
+              [
+                "signal",
+                "Strategy signal",
+                [
+                  ["all", "All signals"],
+                  ["candidate", "Candidates"],
+                  ["long", "Long"],
+                  ["short", "Short"],
+                  ["none", "None reported"],
+                ],
+              ],
+              [
+                "eligibility",
+                "Instrument",
+                [
+                  ["all", "All instruments"],
+                  ["eligible", "Eligible"],
+                  ["ineligible", "Ineligible"],
+                ],
+              ],
+              [
+                "volume",
+                "24h volume",
+                [
+                  ["0", "Any volume"],
+                  ["100000000", "≥ $100M"],
+                  ["1000000000", "≥ $1B"],
+                  ["10000000000", "≥ $10B"],
+                ],
+              ],
+            ] as [keyof ScannerFilters, string, string[][]][]
+          ).map(([key, label, options]) => (
+            <label key={key} className="min-w-32 flex-1 sm:flex-none">
+              <span className="mb-1.5 block text-xs text-muted-foreground">
+                {label}
+              </span>
+              <select
+                className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                value={filters[key]}
+                onChange={(e) => filter(key, e.target.value)}
+              >
+                {options.map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ))}
+        </div>
+        <div className="flex items-center justify-between gap-2 px-4 py-3 text-xs text-muted-foreground">
+          <p aria-live="polite">
+            {rows.length} of {assets.length} assets · select an asset for
+            analysis
+          </p>
+          <button
+            onClick={() => {
+              setFilters(defaultFilters);
+              setSort("rank");
+              setDescending(false);
+            }}
+            className="rounded px-2 py-1 text-foreground hover:bg-muted"
+          >
+            Reset view
+          </button>
+        </div>
+        {universe.loading ? (
+          <div className="p-12 text-center text-muted-foreground">
+            Loading universe…
+          </div>
+        ) : !data ? (
+          <div role="status" className="p-12 text-center">
+            <Radar className="mx-auto mb-3 size-6 text-muted-foreground" />
+            <h2 className="font-medium">Market data unavailable</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              The local API could not be reached. No demo prices or
+              opportunities are shown.
+            </p>
+          </div>
+        ) : !rows.length ? (
+          <div className="p-12 text-center text-muted-foreground">
+            {assets.length
+              ? "No assets match these filters. Reset the view to see the full universe."
+              : "The engine has not stored a universe yet."}
+          </div>
+        ) : (
+          <div
+            className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-ring"
+            tabIndex={0}
+            role="region"
+            aria-label="Asset table, scroll horizontally for all metrics"
+          >
+            <table className="w-full whitespace-nowrap text-xs tabular-nums">
+              <caption className="sr-only">
+                Crypto market snapshots and scanner indicators. Sort with column
+                buttons. Open asset analysis with its symbol.
+              </caption>
+              <thead className="border-y bg-muted/30">
+                <tr>
+                  {columns.map(([key, label]) => (
+                    <th
+                      key={key}
+                      scope="col"
+                      aria-sort={
+                        sort === key
+                          ? descending
+                            ? "descending"
+                            : "ascending"
+                          : "none"
+                      }
+                      className={`px-3 py-3 font-medium text-muted-foreground ${key === "symbol" ? "text-left" : "text-right"}`}
+                    >
+                      <button
+                        className="inline-flex items-center gap-1.5 rounded hover:text-foreground"
+                        onClick={() => {
+                          setSort(key);
+                          setDescending(
+                            sort === key
+                              ? !descending
+                              : key !== "rank" && key !== "symbol",
+                          );
+                        }}
+                      >
+                        {label}
+                        {sort === key ? (
+                          descending ? (
+                            <ArrowDown className="size-3" />
+                          ) : (
+                            <ArrowUp className="size-3" />
+                          )
                         ) : (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Badge className="cursor-help bg-red-500/15 text-red-600 dark:text-red-400">
-                                NOT ELIGIBLE
-                              </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent side="left" className="max-w-60">
-                              {a.reason ?? "No reason provided"}
-                            </TooltipContent>
-                          </Tooltip>
+                          <ArrowUpDown className="size-3 opacity-40" />
                         )}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {a.instrument?.funding_rate === null || a.instrument?.funding_rate === undefined
-                          ? "—"
-                          : fmtPct(a.instrument.funding_rate * 100, 4, true)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {a.instrument?.spread_pct === null || a.instrument?.spread_pct === undefined
-                          ? "—"
-                          : fmtPct(a.instrument.spread_pct, 3)}
-                      </TableCell>
-                      <TableCell className="text-right text-muted-foreground tabular-nums">
-                        {a.instrument?.data_age_s === null || a.instrument?.data_age_s === undefined
-                          ? "—"
-                          : `${a.instrument.data_age_s}s`}
-                      </TableCell>
-                    </TableRow>
+                      </button>
+                    </th>
                   ))}
-                </TableBody>
-              </Table>
+                  <th
+                    scope="col"
+                    className="px-3 text-left font-medium text-muted-foreground"
+                  >
+                    EMA trend
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 text-left font-medium text-muted-foreground"
+                  >
+                    Candidate
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 text-left font-medium text-muted-foreground"
+                  >
+                    Instrument
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((a) => (
+                  <tr
+                    key={a.coingecko_id}
+                    className="border-b border-border/50 last:border-0 hover:bg-muted/40"
+                  >
+                    <td className="px-3 py-4 text-right text-muted-foreground">
+                      {a.rank}
+                    </td>
+                    <td className="sticky left-0 bg-background px-3 py-3">
+                      <button
+                        className="flex min-w-28 items-center gap-3 rounded text-left focus-visible:outline-2 focus-visible:outline-ring"
+                        aria-label={`Analyze ${a.name}`}
+                        onClick={(e) => {
+                          trigger.current = e.currentTarget;
+                          setSelected(a.coingecko_id);
+                        }}
+                      >
+                        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-muted/40 text-[10px] font-semibold text-muted-foreground">
+                          {a.symbol.slice(0, 2)}
+                        </span>
+                        <span>
+                          <span className="block font-semibold text-foreground">
+                            {a.symbol}
+                          </span>
+                          <span className="block max-w-32 truncate text-[10px] text-muted-foreground">
+                            {a.name}
+                          </span>
+                        </span>
+                      </button>
+                    </td>
+                    <td className="px-3 text-right font-medium">
+                      {fmtPrice(a.price_usd)}
+                    </td>
+                    <td
+                      className={`px-3 text-right ${pnlClass(a.change_24h_pct)}`}
+                    >
+                      {fmtPct(a.change_24h_pct, 2, true)}
+                    </td>
+                    <td className="px-3 text-right text-muted-foreground">
+                      {fmtCompactUsd(a.market_cap_usd)}
+                    </td>
+                    <td className="px-3 text-right">
+                      {fmtCompactUsd(a.volume_24h_usd)}
+                    </td>
+                    <td className="px-3 text-right">{fmtNum(a.rsi, 1)}</td>
+                    <td className="px-3 text-right">{fmtPct(a.atr_pct, 2)}</td>
+                    <td className="px-3 text-right">
+                      {fmtPct(
+                        a.instrument?.funding_rate == null
+                          ? null
+                          : a.instrument.funding_rate * 100,
+                        4,
+                        true,
+                      )}
+                    </td>
+                    <td className="px-3 text-right">
+                      {fmtPct(a.instrument?.spread_pct, 3)}
+                    </td>
+                    <td className="px-3 text-muted-foreground">
+                      {trendLabel(a)}
+                    </td>
+                    <td className="px-3">
+                      {a.signal === "long" || a.signal === "short" ? (
+                        <span className="font-medium text-sky-600 dark:text-sky-300">
+                          {a.signal.toUpperCase()}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-3">
+                      <span
+                        className={
+                          a.eligible
+                            ? "text-muted-foreground"
+                            : "text-amber-700 dark:text-amber-300"
+                        }
+                      >
+                        {a.eligible ? "Eligible" : "Ineligible ↗"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="border-t px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
+          Price, change, cap and volume use the market snapshot. RSI, ATR,
+          funding and spread use the scanner snapshot. — means unavailable or no
+          candidate reported. Instrument eligibility never implies entry
+          approval.
+        </p>
+      </section>
+      <details className="rounded-xl border bg-card/30 p-4">
+        <summary className="cursor-pointer text-sm font-medium">
+          Universe membership history{" "}
+          <span className="ml-2 text-xs font-normal text-muted-foreground">
+            {data?.changes.length ?? 0} records
+          </span>
+        </summary>
+        <ul className="mt-4 space-y-3 text-xs text-muted-foreground">
+          {data?.changes.map((c, i) => (
+            <li key={`${c.date}:${i}`} className="flex flex-wrap gap-3">
+              <time>{c.date}</time>
+              <span>Added: {c.added.join(", ") || "none"}</span>
+              <span>Removed: {c.removed.join(", ") || "none"}</span>
+            </li>
+          ))}
+        </ul>
+        {!data?.changes.length && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            No membership history available.
+          </p>
+        )}
+      </details>
+      <Sheet
+        open={Boolean(asset)}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null);
+        }}
+      >
+        <SheetContent
+          className="overflow-y-auto data-[side=right]:w-full data-[side=right]:sm:max-w-2xl"
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            trigger.current?.focus();
+          }}
+        >
+          <SheetHeader className="border-b p-6 pr-14">
+            <SheetTitle>
+              {asset?.symbol}{" "}
+              <span className="font-normal text-muted-foreground">
+                / {asset?.name}
+              </span>
+            </SheetTitle>
+            <SheetDescription>
+              Asset analysis · public market data · paper only
+            </SheetDescription>
+          </SheetHeader>
+          {asset && (
+            <div className="px-6 pb-8">
+              <ScannerAnalysis
+                key={asset.coingecko_id}
+                asset={asset}
+                events={signals.source === "live" ? (signals.data ?? []) : []}
+                logAvailable={signals.source === "live" && !signals.loading}
+                scanMs={scan}
+              />
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="text-sm">Universe change log</CardTitle>
-          <SourceBadge source={source} />
-        </CardHeader>
-        <CardContent>
-          {loading || !data ? (
-            <Skeleton className="h-16 w-full" />
-          ) : data.changes.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No membership changes recorded.</p>
-          ) : (
-            <ul className="space-y-2 text-xs">
-              {data.changes.map((c) => (
-                <li key={c.date} className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-muted-foreground">{c.date}</span>
-                  {c.added.map((s) => (
-                    <Badge key={`a-${s}`} variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
-                      + {s}
-                    </Badge>
-                  ))}
-                  {c.removed.map((s) => (
-                    <Badge key={`r-${s}`} variant="outline" className="border-red-500/40 text-red-600 dark:text-red-400">
-                      − {s}
-                    </Badge>
-                  ))}
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
