@@ -61,6 +61,10 @@ def main():
     download.add_argument("--limit", type=int, default=720)
     back = sub.add_parser("backtest", help="Run candle-accurate (not tick-accurate) offline test")
     back.add_argument("--csv", required=True, help="Candle CSV with ms timestamps and OHLCV")
+    wf = sub.add_parser("walkforward",
+                        help="Frozen-parameter rolling out-of-sample evaluation, offline")
+    wf.add_argument("--csv", required=True, help="Candle CSV with ms timestamps and OHLCV")
+    wf.add_argument("--windows", type=int, default=4)
     args = parser.parse_args()
     cfg = Settings.from_env()
     if args.command == "fetch-history":
@@ -84,6 +88,17 @@ def main():
     if args.command == "backtest":
         result = backtest(load_csv(args.csv), cfg)
         print(json.dumps(result.summary(), indent=2))
+        return
+    if args.command == "walkforward":
+        from .validation import walk_forward
+        report = walk_forward(load_csv(args.csv), cfg, n_windows=args.windows)
+        out = report.summary()
+        meta_path = Path(args.csv + ".metadata.json")
+        if meta_path.exists():
+            out["data_provenance"] = json.loads(meta_path.read_text())
+        else:
+            out["data_provenance"] = "UNKNOWN: no .metadata.json beside the CSV"
+        print(json.dumps(out, indent=2))
         return
     if args.command == "status":
         store = Store(args.db, cfg.starting_balance, cfg.symbol)
