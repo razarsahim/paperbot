@@ -69,9 +69,14 @@ def backtest(bars: list[Candle], cfg: Settings) -> TestResult:
             # Overnight gaps are filled no better than the new candle open.
             if bar.open <= position["stop"]:
                 raw_exit, reason = bar.open, "STOP_GAP"
+            elif bar.open >= position["target"]:
+                # The open is the bar's first trade: a gap open above target
+                # exits before any later intrabar dip to the stop. Fill is
+                # still modelled no better than the target price.
+                raw_exit, reason = position["target"], "TARGET_GAP"
             elif bar.low <= position["stop"]:
                 raw_exit, reason = position["stop"], "STOP"
-            elif bar.open >= position["target"] or bar.high >= position["target"]:
+            elif bar.high >= position["target"]:
                 raw_exit, reason = position["target"], "TARGET"
             else:
                 raw_exit, reason = None, ""

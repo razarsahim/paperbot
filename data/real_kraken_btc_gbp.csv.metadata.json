@@ -1,0 +1,12 @@
+{
+  "exchange": "kraken",
+  "symbol": "BTC/GBP",
+  "market_type": "spot",
+  "timeframe": "1h",
+  "retrieved_at_utc": "2026-10-16T19:02:34+00:00",
+  "number_of_closed_candles": 719,
+  "first_bar_utc": "2026-09-16T20:00:00+00:00",
+  "last_bar_utc": "2026-10-16T18:00:00+00:00",
+  "source": "ccxt public fetch_ohlcv",
+  "no_live_execution": true
+}

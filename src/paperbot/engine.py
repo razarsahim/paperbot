@@ -24,13 +24,17 @@ class PaperEngine:
             if self.db.get("utc_day") != today:
                 self.db.set("utc_day", today)
                 self.db.set("day_start_equity", equity)
+                self.db.set("locked_daily", False)
             peak = max(float(self.db.get("peak_equity")), equity)
             self.db.set("peak_equity", peak)
             if equity <= peak * (1 - self.cfg.max_total_drawdown):
                 self.db.set("locked_total", True)
             if self.db.get("locked_total"):
                 notices.append("TOTAL DRAWDOWN LOCK: manual review required; no new positions")
+            # Sticky for the rest of the UTC day even if equity later recovers.
             if equity <= float(self.db.get("day_start_equity")) * (1 - self.cfg.max_daily_drawdown):
+                self.db.set("locked_daily", True)
+            if self.db.get("locked_daily"):
                 notices.append("DAILY DRAWDOWN LOCK: no entries until next UTC day")
         return notices
 

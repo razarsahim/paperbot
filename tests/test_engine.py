@@ -123,6 +123,37 @@ def test_total_drawdown_lock_prevents_entry(tmp_path, monkeypatch):
     assert 'LOCK' in str(result)
 
 
+def test_daily_lock_sticks_until_next_utc_day(tmp_path, monkeypatch):
+    """README: daily 2% drawdown locks NEW entries until the next UTC day.
+
+    The lock must NOT silently lift if equity recovers later the same day.
+    """
+    bot = make(tmp_path)
+    from paperbot.strategy import Signal
+    signal = {'buy': False}
+    monkeypatch.setattr('paperbot.engine.evaluate',
+                        lambda bars: Signal(signal['buy'], 1, 'FAKE'))
+
+    def tick_at(hour):
+        now = hour * 3_600_000 + 5_000
+        return bot.tick(candles(hour), Quote(100.0, 100.1, now), now)
+
+    tick_at(110)  # mid-UTC-day: initialises utc_day and day_start_equity=1000
+    with bot.db.conn:
+        bot.db.set('balance', 975.0)  # simulated 2.5% intraday loss
+    result = tick_at(111)
+    assert any('DAILY' in e for e in result)
+    with bot.db.conn:
+        bot.db.set('balance', 1000.0)  # equity recovers the same UTC day
+    signal['buy'] = True
+    result = tick_at(112)
+    assert any('DAILY' in e for e in result), 'lock lifted intraday'
+    assert bot.db.position() is None, 'entry allowed during daily lockout'
+    result = tick_at(122)  # next UTC day: lock expires, entries allowed again
+    assert not any('DAILY' in e for e in result)
+    assert bot.db.position() is not None
+
+
 def test_settings_invalid_risk_rejected():
     with pytest.raises(ValueError):
         replace(Settings(), risk_per_trade=0.20).validate()
