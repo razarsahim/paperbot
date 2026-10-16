@@ -45,6 +45,7 @@ def test_dispatch_routes_entries_exits_and_locks(tmp_path):
         'SIMULATED BUY 0.001 @ 60000; stop 59000; target 62000',
         'SIMULATED EXIT (STOP) @ 59000; net P&L -5.00',
         'DAILY DRAWDOWN LOCK: no entries until next UTC day',
+        "MONITORING GAP: open position's stop unobserved for 7200s",
         'HOLD: No qualifying EMA reclaim',  # must NOT alert
         'NO SIGNAL: insufficient historical data',  # must NOT alert
     ])
@@ -53,7 +54,18 @@ def test_dispatch_routes_entries_exits_and_locks(tmp_path):
     assert any('BUY' in t for t in titles)
     assert any('EXIT' in t for t in titles)
     assert any('LOCK' in t for t in titles)
-    assert len(entries) == 3
+    assert any('MONITORING GAP' in t for t in titles)
+    assert len(entries) == 4
+
+
+def test_alert_log_write_failure_prints_but_never_raises(tmp_path, capsys):
+    notifier = make(tmp_path)
+    tmp_path.chmod(0o500)  # alerts dir becomes unwritable (disk trouble)
+    try:
+        notifier.send('error', 'FEED FAILURE', 'must not crash the engine')
+    finally:
+        tmp_path.chmod(0o700)
+    assert 'alert' in capsys.readouterr().err.lower()
 
 
 def test_failure_tracker_alerts_on_streak_and_recovery():

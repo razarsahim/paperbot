@@ -54,7 +54,8 @@ if not equity_hist.empty:
     last_seen = ts.iloc[-1].strftime("%Y-%m-%d %H:%M UTC")
     st.subheader("Mark-to-market equity (GBP)")
     st.caption(f"One point per engine tick; last snapshot {last_seen}. "
-               "Gaps mean the engine was not running — nothing is interpolated.")
+               "Straight segments spanning a long time mean the engine was not "
+               "running there — no data exists inside such gaps.")
     st.line_chart(pd.DataFrame({"equity": equity_hist["equity"].values}, index=ts),
                   color="#2563eb")
     st.subheader("Drawdown from running equity peak (%)")
@@ -93,9 +94,15 @@ else:
 alerts_path = Path(path).parent / "alerts.jsonl"
 if alerts_path.exists():
     lines = alerts_path.read_text(encoding="utf-8").splitlines()[-50:]
-    if lines:
+    parsed = []
+    for line in lines:
+        try:
+            parsed.append(json.loads(line))
+        except json.JSONDecodeError:
+            pass  # torn final line from a killed process; skip, don't crash
+    if parsed:
         st.subheader("Recent alerts")
-        alerts = pd.DataFrame([json.loads(line) for line in lines])
+        alerts = pd.DataFrame(parsed)
         alerts["time"] = pd.to_datetime(alerts["ts"], unit="s", utc=True)
         st.dataframe(alerts[["time", "level", "title", "body"]].iloc[::-1],
                      use_container_width=True, hide_index=True)

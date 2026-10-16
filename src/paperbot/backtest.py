@@ -58,12 +58,14 @@ def backtest(bars: list[Candle], cfg: Settings) -> TestResult:
     day = ""
     day_start = balance
     locked = False
+    daily_locked = False
     for i in range(cfg.min_bars, len(bars)):
         bar = bars[i]
         new_day = datetime.fromtimestamp(bar.timestamp / 1000, timezone.utc).strftime("%Y-%m-%d")
         if new_day != day:
             day = new_day
             day_start = balance + (position["qty"] * bar.open if position else 0)
+            daily_locked = False
         exited = False
         if position:
             # Overnight gaps are filled no better than the new candle open.
@@ -102,7 +104,9 @@ def backtest(bars: list[Candle], cfg: Settings) -> TestResult:
         max_dd = max(max_dd, (peak - equity) / peak)
         if equity <= peak * (1 - cfg.max_total_drawdown):
             locked = True
-        daily_locked = equity <= day_start * (1 - cfg.max_daily_drawdown)
+        # Sticky for the rest of the UTC day, matching the live engine.
+        if equity <= day_start * (1 - cfg.max_daily_drawdown):
+            daily_locked = True
         if position or exited or locked or daily_locked:
             continue
         # Signal uses history through candle i-1 only. Never use bar[i]'s close.
@@ -155,6 +159,8 @@ def backtest(bars: list[Candle], cfg: Settings) -> TestResult:
         max_dd = max(max_dd, (peak - equity_after_entry_bar) / peak)
         if equity_after_entry_bar <= peak * (1 - cfg.max_total_drawdown):
             locked = True
+        if equity_after_entry_bar <= day_start * (1 - cfg.max_daily_drawdown):
+            daily_locked = True
     final = balance + (position["qty"] * bars[-1].close if position else 0)
     peak = max(peak, final)
     max_dd = max(max_dd, (peak - final) / peak)

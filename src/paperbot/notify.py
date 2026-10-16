@@ -43,8 +43,12 @@ class Notifier:
                 return False
             self._last_sent[key] = now
         entry = {"ts": now, "level": level, "title": title, "body": body}
-        with self.path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(entry) + "\n")
+        try:
+            with self.path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(entry) + "\n")
+        except OSError as exc:  # alerting must never break the engine
+            print(f"ALERT log write failed: {type(exc).__name__}: {exc}",
+                  file=sys.stderr, flush=True)
         text = f"[PAPER ONLY][{level.upper()}] {title}: {body}"
         if self.webhook_url:
             try:
@@ -75,6 +79,8 @@ def dispatch_events(notifier: Notifier, events: list[str]) -> None:
             notifier.send("info", "SIMULATED EXIT", event)
         elif "LOCK" in event:
             notifier.send("warning", "DRAWDOWN LOCK", event, key=event.split(":")[0])
+        elif "MONITORING GAP" in event:
+            notifier.send("error", "MONITORING GAP", event, key="monitoring-gap")
         elif "WIDE SPREAD" in event:
             notifier.send("warning", "WIDE SPREAD", event, key="wide-spread")
 
