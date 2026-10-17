@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 import json
+import sqlite3
 import sys
 import time
 import urllib.request
@@ -85,6 +86,8 @@ def main():
                            help="Required review note recorded in the audit log")
     sub.add_parser("migrate-lab",
                    help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
+    sub.add_parser("audit-accounting",
+                   help="READ-ONLY financial reconciliation of both labs (changes nothing)")
     sub.add_parser("research-run", help="Continuous Strategy Research Lab paper engine")
     sub.add_parser("research-once", help="One Research Lab monitor/scan cycle")
     sub.add_parser("research-status", help="Research Lab capital, HWM and 5 strategies")
@@ -110,7 +113,9 @@ def main():
         return
     store = ProStore(cfg.db_path, cfg)
     try:
-        if args.command == "migrate-lab":
+        if args.command == "audit-accounting":
+            _audit_accounting(cfg)
+        elif args.command == "migrate-lab":
             _migrate_lab(store, cfg)
         elif args.command == "pause":
             store.set("manual_pause", True)
@@ -172,6 +177,51 @@ def main():
                         time.sleep(min(cfg.scan_interval_seconds * 2 ** min(failures, 5), 1800))
     finally:
         store.close()
+
+
+def _audit_accounting(cfg: ProSettings) -> None:
+    """READ-ONLY reconciliation of both labs. Opens each DB read-only, so it
+    is safe to run while the engines are live. Mutates nothing."""
+    from dataclasses import replace as _replace
+    from .lab.config import LabSettings
+    from .lab.store import LabStore
+    from .reconcile import reconcile_lab, reconcile_research
+    from .research.config import ResearchSettings
+    from .research.store import ResearchStore
+    overall_ok = True
+    for name, cfg_cls, store_cls, recon in (
+            ("Extreme Lab", LabSettings, LabStore, reconcile_lab),
+            ("Research Lab", ResearchSettings, ResearchStore, reconcile_research)):
+        lab_cfg = _replace(cfg_cls.from_env(), main_db_path=cfg.db_path)
+        ro_uri = f"file:{Path(lab_cfg.db_path).resolve()}?mode=ro"
+        store = store_cls.__new__(store_cls)
+        store.cfg = lab_cfg
+        store.conn = sqlite3.connect(ro_uri, uri=True)
+        store.conn.row_factory = sqlite3.Row
+        try:
+            report = recon(store, lab_cfg)
+        finally:
+            store.conn.close()
+        p = report["portfolio"]
+        print(f"\n=== {name} ({lab_cfg.db_path}) ===")
+        print(f"  equity ${p['equity_usd']:.4f}  (cash ${p['cash_usd']:.4f} + margin "
+              f"${p['margin_used_usd']:.4f} + uPnL ${p['unrealized_usd']:+.4f})")
+        print(f"  peak ${p['peak_equity_usd']:.2f}  threshold ${p['threshold_usd']:.2f}  "
+              f"open positions {p['open_positions']}")
+        for note in report.get("notes", []):
+            print(f"  note: {note}")
+        if report["ok"]:
+            print("  RECONCILED: no discrepancies.")
+        else:
+            overall_ok = False
+            print(f"  ** {len(report['discrepancies'])} DISCREPANCY(IES) **")
+            for d in report["discrepancies"]:
+                imp = f" impact ${d['impact_usd']:.4f}" if d.get("impact_usd") is not None else ""
+                print(f"    [{d['kind']}] {d.get('strategy') or '-'}: {d['detail']}{imp}")
+                if d.get("recommended_correction"):
+                    print(f"        recommended: {d['recommended_correction']}")
+    print(f"\n{'ALL PORTFOLIOS RECONCILED' if overall_ok else 'DISCREPANCIES FOUND — review above'}")
+    print("(read-only; nothing was changed. Corrections require backup + approval.)")
 
 
 def _migrate_lab(store, cfg: ProSettings) -> None:
