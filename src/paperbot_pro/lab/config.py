@@ -70,6 +70,7 @@ class LabSettings:
         if os.getenv("PAPERBOT_LAB_WS") is not None:
             updates["ws_enabled"] = os.getenv("PAPERBOT_LAB_WS") == "1"
         for name, cast in (("db_path", str), ("main_db_path", str),
+                           ("live_state_path", str),
                            ("monitor_interval_seconds", int)):
             raw = os.getenv(f"PAPERBOT_LAB_{name.upper()}")
             if raw is not None:

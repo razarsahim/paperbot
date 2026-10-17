@@ -357,6 +357,66 @@ export interface Lab {
   audit: LabAudit[];
 }
 
+// ---------- /api/lab/stream (SSE `lab_live` events) ----------
+// Continuously updating Lab P&L. Still PAPER ONLY — simulated funds.
+export type LabLiveStatus = "LIVE" | "STALE" | "DISCONNECTED";
+
+export interface LabLivePosition {
+  id: number;
+  strategy: string;
+  symbol: string;
+  side: Side;
+  leverage: number;
+  qty: number;
+  entry_price: number;
+  mark_price: number | null;
+  last_price: number | null;
+  bid: number | null;
+  ask: number | null;
+  notional_usd: number;
+  margin_usd: number;
+  stop: number;
+  liq_price_est: number;
+  funding_paid_usd: number;
+  unrealized_pnl_usd: number | null;
+  unrealized_pct_on_margin: number | null;
+  stop_distance_pct: number | null;
+  liq_distance_pct: number | null;
+  exchange_ts_ms: number | null;
+}
+
+export interface LabLiveCapital {
+  initial_usd: number;
+  equity_usd: number;
+  cash_usd: number;
+  margin_used_usd: number;
+  unrealized_usd: number;
+  realized_usd: number;
+  peak_equity_usd: number;
+  threshold_usd: number;
+  remaining_allowance_usd: number;
+  complete: boolean;
+}
+
+export interface LabLive {
+  live_status: LabLiveStatus;
+  /** API server clock at emit. */
+  server_ts_ms: number;
+  /** Age of the engine snapshot at emit. */
+  publish_age_ms?: number;
+  /** Engine valuation time. */
+  ts_ms?: number;
+  /** Newest exchange ticker timestamp used. */
+  exchange_ts_ms?: number | null;
+  locked?: boolean;
+  breached?: boolean;
+  /** Optional connected/disconnected notes. */
+  stream_status?: string;
+  positions?: LabLivePosition[];
+  /** null when DISCONNECTED. */
+  capital?: LabLiveCapital | null;
+}
+
 // ---------- /api/candles ----------
 export interface CandleMarker {
   ts_ms: number;

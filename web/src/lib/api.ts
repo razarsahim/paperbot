@@ -115,3 +115,5 @@ export function getCandles(
 
 export const tradesCsvUrl = `${API_BASE}/api/export/trades.csv`;
 export const eventsUrl = `${API_BASE}/api/events`;
+/** SSE stream of `lab_live` events (continuous Lab P&L). */
+export const labStreamUrl = `${API_BASE}/api/lab/stream`;

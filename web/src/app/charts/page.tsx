@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCandles, getUniverse } from "@/lib/api";
 import { fmtPrice, timeAgo } from "@/lib/format";
-import { useFetchOnce, usePoll } from "@/lib/hooks";
+import { useFetchOnce, useLabLive, usePoll } from "@/lib/hooks";
 
 const TIMEFRAMES = ["5m", "15m", "1h", "4h", "1d"] as const;
 
@@ -36,15 +36,32 @@ export default function ChartsPage() {
   const candles = usePoll(() => getCandles(symbol, tf, 300), 30_000, [symbol, tf]);
   const last = candles.data?.candles.at(-1);
 
+  // Live mark from the Lab stream when this symbol has an open lab position.
+  const { live, connected } = useLabLive();
+  const liveMark =
+    connected && live?.live_status === "LIVE"
+      ? (live.positions?.find((p) => p.symbol === symbol && p.mark_price !== null)
+          ?.mark_price ?? null)
+      : null;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-lg font-semibold">Chart workbench</h1>
         <SourceBadge source={candles.source} />
-        {last && (
-          <span className="text-xs text-muted-foreground tabular-nums">
-            last {fmtPrice(last[4])} · bar {timeAgo(last[0])}
+        {liveMark !== null ? (
+          <span
+            className="text-xs text-emerald-600 tabular-nums dark:text-emerald-400"
+            title="Live mark price from the Lab stream for this symbol's open lab position"
+          >
+            last {fmtPrice(liveMark)} · live mark
           </span>
+        ) : (
+          last && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              last {fmtPrice(last[4])} · bar {timeAgo(last[0])}
+            </span>
+          )
         )}
       </div>
 

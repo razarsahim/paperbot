@@ -117,6 +117,35 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Subtle background flash for live mark-price ticks (Lab stream). The
+   background transitions in and fades out via CSS only — numbers themselves
+   never animate or interpolate. */
+@keyframes lab-flash-up {
+  0% {
+    background-color: oklch(0.7 0.17 160 / 22%);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes lab-flash-down {
+  0% {
+    background-color: oklch(0.63 0.2 25 / 22%);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.lab-flash-up {
+  animation: lab-flash-up 700ms ease-out;
+}
+
+.lab-flash-down {
+  animation: lab-flash-down 700ms ease-out;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

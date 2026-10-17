@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { eventsUrl, getLab, getOverview } from "./api";
-import type { ApiResult, Lab, Overview, Source } from "./types";
+import { eventsUrl, getLab, getOverview, labStreamUrl } from "./api";
+import type { ApiResult, Lab, LabLive, Overview, Source } from "./types";
 
 export interface Loadable<T> {
   data: T | null;
@@ -125,4 +125,123 @@ export function useOverview(): Loadable<Overview> {
 /** Extreme Lab state: `lab` SSE events with 10s polling fallback. */
 export function useLab(): Loadable<Lab> {
   return useSseResource(getLab, "lab");
+}
+
+// ---------- Continuous Lab P&L stream (/api/lab/stream) ----------
+
+export interface LabLiveState {
+  /** Latest `lab_live` payload (throttled to <=1 render per 150ms, trailing edge). */
+  live: LabLive | null;
+  /** True while the EventSource is open. False means treat as DISCONNECTED. */
+  connected: boolean;
+  /** Client clock captured when the rendered payload was received (ms). */
+  receivedAtMs: number | null;
+}
+
+const LAB_LIVE_RENDER_THROTTLE_MS = 150;
+const LAB_LIVE_RECONNECT_BASE_MS = 2_000;
+const LAB_LIVE_RECONNECT_MAX_MS = 30_000;
+
+/**
+ * Subscribe to the `lab_live` SSE stream. Reconnects with exponential backoff
+ * (2s, 4s, 8s … capped at 30s) by closing and recreating the EventSource.
+ * Re-renders are throttled to at most one per 150ms; the latest payload is
+ * never dropped — a trailing flush always delivers it. No prices are ever
+ * fabricated or interpolated: only payloads the backend actually sent are
+ * stored, each with the client receipt time for honest latency display.
+ */
+export function useLabLive(): LabLiveState {
+  const [state, setState] = useState<{
+    live: LabLive | null;
+    receivedAtMs: number | null;
+  }>({ live: null, receivedAtMs: null });
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof EventSource === "undefined") return;
+
+    let disposed = false;
+    let es: EventSource | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let attempt = 0;
+
+    // Trailing-edge throttle: latest pending payload wins, nothing dropped.
+    let pending: { live: LabLive; receivedAtMs: number } | null = null;
+    let flushTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastFlushMs = 0;
+
+    const flush = () => {
+      flushTimer = null;
+      if (disposed || pending === null) return;
+      const next = pending;
+      pending = null;
+      lastFlushMs = Date.now();
+      setState({ live: next.live, receivedAtMs: next.receivedAtMs });
+    };
+
+    const push = (live: LabLive) => {
+      pending = { live, receivedAtMs: Date.now() };
+      if (flushTimer !== null) return; // trailing flush already scheduled
+      const sinceLast = Date.now() - lastFlushMs;
+      if (sinceLast >= LAB_LIVE_RENDER_THROTTLE_MS) {
+        flush();
+      } else {
+        flushTimer = setTimeout(flush, LAB_LIVE_RENDER_THROTTLE_MS - sinceLast);
+      }
+    };
+
+    const scheduleReconnect = () => {
+      if (disposed || reconnectTimer !== null) return;
+      const delay = Math.min(
+        LAB_LIVE_RECONNECT_MAX_MS,
+        LAB_LIVE_RECONNECT_BASE_MS * 2 ** attempt
+      );
+      attempt += 1;
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connect();
+      }, delay);
+    };
+
+    const connect = () => {
+      if (disposed) return;
+      try {
+        es = new EventSource(labStreamUrl);
+      } catch {
+        scheduleReconnect();
+        return;
+      }
+      es.onopen = () => {
+        if (disposed) return;
+        attempt = 0; // healthy again — reset backoff
+        setConnected(true);
+      };
+      es.addEventListener("lab_live", (ev) => {
+        if (disposed) return;
+        try {
+          push(JSON.parse((ev as MessageEvent).data) as LabLive);
+        } catch {
+          // Malformed event: ignore. Never synthesize a payload.
+        }
+      });
+      es.onerror = () => {
+        if (disposed) return;
+        setConnected(false);
+        es?.close();
+        es = null;
+        scheduleReconnect();
+      };
+    };
+
+    connect();
+
+    return () => {
+      disposed = true;
+      if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+      if (flushTimer !== null) clearTimeout(flushTimer);
+      es?.close();
+    };
+  }, []);
+
+  return { live: state.live, connected, receivedAtMs: state.receivedAtMs };
 }
