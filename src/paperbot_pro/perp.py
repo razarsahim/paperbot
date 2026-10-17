@@ -33,7 +33,7 @@ class PlannedEntry:
     side: str = ""
     entry_price: float = 0.0
     stop: float = 0.0
-    target: float = 0.0
+    target: float | None = 0.0  # None: no fixed take-profit cap (Lab style)
     liq_price_est: float = 0.0
     qty: float = 0.0
     notional_usd: float = 0.0
@@ -77,14 +77,21 @@ def funding_cost(side: str, rate: float, mark: float, qty: float) -> float:
 
 
 def plan_entry(side: str, price: float, atr_value: float, spec: ContractSpec,
-               cfg: ProSettings, equity: float, available_margin: float,
-               risk_rate: float) -> PlannedEntry:
+               cfg, equity: float, available_margin: float,
+               risk_rate: float | None = None,
+               risk_budget_usd: float | None = None,
+               with_target: bool = True) -> PlannedEntry:
     """Risk-based sizing: the planned worst-case loss at the stop (slippage
-    and both taker fees included) stays within risk_rate of total equity, and
-    the required margin plus entry fee must fit the sleeve's available cash.
+    and both taker fees included) stays within the risk budget — either
+    risk_rate of total equity, or an absolute risk_budget_usd — and the
+    required margin plus entry fee must fit the sleeve's available cash.
+    with_target=False plans an open-ended position (exits via trailing stop
+    or liquidation only; no fixed take-profit cap).
     """
     if atr_value <= 0 or price <= 0:
         return PlannedEntry(False, "invalid price/ATR input")
+    if (risk_rate is None) == (risk_budget_usd is None):
+        return PlannedEntry(False, "exactly one of risk_rate/risk_budget_usd required")
     slip, fee, lev = cfg.slippage_rate, spec.taker_fee, cfg.leverage
     sign = direction(side)
     fill = price * (1 + sign * slip)
@@ -100,7 +107,8 @@ def plan_entry(side: str, price: float, atr_value: float, spec: ContractSpec,
     loss_per_unit = sign * (fill - stop_fill) + fill * fee + stop_fill * fee
     if loss_per_unit <= 0:
         return PlannedEntry(False, "invalid planned loss per unit")
-    qty_risk = equity * risk_rate / loss_per_unit
+    budget = risk_budget_usd if risk_budget_usd is not None else equity * risk_rate
+    qty_risk = budget / loss_per_unit
     # cash needed per unit = margin (fill/leverage) + entry fee (fill*fee)
     qty_margin = available_margin / (fill * (1 / lev + fee))
     qty = floor(min(qty_risk, qty_margin) / spec.lot_size) * spec.lot_size
@@ -109,13 +117,21 @@ def plan_entry(side: str, price: float, atr_value: float, spec: ContractSpec,
         return PlannedEntry(False, "position too small after margin/lot constraints")
     return PlannedEntry(
         ok=True, reason="", side=side, entry_price=fill, stop=stop,
-        target=fill + sign * cfg.reward_risk * abs(fill - stop),
+        target=(fill + sign * cfg.reward_risk * abs(fill - stop)) if with_target else None,
         liq_price_est=liq, qty=qty, notional_usd=notional,
         margin_usd=notional / lev, entry_fee_usd=notional * fee,
         planned_risk_usd=qty * loss_per_unit, leverage=lev)
 
 
-def check_exit(pos: dict, observed_price: float, cfg: ProSettings,
+def trail_stop(side: str, current_stop: float, observed: float, atr_value: float,
+               multiplier: float) -> float:
+    """Monotonic ATR trailing stop: ratchets toward price, NEVER widens."""
+    if side == "long":
+        return max(current_stop, observed - multiplier * atr_value)
+    return min(current_stop, observed + multiplier * atr_value)
+
+
+def check_exit(pos: dict, observed_price: float, cfg,
                taker_fee: float) -> ExitEvent | None:
     """Evaluate one observed price against liquidation, stop and target.
     Liquidation is checked FIRST: when a gap crosses both, the worse outcome
@@ -135,7 +151,10 @@ def check_exit(pos: dict, observed_price: float, cfg: ProSettings,
         pnl = realized_pnl(side, pos["entry_price"], fill, pos["qty"],
                            pos["entry_fee_usd"], exit_fee, pos["funding_paid_usd"])
         return ExitEvent("STOP (gap)" if gapped else "STOP", fill, pnl, exit_fee)
-    hit_target = p >= pos["target"] if side == "long" else p <= pos["target"]
+    target = pos.get("target")
+    if target is None:
+        return None  # open-ended position: no fixed take-profit cap
+    hit_target = p >= target if side == "long" else p <= target
     if hit_target:
         fill = pos["target"] * (1 - sign * cfg.slippage_rate)  # never better than target
         exit_fee = abs(fill * pos["qty"] * taker_fee)
