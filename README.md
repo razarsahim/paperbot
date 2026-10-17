@@ -23,6 +23,30 @@ cd web && npm install && npm run dev       # terminal 3: dashboard on localhost:
 
 The API and dashboard are read-only and unauthenticated: keep them on localhost. The legacy spot engine below is unchanged and uses its own database.
 
+### Extreme Lab (isolated $250 experimental paper portfolio)
+
+Five strategies ($50 each: breakout, launch sniper, squeeze fade, trend
+rider, crash reversal) trade SIMULATED 10x perps on live public data with
+hard rails: $5 planned risk/trade, $15 combined, 3 positions, trailing
+stops only (no fixed targets), and a **$50 trailing portfolio drawdown**
+against a persistent high-water mark — a breach locks all strategies,
+emergency-exits positions at real observed quotes, and requires a manual
+reviewed reset. Fully isolated DB (`state/extreme_lab.sqlite`); aggregate
+stays $1,000 after `propaper migrate-lab` (main $750 + Lab $250).
+
+```bash
+propaper migrate-lab                        # once, with `propaper run` stopped
+export PAPERBOT_LAB_AUTO_ENTRY=1            # the Lab-only experimental opt-in
+propaper lab-run                            # autonomous Lab engine (60s monitoring)
+propaper lab-status                         # capital, HWM, threshold, sleeves
+propaper lab-pause | lab-resume             # manual entry gate
+propaper lab-reset --note "reviewed ..."    # clear a drawdown lockout after review
+```
+
+The main portfolio's negative-validation safeguard is untouched; the Lab
+flag affects only the Lab. Negative results are expected and reported
+honestly — this is speculative research, not investment advice.
+
 # Legacy engine: BTC/GBP, no leverage
 
 **Paper trading only.** This bot cannot place real orders. It has no API-key handling or exchange trade methods. It reads public spot market data, applies an illustrative, unvalidated strategy, simulates entries/exits, stores simulated positions and trades in SQLite, and shows a local dashboard.

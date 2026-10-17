@@ -4,6 +4,9 @@ import {
   AreaSeries,
   BaselineSeries,
   createChart,
+  LineSeries,
+  LineStyle,
+  LineType,
   type UTCTimestamp,
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
@@ -14,11 +17,14 @@ export function CurveChart({
   points,
   height = 260,
   mode = "area",
+  threshold,
 }: {
   /** [ts_ms, value] */
   points: [number, number][];
   height?: number;
   mode?: "area" | "baseline";
+  /** Optional [ts_ms, value] limit line (e.g. trailing-drawdown threshold), drawn stepped + dashed in red. */
+  threshold?: [number, number][];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const colors = useChartColors();
@@ -52,9 +58,23 @@ export function CurveChart({
       });
       series.setData(data);
     }
+    if (threshold && threshold.length > 0) {
+      const limit = chart.addSeries(LineSeries, {
+        color: colors.red,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dashed,
+        lineType: LineType.WithSteps,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        crosshairMarkerVisible: false,
+      });
+      limit.setData(
+        threshold.map(([t, v]) => ({ time: (t / 1000) as UTCTimestamp, value: v }))
+      );
+    }
     chart.timeScale().fitContent();
     return () => chart.remove();
-  }, [points, colors, mode]);
+  }, [points, colors, mode, threshold]);
 
   return <div ref={ref} style={{ height }} className="w-full" />;
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { eventsUrl, getOverview } from "./api";
-import type { ApiResult, Overview, Source } from "./types";
+import { eventsUrl, getLab, getOverview } from "./api";
+import type { ApiResult, Lab, Overview, Source } from "./types";
 
 export interface Loadable<T> {
   data: T | null;
@@ -79,18 +79,26 @@ export function useNow(intervalMs = 15_000): number {
   return now;
 }
 
-export function useOverview(): Loadable<Overview> {
-  const base = usePoll(getOverview, 10_000);
-  const [sse, setSse] = useState<Overview | null>(null);
+/**
+ * Poll + SSE combo: polls `fetcher` every 10s and overlays the latest payload
+ * from the named SSE event when the stream is healthy. SSE data always comes
+ * from the real backend, so overlaid data is honestly tagged source:"live".
+ */
+function useSseResource<T>(
+  fetcher: () => Promise<ApiResult<T>>,
+  eventName: string
+): Loadable<T> {
+  const base = usePoll(fetcher, 10_000);
+  const [sse, setSse] = useState<T | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined" || typeof EventSource === "undefined") return;
     let es: EventSource | null = null;
     try {
       es = new EventSource(eventsUrl);
-      es.addEventListener("overview", (ev) => {
+      es.addEventListener(eventName, (ev) => {
         try {
-          setSse(JSON.parse((ev as MessageEvent).data) as Overview);
+          setSse(JSON.parse((ev as MessageEvent).data) as T);
         } catch {
           // ignore malformed event, polling still covers us
         }
@@ -104,8 +112,17 @@ export function useOverview(): Loadable<Overview> {
       // EventSource construction failed — polling covers us.
     }
     return () => es?.close();
-  }, []);
+  }, [eventName]);
 
   if (sse) return { ...base, data: sse, source: "live", loading: false };
   return base;
+}
+
+export function useOverview(): Loadable<Overview> {
+  return useSseResource(getOverview, "overview");
+}
+
+/** Extreme Lab state: `lab` SSE events with 10s polling fallback. */
+export function useLab(): Loadable<Lab> {
+  return useSseResource(getLab, "lab");
 }

@@ -411,7 +411,7 @@ function labCurve(): [number, number, number][] {
   let peak = 250;
   for (let i = 0; i < points; i++) {
     const t = i / (points - 1);
-    const base = 250 + 9 * Math.sin(t * 2.2) - 14 * t; // drifts down to ~244
+    const base = 250 + 9 * Math.sin(t * 2.2) - 17 * t; // drifts down to ~243
     const w = Math.sin(i * 1.9) * 1.8 + Math.sin(i * 0.37) * 2.6;
     const equity = Math.round((base + w) * 100) / 100;
     peak = Math.max(peak, equity);
@@ -438,7 +438,7 @@ export const mockLab: Lab = {
   capital: {
     initial_usd: 250.0,
     equity_usd: labEquityNow,
-    cash_usd: Math.round((labEquityNow - 21.5 - 0.42) * 100) / 100,
+    cash_usd: Math.round((labEquityNow - 21.5 + 0.42) * 100) / 100,
     margin_used_usd: 21.5,
     unrealized_usd: -0.42,
     peak_equity_usd: labPeak,
@@ -527,7 +527,7 @@ export const mockLab: Lab = {
       action: "long",
       approved: false,
       reject_reason: "Remaining drawdown allowance below per-trade risk floor",
-      details: "EMA stack intact but lab allowance $13 < required $15 buffer",
+      details: "EMA stack intact but lab allowance is below the required $15 buffer",
     },
     {
       id: 9006,
@@ -670,7 +670,7 @@ export const mockLab: Lab = {
   equity_curve: labEq,
   audit: [
     { id: 41, ts_ms: NOW - 4 * MIN, level: "info", category: "scanner", message: "Lab scan complete: 4 symbols × 5 strategies, 4 candidate signals, 0 entries (auto-entry off)" },
-    { id: 40, ts_ms: NOW - 9 * MIN, level: "warning", category: "risk", message: "Remaining drawdown allowance $13.02 below $15 soft floor — new entries gated" },
+    { id: 40, ts_ms: NOW - 9 * MIN, level: "warning", category: "risk", message: "Remaining drawdown allowance below $15 soft floor — new entries gated" },
     { id: 39, ts_ms: NOW - 2 * HOUR, level: "info", category: "execution", message: "Mark-to-market: BTC breakout position −$0.42 unrealized, stop unchanged" },
     { id: 38, ts_ms: NOW - 8 * HOUR, level: "error", category: "data", message: "Funding feed stale (>120s) — funding_skew entries blocked, nothing hidden" },
     { id: 37, ts_ms: NOW - 10 * DAY, level: "error", category: "risk", message: "EMERGENCY flatten: intraday drawdown spike breached lab rule; DOGE momo closed at market" },

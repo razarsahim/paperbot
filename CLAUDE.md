@@ -13,6 +13,15 @@ Build and refine **PaperBot Pro**: a research and PAPER-TRADING system — never
 - Backtests/validation: previous-bar signals only, model fees, funding, slippage, gaps and liquidation conservatively.
 - Dashboard/API are read-only, bind 127.0.0.1, no auth → never expose publicly; every displayed value is engine-sourced or visibly badged DEMO.
 
+## Extreme Lab (2026-10-17)
+Isolated $250 experimental paper portfolio (`src/paperbot_pro/lab`, own DB
+`state/extreme_lab.sqlite`): five $50 strategy sleeves, $5/$15/3-slot rails,
+trailing stops only, and a monotonic $50 trailing portfolio drawdown whose
+breach locks everything, emergency-exits at observed quotes, and requires
+`propaper lab-reset --note`. Its auto-entry flag (`PAPERBOT_LAB_AUTO_ENTRY`)
+is Lab-only and must never weaken the main portfolio's validation gate.
+Aggregate after `propaper migrate-lab`: main $750 + Lab $250 = $1,000.
+
 ## Developer commands
 - Install: `python3 -m pip install -e '.[dev,pro]'`
 - Tests: `python3 -m pytest -q` (legacy 40 tests must always pass)

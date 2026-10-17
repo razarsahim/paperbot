@@ -6,6 +6,7 @@ import {
   ChartCandlestick,
   CircleDot,
   Flame,
+  FlaskConical,
   History,
   LayoutDashboard,
   LineChart,
@@ -33,6 +34,7 @@ const NAV = [
   { href: "/history", label: "History", icon: History },
   { href: "/analytics", label: "Analytics", icon: LineChart },
   { href: "/hype", label: "Hype Radar", icon: Flame },
+  { href: "/lab", label: "Extreme Lab", icon: FlaskConical },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/settings", label: "Settings", icon: Settings },
 ] as const;

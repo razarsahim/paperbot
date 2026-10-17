@@ -9,6 +9,7 @@ import {
   mockCandles,
   mockHealth,
   mockHype,
+  mockLab,
   mockOverview,
   mockPositions,
   mockSettings,
@@ -23,6 +24,7 @@ import type {
   CandleResponse,
   Health,
   HypeRadar,
+  Lab,
   Overview,
   Position,
   Settings,
@@ -90,6 +92,8 @@ export const getSignals = (limit = 50) =>
 export const getAnalytics = () => getJson<Analytics>("/api/analytics", mockAnalytics);
 
 export const getHype = () => getJson<HypeRadar>("/api/hype", mockHype);
+
+export const getLab = () => getJson<Lab>("/api/lab", mockLab);
 
 export const getAudit = (limit = 100) =>
   getJson<AuditEntry[]>(`/api/audit?limit=${limit}`, mockAudit);
