@@ -395,7 +395,7 @@ export default function StrategiesPage() {
         </div>
         <p className="max-w-3xl text-xs text-muted-foreground">
           {data?.note ??
-            "Forward-paper diagnostics only — live simulated results across both labs. These are not backtests and never validated returns."}
+            "Forward-paper diagnostics only — live simulated results across both cohorts of the unified Extreme Lab. These are not backtests and never validated returns."}
         </p>
       </div>
 
@@ -434,7 +434,7 @@ export default function StrategiesPage() {
         <StatTile
           label="Total virtual equity"
           value={fmtUsd(summary?.totalEquity)}
-          sub="both labs combined"
+          sub="unified lab · both cohorts"
           source={source}
           loading={loading && !summary}
         />
@@ -493,10 +493,10 @@ export default function StrategiesPage() {
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-1.5 text-sm font-semibold">
                 <FlaskConical className="size-4 text-amber-500" />
-                Extreme Lab
+                Extreme cohort
               </span>
               <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
-                virtual $250
+                5 sleeves · $250
               </span>
             </div>
             <div className="flex items-end justify-between gap-2">
@@ -516,15 +516,15 @@ export default function StrategiesPage() {
             </div>
           </Card>
         </Link>
-        <Link href="/research" className="group">
+        <Link href="/lab" className="group">
           <Card className="h-full gap-1 rounded-xl border-cyan-500/30 bg-cyan-500/5 px-4 py-3 transition-colors group-hover:border-cyan-500/60">
             <div className="flex items-center justify-between gap-2">
               <span className="flex items-center gap-1.5 text-sm font-semibold">
                 <Beaker className="size-4 text-cyan-500" />
-                Strategy Research Lab
+                Research cohort
               </span>
               <span className="text-[10px] tracking-wider text-muted-foreground uppercase">
-                virtual $250
+                5 sleeves · $250
               </span>
             </div>
             <div className="flex items-end justify-between gap-2">
@@ -626,9 +626,10 @@ export default function StrategiesPage() {
 
       {/* Disclaimer */}
       <p className="text-[11px] text-muted-foreground">
-        Forward-paper diagnostics across the Extreme Lab and Strategy Research Lab, both virtual $250
-        simulations. Rankings reflect simulated net P&L only and are not evidence of skill or future
-        performance. Strategies flagged with a warning icon have too few trades to interpret.
+        Forward-paper diagnostics across the unified Extreme Lab (10 sleeves, virtual $500) — the
+        extreme and research cohorts, $250 each. Rankings reflect simulated net P&L only and are not
+        evidence of skill or future performance. Strategies flagged with a warning icon have too few
+        trades to interpret.
       </p>
     </div>
   );
