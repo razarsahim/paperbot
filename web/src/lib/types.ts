@@ -255,6 +255,8 @@ export interface LabStatus {
   locked: boolean;
   lock_reason: string | null;
   manual_pause: boolean;
+  integrity_locked?: boolean;
+  integrity_reason?: string | null;
 }
 
 export interface LabCapital {

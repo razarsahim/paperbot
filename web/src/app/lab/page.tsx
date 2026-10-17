@@ -480,6 +480,23 @@ export default function LabPage() {
       </div>
 
       {/* Emergency lockout banner (stored state OR live stream) */}
+      {lab?.status.integrity_locked && (
+        <div className="flex w-full flex-col gap-1 rounded-xl border border-red-500/60 bg-red-500/10 p-4">
+          <p className="flex items-center gap-2 text-sm font-bold tracking-wide text-red-600 uppercase dark:text-red-400">
+            <Lock className="size-4 shrink-0" />
+            ACCOUNTING INTEGRITY LOCK — new entries blocked pending reconciliation
+          </p>
+          {lab.status.integrity_reason && (
+            <p className="text-sm text-red-700 dark:text-red-300">{lab.status.integrity_reason}</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Open-position monitoring and protective exits continue. After review run{" "}
+            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">
+              propaper audit-clear --lab extreme --note &quot;...&quot;
+            </code>
+          </p>
+        </div>
+      )}
       {locked && (
         <div className="flex w-full flex-col gap-1 rounded-xl border border-red-500/60 bg-red-500/10 p-4">
           <p className="flex items-center gap-2 text-sm font-bold tracking-wide text-red-600 uppercase dark:text-red-400">

@@ -531,6 +531,23 @@ export default function ResearchPage() {
         </div>
       </div>
 
+      {research?.status.integrity_locked && (
+        <div className="flex w-full flex-col gap-1 rounded-xl border border-red-500/60 bg-red-500/10 p-4">
+          <p className="flex items-center gap-2 text-sm font-bold tracking-wide text-red-600 uppercase dark:text-red-400">
+            <Lock className="size-4 shrink-0" />
+            ACCOUNTING INTEGRITY LOCK — new entries blocked pending reconciliation
+          </p>
+          {research.status.integrity_reason && (
+            <p className="text-sm text-red-700 dark:text-red-300">{research.status.integrity_reason}</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            Open-position monitoring and protective exits continue. After review run{" "}
+            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px]">
+              propaper audit-clear --lab research --note &quot;...&quot;
+            </code>
+          </p>
+        </div>
+      )}
       {/* Emergency lockout banner (stored state OR live stream) */}
       {locked && (
         <div className="flex w-full flex-col gap-1 rounded-xl border border-red-500/60 bg-red-500/10 p-4">
