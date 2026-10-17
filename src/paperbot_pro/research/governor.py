@@ -28,7 +28,12 @@ class ResearchGovernor:
         self.cfg = cfg
 
     # ---------------- lab trailing high-water mark ----------------
-    def update_hwm(self, net_equity: float, now_ms: int) -> dict:
+    def update_hwm(self, net_equity: float, now_ms: int,
+                   require_confirmation: bool = False) -> dict:
+        """See LabGovernor.update_hwm. require_confirmation debounces the lock
+        to two consecutive breached readings on the high-frequency live path,
+        so a single post-gap/transient catch-up tick never irreversibly locks;
+        the validated REST cycle locks immediately."""
         with self.db.conn:
             row = self.db.conn.execute(
                 "SELECT value FROM kv WHERE key='peak_equity'").fetchone()
@@ -41,7 +46,13 @@ class ResearchGovernor:
                 "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (json.dumps(peak),))
             locked = json.loads((self.db.conn.execute(
                 "SELECT value FROM kv WHERE key='lab_locked'").fetchone() or ["false"])[0])
-            if breached and not locked:
+            streak_row = self.db.conn.execute(
+                "SELECT value FROM kv WHERE key='breach_streak'").fetchone()
+            streak = (json.loads(streak_row[0]) if streak_row else 0) + 1 if breached else 0
+            self.db.conn.execute(
+                "INSERT INTO kv(key,value) VALUES('breach_streak',?) "
+                "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (json.dumps(streak),))
+            if breached and not locked and (not require_confirmation or streak >= 2):
                 reason = (f"LAB TRAILING DRAWDOWN BREACH: equity {net_equity:.2f} <= "
                           f"threshold {threshold:.2f} (peak {peak:.2f} - "
                           f"{self.cfg.trailing_drawdown_usd:.0f})")

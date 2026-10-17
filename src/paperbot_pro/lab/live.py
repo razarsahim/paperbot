@@ -108,7 +108,9 @@ class LiveValuator:
         realized = sum(r["realized_pnl_usd"]
                        for r in self.db.strategy_ledger().values())
         if complete and positions_out or not positions_out:
-            hwm = self.governor.update_hwm(equity, now_ms)
+            # live tick path: require two consecutive breached readings to lock,
+            # so a single post-gap/transient catch-up mark can't nuisance-trip
+            hwm = self.governor.update_hwm(equity, now_ms, require_confirmation=True)
         else:
             # incomplete marks: do not ratchet/lock on a partial valuation
             peak = float(self.db.get("peak_equity", self.cfg.starting_capital_usd))

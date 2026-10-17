@@ -26,9 +26,17 @@ class LabGovernor:
         self.cfg = cfg
 
     # ---------------- trailing high-water mark ----------------
-    def update_hwm(self, net_equity: float, now_ms: int) -> dict:
+    def update_hwm(self, net_equity: float, now_ms: int,
+                   require_confirmation: bool = False) -> dict:
         """Ratchet the peak, derive the threshold, detect a breach. The lock
-        is set in the SAME transaction as the peak update (atomic)."""
+        is set in the SAME transaction as the peak update (atomic).
+
+        require_confirmation: the high-frequency live-tick path sets this so a
+        lock needs TWO consecutive breached readings — a single post-gap or
+        transient catch-up tick (e.g. a quote that went stale then jumped)
+        ratchets the peak and reports the breach but does not irreversibly
+        lock. The slower validated REST cycle leaves it False and locks
+        immediately. A reading at/above threshold resets the streak."""
         with self.db.conn:
             row = self.db.conn.execute(
                 "SELECT value FROM kv WHERE key='peak_equity'").fetchone()
@@ -43,7 +51,14 @@ class LabGovernor:
                 (json.dumps(peak),))
             already_locked = json.loads((self.db.conn.execute(
                 "SELECT value FROM kv WHERE key='lab_locked'").fetchone() or ["false"])[0])
-            if breached and not already_locked:
+            streak_row = self.db.conn.execute(
+                "SELECT value FROM kv WHERE key='breach_streak'").fetchone()
+            streak = (json.loads(streak_row[0]) if streak_row else 0) + 1 if breached else 0
+            self.db.conn.execute(
+                "INSERT INTO kv(key,value) VALUES('breach_streak',?) "
+                "ON CONFLICT(key) DO UPDATE SET value=excluded.value", (json.dumps(streak),))
+            do_lock = breached and not already_locked and (not require_confirmation or streak >= 2)
+            if do_lock:
                 reason = (f"TRAILING DRAWDOWN BREACH: net equity {net_equity:.2f} <= "
                           f"threshold {threshold:.2f} (peak {peak:.2f} - "
                           f"{self.cfg.trailing_drawdown_usd:.0f})")

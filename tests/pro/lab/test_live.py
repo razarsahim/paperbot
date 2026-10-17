@@ -92,14 +92,19 @@ def test_hwm_ratchets_on_ticks_and_breach_flags(tmp_path):
     s1 = valuator.value(book, now_ms=1000)           # uPnL +100 -> equity ~349.9
     assert s1['capital']['peak_equity_usd'] > 349.0
     assert store.get('peak_equity') == pytest.approx(s1['capital']['peak_equity_usd'])
-    # rapid reversal: equity drops > $50 from the new peak -> breach flagged
+    # rapid reversal: equity drops > $50 from the new peak -> breach flagged.
+    # The live path needs a CONFIRMING second breached tick to lock (so a
+    # single post-gap/transient mark can't nuisance-trip the lockout).
     book.apply('AAAUSDT', {"markPrice": "104", "bid1Price": "103.9",
                            "ask1Price": "104.1"}, 2000, "delta")
     s2 = valuator.value(book, now_ms=2000)
     assert s2['capital']['threshold_usd'] == pytest.approx(
         s1['capital']['peak_equity_usd'] - 50.0)
     assert s2['breached'] is True
-    assert store.get('lab_locked') is True            # persisted by the governor
+    assert store.get('lab_locked') is False           # first breach: pending
+    book.apply('AAAUSDT', {"markPrice": "103.5"}, 3000, "delta")
+    valuator.value(book, now_ms=3000)                 # confirmed
+    assert store.get('lab_locked') is True            # now persisted/locked
 
 
 def test_missing_mark_keeps_position_unvalued_not_fabricated(tmp_path):
