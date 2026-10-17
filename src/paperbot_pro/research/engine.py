@@ -109,6 +109,11 @@ class ResearchEngine:
         mfe = (sign * (pos["mfe_price"] - entry) / entry * 100) if pos.get("mfe_price") else None
         mae = (sign * (pos["mae_price"] - entry) / entry * 100) if pos.get("mae_price") else None
         with self.db.conn:
+            # Idempotency guard (see lab engine): only book + credit if THIS
+            # call removed the row, so a double-close can't double-credit.
+            if self.db.conn.execute("DELETE FROM positions WHERE id=?",
+                                    (pos["id"],)).rowcount == 0:
+                return
             self.db.conn.execute(
                 """INSERT INTO trades(strategy, symbol, side, leverage, qty, entry_price,
                    exit_price, stop_initial, stop_final, target, margin_usd, notional_usd,
@@ -122,7 +127,6 @@ class ResearchEngine:
                  event.reason, pos["rationale"],
                  pos.get("indicator_snapshot") if isinstance(pos.get("indicator_snapshot"), str)
                  else json.dumps(pos.get("indicator_snapshot"))))
-            self.db.conn.execute("DELETE FROM positions WHERE id=?", (pos["id"],))
             self._adjust(pos["strategy"], credit, realized=event.pnl_usd)
         self.db.set(f"research_last_exit:{pos['symbol']}", now_ms)
         self.db.audit("warning" if event.pnl_usd < 0 else "info", "trade",
