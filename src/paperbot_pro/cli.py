@@ -85,11 +85,22 @@ def main():
                            help="Required review note recorded in the audit log")
     sub.add_parser("migrate-lab",
                    help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
+    sub.add_parser("research-run", help="Continuous Strategy Research Lab paper engine")
+    sub.add_parser("research-once", help="One Research Lab monitor/scan cycle")
+    sub.add_parser("research-status", help="Research Lab capital, HWM and 5 strategies")
+    sub.add_parser("research-pause", help="Manually block new Research Lab entries")
+    sub.add_parser("research-resume", help="Lift the Research Lab manual pause")
+    r_reset = sub.add_parser("research-reset",
+                             help="Clear the Research Lab lockout AFTER manual review")
+    r_reset.add_argument("--note", required=True, help="Required review note")
     args = parser.parse_args()
     cfg = ProSettings.from_env()
     from .store import ProStore
     if args.command and args.command.startswith("lab-"):
         _lab_main(args, cfg)
+        return
+    if args.command and args.command.startswith("research-"):
+        _research_main(args, cfg)
         return
     if args.command == "api":
         import uvicorn
@@ -211,6 +222,68 @@ def _migrate_lab(store, cfg: ProSettings) -> None:
     LabStore(lab_cfg.db_path, lab_cfg).close()
     print("Migrated: main $750 (peak/day anchors reset), Extreme Lab $250 "
           f"initialized at {lab_cfg.db_path}. Restart `propaper run` and the API.")
+
+
+def _research_main(args, cfg: ProSettings) -> None:
+    from dataclasses import replace as _replace
+    from .research.config import ResearchSettings
+    from .research.engine import ResearchEngine
+    from .research.governor import ResearchGovernor
+    from .research.store import ResearchStore
+    r_cfg = _replace(ResearchSettings.from_env(), main_db_path=cfg.db_path)
+    store = ResearchStore(r_cfg.db_path, r_cfg)
+    try:
+        if args.command == "research-status":
+            from .api import compute_research
+            snap = compute_research(store, r_cfg)
+            for k in ("signals", "trades", "audit"):
+                snap[k] = snap[k][:5]
+            snap["equity_curve"] = snap["equity_curve"][-5:]
+            print(json.dumps(snap, indent=2))
+        elif args.command == "research-pause":
+            store.set("research_manual_pause", True)
+            store.audit("warning", "risk", "Research Lab manual pause ENABLED")
+            print("Research Lab paused: no new entries; monitoring and exits continue.")
+        elif args.command == "research-resume":
+            store.set("research_manual_pause", False)
+            store.audit("info", "risk", "Research Lab manual pause lifted")
+            print("Research Lab resumed (subject to all rails and locks).")
+        elif args.command == "research-reset":
+            from .api import compute_research
+            equity = compute_research(store, r_cfg)["capital"]["equity_usd"]
+            ResearchGovernor(store, r_cfg).reset(current_equity=equity, note=args.note)
+            print(f"Lockout cleared after review. Peak re-anchored at ${equity:.2f}.")
+        elif args.command == "research-once":
+            with single_instance(r_cfg.db_path):
+                print(json.dumps(ResearchEngine(store, r_cfg).run_cycle()))
+        elif args.command == "research-run":
+            engine = ResearchEngine(store, r_cfg)
+            print("STRATEGY RESEARCH LAB — PAPER ONLY, virtual $250, experimental. "
+                  f"Auto-entry: {'ON' if r_cfg.auto_entry else 'OFF'}. "
+                  f"Live ticker stream: {'ON' if r_cfg.ws_enabled else 'OFF'}. Ctrl+C stops.",
+                  flush=True)
+            with single_instance(r_cfg.db_path):
+                if r_cfg.ws_enabled:
+                    engine.start_live_components()
+                    engine.start_live_feed()
+                failures = 0
+                while True:
+                    try:
+                        summary = engine.run_cycle()
+                        print(f"{time.strftime('%H:%M:%S')} research {summary}", flush=True)
+                        failures = 0
+                        time.sleep(r_cfg.monitor_interval_seconds)
+                    except KeyboardInterrupt:
+                        print("Stopped.")
+                        break
+                    except Exception as exc:
+                        failures += 1
+                        store.audit("error", "engine", f"cycle failed: {type(exc).__name__}: {exc}")
+                        print(f"SAFE ERROR (no entries): {type(exc).__name__}: {exc}",
+                              file=sys.stderr, flush=True)
+                        time.sleep(min(r_cfg.monitor_interval_seconds * 2 ** min(failures, 5), 1800))
+    finally:
+        store.close()
 
 
 def _lab_main(args, cfg: ProSettings) -> None:

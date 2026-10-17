@@ -181,7 +181,132 @@ def compute_lab(store, lab_cfg) -> dict:
     }
 
 
-def create_app(cfg: ProSettings, lab_cfg=None) -> FastAPI:
+def compute_research(store, research_cfg) -> dict:
+    """Research Lab snapshot — mirrors compute_lab with per-strategy lock
+    levels and correlation clusters on positions."""
+    from .perp import unrealized_pnl as _upnl
+    from .research.config import STRATEGIES as R_STRATEGIES
+    marks = store.get("marks", {}) or {}
+    positions = store.open_positions()
+    margin_used = sum(p["margin_usd"] for p in positions)
+    unrealized, out_positions = 0.0, []
+    for p in positions:
+        mark = marks.get(p["symbol"])
+        u = _upnl(p["side"], p["entry_price"], mark, p["qty"]) if mark is not None else None
+        if u is not None:
+            unrealized += u
+        out_positions.append({**{k: p[k] for k in (
+            "id", "strategy", "symbol", "side", "leverage", "qty", "entry_price",
+            "margin_usd", "notional_usd", "stop", "target", "liq_price_est",
+            "funding_paid_usd", "planned_risk_usd", "opened_ms", "corr_cluster")},
+            "mark_price": mark, "unrealized_pnl_usd": u})
+    cash = store.total_cash()
+    equity = cash + margin_used + unrealized
+    peak = max(float(store.get("peak_equity", research_cfg.starting_capital_usd)), equity)
+    threshold = peak - research_cfg.trailing_drawdown_usd
+    last_scan = store.get("last_scan_ms")
+    now_ms = time.time() * 1000
+    ledger = store.strategy_ledger()
+    return {
+        "status": {
+            "live": bool(last_scan and now_ms - last_scan <
+                         research_cfg.monitor_interval_seconds * 3000),
+            "last_scan_ms": last_scan, "auto_entry": research_cfg.auto_entry,
+            "locked": bool(store.get("lab_locked")),
+            "lock_reason": store.get("lab_lock_reason"),
+            "manual_pause": bool(store.get("research_manual_pause")),
+        },
+        "capital": {
+            "initial_usd": research_cfg.starting_capital_usd,
+            "equity_usd": equity, "cash_usd": cash, "margin_used_usd": margin_used,
+            "unrealized_usd": unrealized, "peak_equity_usd": peak,
+            "threshold_usd": threshold,
+            "remaining_allowance_usd": max(0.0, equity - threshold),
+        },
+        "strategies": [{**ledger[s.key], "display_name": s.name,
+                        "description": s.description,
+                        "status": store.strategy_status(s.key),
+                        "open_symbols": [p["symbol"] for p in positions
+                                         if p["strategy"] == s.key]}
+                       for s in R_STRATEGIES if s.key in ledger],
+        "positions": out_positions,
+        "signals": store.signals(100),
+        "trades": store.trades(200),
+        "equity_curve": [[r["ts_ms"], r["equity_usd"], r["threshold_usd"]]
+                         for r in store.equity_history(5000)],
+        "audit": store.audit_log(100),
+    }
+
+
+def _strategy_stats(trades: list[dict]) -> dict:
+    """Per-strategy realised stats + a realised-cumulative max-drawdown proxy
+    (clearly a realised series, not mark-to-market). Sample flagged."""
+    pnls = [t["net_pnl_usd"] for t in trades]
+    wins = [p for p in pnls if p > 0]
+    losses = [p for p in pnls if p < 0]
+    gross_w, gross_l = sum(wins), abs(sum(losses))
+    fees = sum(t.get("entry_fee_usd", 0) + t.get("exit_fee_usd", 0) for t in trades)
+    funding = sum(t.get("funding_usd", 0) for t in trades)
+    peak = cum = max_dd = 0.0
+    for p in reversed(pnls):   # trades come newest-first
+        cum += p
+        peak = max(peak, cum)
+        max_dd = max(max_dd, peak - cum)
+    return {
+        "trade_count": len(trades),
+        "win_rate_pct": (len(wins) / len(trades) * 100) if trades else None,
+        "profit_factor": (gross_w / gross_l) if gross_l else (None if not wins else None),
+        "expectancy_usd": (sum(pnls) / len(pnls)) if pnls else None,
+        "realized_pnl_usd": sum(pnls),
+        "fees_usd": fees, "funding_usd": funding,
+        "max_drawdown_realized_usd": max_dd,
+        "sample": "insufficient" if len(trades) < 30 else "developing",
+    }
+
+
+def compute_strategies(lab_store, lab_cfg, research_store, research_cfg) -> dict:
+    """Unified comparison of all ten strategies across both labs with a net-PnL
+    ranking. Performance figures are forward-paper diagnostics, never validated
+    returns."""
+    from .lab.config import STRATEGIES as L_STRATEGIES
+    from .research.config import STRATEGIES as R_STRATEGIES
+    rows = []
+    for store, cfg, defs, lab_name in (
+            (lab_store, lab_cfg, L_STRATEGIES, "extreme"),
+            (research_store, research_cfg, R_STRATEGIES, "research")):
+        ledger = store.strategy_ledger()
+        marks = store.get("marks", {}) or {}
+        positions = store.open_positions()
+        from .perp import unrealized_pnl as _upnl
+        for sdef in defs:
+            if sdef.key not in ledger:
+                continue
+            led = ledger[sdef.key]
+            strat_pos = [p for p in positions if p["strategy"] == sdef.key]
+            margin = sum(p["margin_usd"] for p in strat_pos)
+            unreal = sum((_upnl(p["side"], p["entry_price"], marks.get(p["symbol"]), p["qty"])
+                          if marks.get(p["symbol"]) is not None else 0.0) for p in strat_pos)
+            equity = led["cash_usd"] + margin + unreal
+            stats = _strategy_stats(store.trades(limit=100_000, strategy=sdef.key))
+            locked = bool(led.get("locked")) or bool(store.get("lab_locked"))
+            rows.append({
+                "lab": lab_name, "key": sdef.key, "name": sdef.name,
+                "allocation_usd": led["allocation_usd"], "cash_usd": led["cash_usd"],
+                "equity_usd": equity, "unrealized_pnl_usd": unreal,
+                "return_pct": (equity / led["allocation_usd"] - 1) * 100,
+                "open_positions": len(strat_pos), "leverage": cfg.leverage,
+                "locked": locked, **stats,
+            })
+    ordered = sorted(rows, key=lambda r: r["realized_pnl_usd"] + r["unrealized_pnl_usd"],
+                     reverse=True)
+    for i, r in enumerate(ordered, 1):
+        r["rank_by_net_pnl"] = i
+    return {"count": len(rows), "strategies": rows,
+            "note": "Forward-paper diagnostics on virtual funds with real costs — "
+                    "not validated or predictive. Small samples are flagged."}
+
+
+def create_app(cfg: ProSettings, lab_cfg=None, research_cfg=None) -> FastAPI:
     from dataclasses import replace as _replace
     from .lab.config import LabSettings
     from .lab.store import LabStore
@@ -190,6 +315,11 @@ def create_app(cfg: ProSettings, lab_cfg=None) -> FastAPI:
     if lab_cfg is None:
         lab_cfg = _replace(LabSettings.from_env(), main_db_path=cfg.db_path)
     lab_store = LabStore(lab_cfg.db_path, lab_cfg)
+    from .research.config import ResearchSettings
+    from .research.store import ResearchStore
+    if research_cfg is None:
+        research_cfg = _replace(ResearchSettings.from_env(), main_db_path=cfg.db_path)
+    research_store = ResearchStore(research_cfg.db_path, research_cfg)
     app = FastAPI(title="PaperBot Pro (PAPER ONLY)", docs_url="/api/docs")
     app.add_middleware(CORSMiddleware,
                        allow_origins=[f"http://{host}:{port}" for host in
@@ -229,6 +359,44 @@ def create_app(cfg: ProSettings, lab_cfg=None) -> FastAPI:
     @app.get("/api/lab")
     def lab():
         return compute_lab(lab_store, lab_cfg)
+
+    @app.get("/api/research")
+    def research():
+        return compute_research(research_store, research_cfg)
+
+    @app.get("/api/strategies")
+    def strategies():
+        return compute_strategies(lab_store, lab_cfg, research_store, research_cfg)
+
+    @app.get("/api/research/stream")
+    async def research_stream(limit: int | None = None):
+        live_path = Path(research_cfg.live_state_path)
+
+        def sample() -> dict:
+            now = int(time.time() * 1000)
+            try:
+                state = json.loads(live_path.read_text())
+            except (OSError, json.JSONDecodeError):
+                return {"live_status": "DISCONNECTED", "server_ts_ms": now,
+                        "capital": None, "positions": []}
+            age = now - state.get("published_at_ms", 0)
+            state["live_status"] = "STALE" if age > max(
+                research_cfg.price_fresh_seconds, 60) * 1000 else "LIVE"
+            state["server_ts_ms"] = now
+            state["publish_age_ms"] = age
+            return state
+
+        async def stream():
+            sent, last = 0, None
+            while limit is None or sent < limit:
+                payload = json.dumps(sample())
+                if payload != last or limit is not None:
+                    yield f"event: research_live\ndata: {payload}\n\n"
+                    last = payload
+                    sent += 1
+                if limit is None or sent < limit:
+                    await asyncio.sleep(0.2)
+        return StreamingResponse(stream(), media_type="text/event-stream")
 
     @app.get("/api/positions")
     def positions():
