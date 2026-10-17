@@ -2,7 +2,12 @@
 
 **Branch:** `merge-ten-strategies` (off `financial-audit`)
 **Backups:** `backups/2026-10-17-premerge/` — all 4 DBs, WAL-consistent, `integrity_check=ok`, `fk_violations=0`
-**Status:** AWAITING APPROVAL. No running DB mutated, no engine restarted, no balance altered.
+**Status:** ✅ COMPLETED 2026-10-17. Owner-approved, applied to the live system, fully verified.
+Applied via `propaper merge-labs --apply` (backup `backups/merge-apply-1792265405`): live Extreme DB
+5→10 sleeves, cash $179.69→$429.69, realized $2.8193 unchanged, peak $274.5584→$524.5584, threshold
+$474.5584; BNB+XMR preserved; both labs reconcile; 247 tests pass; dashboard browser-QA'd live.
+`research-run` retired; one unified `lab-run` serves all 10. `peak_equity_pre_merge` (274.5584) and
+`peak_equity_pre_correction` (275.76) preserved. Hybrid 50%-at-2R remains PENDING (not implemented).
 **Hard constraint:** PAPER ONLY. No real orders, credentials, or funds — ever.
 
 ## 1. Inspection findings
