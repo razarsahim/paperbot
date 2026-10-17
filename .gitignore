@@ -9,3 +9,5 @@ state/
 *.sqlite-shm
 *.sqlite-wal
 .DS_Store
+logs/
+launcher/run/
