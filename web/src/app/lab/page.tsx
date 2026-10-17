@@ -1,12 +1,19 @@
 "use client";
 
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   FlaskConical,
   Gauge,
+  Layers,
   Lock,
+  Pause,
   Radio,
   Scale,
   TrendingUp,
+  TriangleAlert,
+  Trophy,
   Waves,
   Zap,
   type LucideIcon,
@@ -28,7 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   fmtDateTime,
   fmtPct,
@@ -38,7 +45,8 @@ import {
   pnlClass,
   timeAgo,
 } from "@/lib/format";
-import { useLab, useLabLive, useNow } from "@/lib/hooks";
+import { getStrategies } from "@/lib/api";
+import { useLab, useLabLive, useNow, usePoll } from "@/lib/hooks";
 import type {
   Lab,
   LabLiveCapital,
@@ -47,16 +55,24 @@ import type {
   LabPosition,
   LabStrategy,
   Source,
+  StrategyRow,
 } from "@/lib/types";
 
 const STALE_AFTER_MS = 3 * 60_000;
 
 const STRATEGY_ICONS: Record<string, LucideIcon> = {
+  // extreme cohort
   breakout: Zap,
   trend: TrendingUp,
   meanrev: Waves,
   funding: Scale,
   momo: Gauge,
+  // research cohort
+  carry: Scale,
+  pairs: Waves,
+  seasonality: Gauge,
+  voltarget: TrendingUp,
+  liqsweep: Zap,
 };
 
 function strategyIcon(key: string): LucideIcon {
@@ -402,12 +418,375 @@ function auditLevelClass(level: string): string {
   return "text-muted-foreground";
 }
 
+// ---------- cohort + per-strategy status ----------
+
+type Cohort = LabStrategy["cohort"];
+type CohortFilter = "all" | Cohort;
+
+/** Distinct cohort pill: amber EXTREME (original 5) vs cyan RESEARCH (migrated 5). */
+function CohortBadge({ cohort }: { cohort: Cohort }) {
+  if (cohort === "extreme") {
+    return (
+      <Badge className="border-amber-500/40 bg-amber-500/15 text-[10px] font-semibold tracking-wider text-amber-600 uppercase dark:text-amber-400">
+        Extreme
+      </Badge>
+    );
+  }
+  return (
+    <Badge className="border-cyan-500/40 bg-cyan-500/15 text-[10px] font-semibold tracking-wider text-cyan-700 uppercase dark:text-cyan-300">
+      Research
+    </Badge>
+  );
+}
+
+type StatusKind = "ACTIVE" | "PAUSED" | "LOCKED" | "WARNING" | "DATA-STALE";
+
+/**
+ * Per-strategy status, resolved in severity order:
+ * locked → warning → (lab manually paused) → (data stale) → active.
+ */
+function strategyStatusKind(
+  s: LabStrategy,
+  manualPause: boolean,
+  dataStale: boolean
+): StatusKind {
+  if (s.status.level === "locked" || s.locked) return "LOCKED";
+  if (s.status.level === "warning") return "WARNING";
+  if (manualPause) return "PAUSED";
+  if (dataStale) return "DATA-STALE";
+  return "ACTIVE";
+}
+
+const STATUS_STYLES: Record<StatusKind, string> = {
+  ACTIVE:
+    "border-emerald-500/40 text-emerald-600 dark:text-emerald-400",
+  WARNING:
+    "border-amber-500/50 bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  LOCKED: "border-red-500/60 bg-red-500/15 text-red-600 dark:text-red-400",
+  PAUSED: "border-border bg-muted/50 text-muted-foreground",
+  "DATA-STALE":
+    "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+};
+
+function StrategyStatusBadge({ kind }: { kind: StatusKind }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex h-5 shrink-0 items-center gap-1 rounded-full border px-2 text-[10px] font-semibold tracking-wider uppercase",
+        STATUS_STYLES[kind]
+      )}
+    >
+      {kind === "LOCKED" && <Lock className="size-3" />}
+      {kind === "PAUSED" && <Pause className="size-3" />}
+      {kind}
+    </span>
+  );
+}
+
+// ---------- forward-paper leaderboard ----------
+
+type LbSortKey =
+  | "rank_by_net_pnl"
+  | "net"
+  | "return_pct"
+  | "win_rate_pct"
+  | "profit_factor"
+  | "trade_count";
+
+type SortDir = "asc" | "desc";
+
+function lbNet(r: StrategyRow): number {
+  return r.realized_pnl_usd + r.unrealized_pnl_usd;
+}
+
+const LB_ACCESSORS: Record<LbSortKey, (r: StrategyRow) => number | null> = {
+  rank_by_net_pnl: (r) => r.rank_by_net_pnl,
+  net: (r) => lbNet(r),
+  return_pct: (r) => r.return_pct,
+  win_rate_pct: (r) => r.win_rate_pct,
+  profit_factor: (r) => r.profit_factor,
+  trade_count: (r) => r.trade_count,
+};
+
+// Rank is naturally best-first when ascending (1 = best); everything else desc.
+function lbDefaultDir(key: LbSortKey): SortDir {
+  return key === "rank_by_net_pnl" ? "asc" : "desc";
+}
+
+function lbCompare(a: StrategyRow, b: StrategyRow, key: LbSortKey, dir: SortDir): number {
+  const av = LB_ACCESSORS[key](a);
+  const bv = LB_ACCESSORS[key](b);
+  if (av === null && bv === null) return a.rank_by_net_pnl - b.rank_by_net_pnl;
+  if (av === null) return 1; // nulls always sink
+  if (bv === null) return -1;
+  const raw = av - bv;
+  return dir === "asc" ? raw : -raw;
+}
+
+interface LbColumn {
+  key: LbSortKey;
+  label: string;
+  align: "left" | "right";
+}
+
+const LB_COLUMNS: LbColumn[] = [
+  { key: "rank_by_net_pnl", label: "Rank", align: "left" },
+  { key: "net", label: "Net P&L", align: "right" },
+  { key: "return_pct", label: "Return %", align: "right" },
+  { key: "win_rate_pct", label: "Win rate", align: "right" },
+  { key: "profit_factor", label: "Profit factor", align: "right" },
+  { key: "trade_count", label: "Trades", align: "right" },
+];
+
+function LbSortHeader({
+  col,
+  active,
+  dir,
+  onSort,
+}: {
+  col: LbColumn;
+  active: boolean;
+  dir: SortDir;
+  onSort: (key: LbSortKey) => void;
+}) {
+  const Icon = active ? (dir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+  return (
+    <TableHead
+      className={cn(
+        col.align === "right" ? "text-right" : "text-left",
+        "cursor-pointer select-none whitespace-nowrap hover:text-foreground",
+        active && "text-foreground"
+      )}
+      aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(col.key)}
+        className={cn("inline-flex items-center gap-1", col.align === "right" && "flex-row-reverse")}
+      >
+        {col.label}
+        <Icon className={cn("size-3", active ? "opacity-100" : "opacity-40")} />
+      </button>
+    </TableHead>
+  );
+}
+
+/**
+ * Sortable best↔worst leaderboard over the /api/strategies forward-paper
+ * diagnostics, joined to the lab strategies for the per-strategy status badge.
+ * These are simulated paper results — NOT backtested or validated returns —
+ * and small samples carry no statistical weight.
+ */
+function Leaderboard({
+  rows,
+  labByKey,
+  manualPause,
+  dataStale,
+  source,
+  loading,
+}: {
+  rows: StrategyRow[];
+  labByKey: Map<string, LabStrategy>;
+  manualPause: boolean;
+  dataStale: boolean;
+  source: Source;
+  loading: boolean;
+}) {
+  const [sort, setSort] = useState<{ key: LbSortKey; dir: SortDir }>({
+    key: "rank_by_net_pnl",
+    dir: "asc",
+  });
+  const sorted = useMemo(
+    () => [...rows].sort((a, b) => lbCompare(a, b, sort.key, sort.dir)),
+    [rows, sort]
+  );
+  const onSort = (key: LbSortKey) =>
+    setSort((prev) =>
+      prev.key === key
+        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: lbDefaultDir(key) }
+    );
+
+  return (
+    <Card className="py-0">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 py-3">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <Trophy className="size-4 text-amber-500" />
+          Leaderboard — best to worst (forward paper)
+        </CardTitle>
+        <SourceBadge source={source} />
+      </CardHeader>
+      <CardContent className="px-0 pb-3">
+        <p className="px-4 pb-2 text-[11px] leading-snug text-amber-700 dark:text-amber-300">
+          Forward-paper diagnostics only — simulated net P&amp;L across the unified lab. These are
+          NOT backtested or validated returns; strategies flagged with a warning icon have too few
+          trades to be statistically significant. Default order is best-first by net P&amp;L rank.
+        </p>
+        {loading && rows.length === 0 ? (
+          <div className="space-y-2 p-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-full" />
+            ))}
+          </div>
+        ) : rows.length === 0 ? (
+          <div className="p-4">
+            <EmptyState
+              icon={Trophy}
+              title="No strategies to rank"
+              description="The diagnostics endpoint returned no rows for this cohort."
+            />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table className="text-xs">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  {LB_COLUMNS.slice(0, 1).map((col) => (
+                    <LbSortHeader
+                      key={col.key}
+                      col={col}
+                      active={sort.key === col.key}
+                      dir={sort.dir}
+                      onSort={onSort}
+                    />
+                  ))}
+                  <TableHead>Strategy</TableHead>
+                  <TableHead>Cohort</TableHead>
+                  {LB_COLUMNS.slice(1).map((col) => (
+                    <LbSortHeader
+                      key={col.key}
+                      col={col}
+                      active={sort.key === col.key}
+                      dir={sort.dir}
+                      onSort={onSort}
+                    />
+                  ))}
+                  <TableHead className="text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sorted.map((r) => {
+                  const net = lbNet(r);
+                  const ls = labByKey.get(r.key);
+                  return (
+                    <TableRow
+                      key={`${r.lab}:${r.key}`}
+                      className={r.lab === "extreme" ? "bg-amber-500/5" : "bg-cyan-500/5"}
+                    >
+                      <TableCell>
+                        <span className="inline-flex items-center gap-1.5 font-semibold tabular-nums">
+                          {r.rank_by_net_pnl === 1 && <Trophy className="size-3.5 text-amber-500" />}
+                          {r.rank_by_net_pnl}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium whitespace-nowrap">{r.name}</TableCell>
+                      <TableCell>
+                        <CohortBadge cohort={r.lab} />
+                      </TableCell>
+                      <TableCell className={cn("text-right font-semibold tabular-nums", pnlClass(net))}>
+                        {fmtUsd(net, { sign: true })}
+                      </TableCell>
+                      <TableCell className={cn("text-right tabular-nums", pnlClass(r.return_pct))}>
+                        {fmtPct(r.return_pct, 2, true)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {r.win_rate_pct === null ? "—" : fmtPct(r.win_rate_pct, 1)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {r.profit_factor === null ? "—" : r.profit_factor.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="inline-flex items-center justify-end gap-1 tabular-nums">
+                          {r.trade_count}
+                          {r.sample === "insufficient" && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex cursor-default">
+                                  <TriangleAlert className="size-3.5 text-amber-500" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                Insufficient sample — far too few trades to draw any conclusion.
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {ls ? (
+                          <StrategyStatusBadge
+                            kind={strategyStatusKind(ls, manualPause, dataStale)}
+                          />
+                        ) : r.locked ? (
+                          <StrategyStatusBadge kind="LOCKED" />
+                        ) : (
+                          <span className="text-muted-foreground/50">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function LabPage() {
   const { data, source, loading } = useLab();
+  const {
+    data: strategiesData,
+    source: strategiesSource,
+    loading: strategiesLoading,
+  } = usePoll(getStrategies, 15_000);
   const { live, connected, receivedAtMs } = useLabLive();
   const now = useNow(15_000);
   const nowFast = useNow(1_000);
   const lab = data ?? null;
+
+  // Cohort filter so the ten sleeves read as one lab with two cohorts.
+  const [cohort, setCohort] = useState<CohortFilter>("all");
+
+  // Per-strategy status inputs (lab-wide pause + data staleness).
+  const manualPause = Boolean(lab?.status.manual_pause);
+  const scanStale =
+    lab !== null &&
+    now > 0 &&
+    (lab.status.last_scan_ms === null || now - lab.status.last_scan_ms > STALE_AFTER_MS);
+  // Only a reachable backend can be "stale"; in demo the page is wholly synthetic.
+  const dataStale = source === "live" && lab !== null && (!lab.status.live || scanStale);
+
+  const allStrategies = useMemo(() => lab?.strategies ?? [], [lab]);
+  const labByKey = useMemo(
+    () => new Map(allStrategies.map((s) => [s.key, s])),
+    [allStrategies]
+  );
+  const rowByKey = useMemo(
+    () => new Map((strategiesData?.strategies ?? []).map((r) => [r.key, r])),
+    [strategiesData]
+  );
+  const cohortCounts = useMemo(
+    () => ({
+      all: allStrategies.length,
+      extreme: allStrategies.filter((s) => s.cohort === "extreme").length,
+      research: allStrategies.filter((s) => s.cohort === "research").length,
+    }),
+    [allStrategies]
+  );
+  const visibleStrategies = useMemo(
+    () => allStrategies.filter((s) => cohort === "all" || s.cohort === cohort),
+    [allStrategies, cohort]
+  );
+  const leaderboardRows = useMemo(
+    () =>
+      (strategiesData?.strategies ?? []).filter(
+        (r) => cohort === "all" || r.lab === cohort
+      ),
+    [strategiesData, cohort]
+  );
 
   // EventSource down => DISCONNECTED regardless of the last payload received.
   const liveStatus: LabLiveStatus =
@@ -519,7 +898,8 @@ export default function LabPage() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         <StatTile
           label="Initial (virtual)"
-          value={fmtUsd(capital?.initial_usd ?? 250)}
+          value={fmtUsd(capital?.initial_usd ?? 500)}
+          sub="10 × $50 sleeves"
           source={capitalSource}
           loading={capitalLoading}
         />
@@ -600,31 +980,85 @@ export default function LabPage() {
         </CardContent>
       </Card>
 
-      {/* Strategy cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+      {/* Strategies — one unified lab, two cohorts, filterable */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <Layers className="size-4 text-muted-foreground" />
+          Strategies
+          <span className="text-xs font-normal text-muted-foreground">
+            one unified lab · {cohortCounts.extreme} extreme + {cohortCounts.research} research
+            {" "}cohorts
+          </span>
+        </h2>
+        <div className="inline-flex rounded-lg border border-border/60 p-0.5">
+          {(["all", "extreme", "research"] as CohortFilter[]).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCohort(c)}
+              aria-pressed={cohort === c}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors",
+                cohort === c
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {c === "all" ? "All" : c}
+              <span className="tabular-nums opacity-70">{cohortCounts[c]}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {loading || !lab
-          ? Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-36 w-full" />)
-          : lab.strategies.map((s) => {
+          ? Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} className="h-64 w-full" />)
+          : visibleStrategies.map((s) => {
               const Icon = strategyIcon(s.key);
+              const row = rowByKey.get(s.key);
+              const statusKind = strategyStatusKind(s, manualPause, dataStale);
+              const netPnl = s.realized_pnl_usd + s.unrealized_pnl_usd;
               return (
                 <Card key={s.key} className="gap-2 rounded-xl border-border/60 bg-card/60 py-4">
-                  <CardHeader className="flex-row items-center justify-between py-0">
-                    <CardTitle className="flex items-center gap-2 text-sm">
+                  <CardHeader className="flex-row items-start justify-between gap-2 py-0">
+                    <CardTitle className="flex min-w-0 items-center gap-2 text-sm">
                       <Icon className="size-4 shrink-0 text-muted-foreground" />
-                      {s.display_name}
+                      <span className="truncate">{s.display_name}</span>
                     </CardTitle>
-                    <SourceBadge source={source} />
+                    <div className="flex shrink-0 items-center gap-1">
+                      <CohortBadge cohort={s.cohort} />
+                      <SourceBadge source={source} />
+                    </div>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-2">
-                    <p className="text-xs leading-snug text-muted-foreground">{s.description}</p>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <StrategyStatusBadge kind={statusKind} />
+                      <Badge variant="outline" className="text-[10px] tabular-nums">
+                        {s.leverage}x
+                      </Badge>
+                      <span
+                        className={cn("ml-auto text-xs font-semibold tabular-nums", pnlClass(s.return_pct))}
+                      >
+                        {fmtPct(s.return_pct, 2, true)}
+                      </span>
+                    </div>
+                    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                      {s.description}
+                    </p>
+                    <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 text-xs">
                       <div>
-                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Alloc</p>
-                        <p className="font-semibold tabular-nums">{fmtUsd(s.allocation_usd)}</p>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Equity</p>
+                        <p className="font-semibold tabular-nums">
+                          {row ? fmtUsd(row.equity_usd) : fmtUsd(s.cash_usd + s.unrealized_pnl_usd)}
+                        </p>
                       </div>
                       <div>
                         <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Cash</p>
                         <p className="font-semibold tabular-nums">{fmtUsd(s.cash_usd)}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Alloc</p>
+                        <p className="font-semibold tabular-nums">{fmtUsd(s.allocation_usd)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Real. P&L</p>
@@ -632,7 +1066,74 @@ export default function LabPage() {
                           {fmtUsd(s.realized_pnl_usd, { sign: true })}
                         </p>
                       </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Unreal. P&L</p>
+                        <p className={cn("font-semibold tabular-nums", pnlClass(s.unrealized_pnl_usd))}>
+                          {fmtUsd(s.unrealized_pnl_usd, { sign: true })}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Net P&L</p>
+                        <p className={cn("font-semibold tabular-nums", pnlClass(netPnl))}>
+                          {fmtUsd(netPnl, { sign: true })}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Win rate</p>
+                        <p className="font-semibold tabular-nums">
+                          {row?.win_rate_pct == null ? "—" : fmtPct(row.win_rate_pct, 1)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Profit fac.</p>
+                        <p className="font-semibold tabular-nums">
+                          {row?.profit_factor == null ? "—" : row.profit_factor.toFixed(2)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] tracking-wider text-muted-foreground uppercase">Trades</p>
+                        <p className="inline-flex items-center gap-1 font-semibold tabular-nums">
+                          {row?.trade_count ?? "—"}
+                          {row?.sample === "insufficient" && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex cursor-default">
+                                  <TriangleAlert className="size-3 text-amber-500" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                Insufficient sample — far too few trades to interpret.
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </p>
+                      </div>
                     </div>
+                    {/* Remaining loss allowance: research has a $30 floor, extreme has none */}
+                    {s.cohort === "research" ? (
+                      <p className="text-[11px] text-muted-foreground">
+                        Remaining allowance{" "}
+                        <span
+                          className={cn(
+                            "font-semibold tabular-nums",
+                            allowanceClass(s.status.remaining_allowance_usd)
+                          )}
+                        >
+                          {fmtUsd(s.status.remaining_allowance_usd)}
+                        </span>{" "}
+                        · $30 per-strategy floor
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground">
+                        No per-strategy floor (lab-level trailing lockout only)
+                      </p>
+                    )}
+                    {s.locked && s.lock_reason && (
+                      <p className="flex items-start gap-1 text-[11px] font-medium text-red-600 dark:text-red-400">
+                        <Lock className="mt-0.5 size-3 shrink-0" />
+                        {s.lock_reason}
+                      </p>
+                    )}
                     <div className="flex min-h-5 flex-wrap gap-1">
                       {s.open_symbols.length === 0 ? (
                         <span className="text-[10px] text-muted-foreground">no open symbols</span>
@@ -644,11 +1145,24 @@ export default function LabPage() {
                         ))
                       )}
                     </div>
+                    <p className="text-[10px] tracking-wide text-muted-foreground/80 uppercase">
+                      ATR trailing stop · no fixed target
+                    </p>
                   </CardContent>
                 </Card>
               );
             })}
       </div>
+
+      {/* Sortable forward-paper leaderboard (joins /api/strategies by key) */}
+      <Leaderboard
+        rows={leaderboardRows}
+        labByKey={labByKey}
+        manualPause={manualPause}
+        dataStale={dataStale}
+        source={strategiesSource}
+        loading={strategiesLoading}
+      />
 
       {/* Opportunities matrix */}
       <Card className="py-0">
@@ -1017,8 +1531,11 @@ export default function LabPage() {
 
       {/* Disclaimer */}
       <p className="text-[11px] text-muted-foreground">
-        Extreme Lab is a speculative PAPER-ONLY research simulation with virtual funds. Nothing here
-        is investment advice, and negative results are expected.
+        The Extreme Lab is a speculative PAPER-ONLY research simulation: one unified virtual $500
+        book across ten $50 sleeves (5 extreme + 5 migrated research strategies), all on simulated
+        10x perps with an ATR trailing stop and no fixed take-profit target. Every number is
+        forward-paper — never a backtest or validated return — nothing here is investment advice,
+        and negative results are expected.
       </p>
     </div>
   );

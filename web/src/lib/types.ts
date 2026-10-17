@@ -270,6 +270,13 @@ export interface LabCapital {
   remaining_allowance_usd: number;
 }
 
+export interface LabStrategyStatus {
+  level: "ok" | "warning" | "locked";
+  cash_usd?: number;
+  locked?: boolean;
+  remaining_allowance_usd: number;
+}
+
 export interface LabStrategy {
   key: string;
   name: string;
@@ -279,6 +286,15 @@ export interface LabStrategy {
   cash_usd: number;
   realized_pnl_usd: number;
   open_symbols: string[];
+  /** "extreme" (original 5, $5 risk, no floor) or "research" (migrated 5, $2 risk, $30 floor). */
+  cohort: "extreme" | "research";
+  leverage: number;
+  status: LabStrategyStatus;
+  unrealized_pnl_usd: number;
+  return_pct: number;
+  /** per-strategy lock flag + reason from the ledger (research cohort). */
+  locked?: boolean;
+  lock_reason?: string | null;
 }
 
 export interface LabPosition {

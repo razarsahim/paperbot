@@ -4,7 +4,6 @@ import { cn } from "cn";
 import {
   Activity,
   BarChart3,
-  Beaker,
   ChartCandlestick,
   CircleDot,
   Flame,
@@ -37,7 +36,6 @@ const NAV = [
   { href: "/analytics", label: "Analytics", icon: LineChart },
   { href: "/hype", label: "Hype Radar", icon: Flame },
   { href: "/lab", label: "Extreme Lab", icon: FlaskConical },
-  { href: "/research", label: "Research Lab", icon: Beaker },
   { href: "/strategies", label: "Strategy Analytics", icon: BarChart3 },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/settings", label: "Settings", icon: Settings },
