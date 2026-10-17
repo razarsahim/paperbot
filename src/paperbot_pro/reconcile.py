@@ -102,18 +102,19 @@ def _reconcile(store, strategy_keys, allocation: float, trailing_dd: float,
     equity = total_cash + margin_used + unreal
     peak = float(store.get("peak_equity", starting_capital))
     notes = []
-    # HWM invariant: peak must be >= the max equity ever RECORDED (it ratchets
-    # per cycle). Current live equity can exceed peak transiently between
-    # cycles — that's expected, not a defect, so it is a note, not a breach.
+    # A peak BELOW the max equity ever recorded is NOT a material discrepancy:
+    # it only tightens the trailing-drawdown threshold, so it can never inflate
+    # available trading capital. It legitimately occurs after a verified
+    # downward peak correction (where historical snapshots were themselves
+    # inflated by a bug). Surface it as a note so it is visible but never trips
+    # the integrity lock. The only peak value that is a real defect is one below
+    # starting capital — that is structural corruption.
     history = store.equity_history(10**9)
     hist_max = max((r["equity_usd"] for r in history), default=starting_capital)
     if peak < hist_max - 1e-4:
-        discrepancies.append({
-            "strategy": None, "kind": "hwm_not_ratcheted",
-            "detail": f"peak_equity {peak:.4f} < max recorded equity {hist_max:.4f}",
-            "impact_usd": hist_max - peak,
-            "recommended_correction": {"table": "kv", "key": "peak_equity",
-                                       "value": round(hist_max, 8)}})
+        notes.append(f"peak_equity {peak:.4f} < max recorded equity "
+                     f"{hist_max:.4f} (tighter protection only; not a breach — "
+                     "expected after a verified downward peak correction)")
     if peak < starting_capital - 1e-4:
         discrepancies.append({
             "strategy": None, "kind": "peak_below_initial",

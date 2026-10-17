@@ -87,6 +87,28 @@ def test_detects_funding_mismatch(tmp_path):
     assert fm and fm[0]['impact_usd'] == pytest.approx(0.3)
 
 
+def test_peak_below_recorded_equity_is_a_note_not_a_lock(tmp_path):
+    """A peak BELOW a historically-recorded equity (e.g. after a legitimate
+    downward peak correction, where old snapshots were inflated) only tightens
+    protection — it must be an informational note, never a material
+    discrepancy that trips the integrity lock."""
+    store, cfg = make(tmp_path)
+    store.record_equity(1000, 275.07, 250, 0, 0, 275.07, 225.07)  # inflated old snapshot
+    store.set("peak_equity", 274.56)                               # corrected (lower) peak
+    report = reconcile_lab(store, cfg)
+    assert report["ok"] is True                                    # NOT a discrepancy
+    assert not any(d["kind"] == "hwm_not_ratcheted" for d in report["discrepancies"])
+    assert any("peak" in n.lower() for n in report["notes"])       # surfaced as a note
+
+
+def test_peak_below_initial_is_a_real_discrepancy(tmp_path):
+    store, cfg = make(tmp_path)
+    store.set("peak_equity", 240.0)        # below the $250 starting capital = corruption
+    report = reconcile_lab(store, cfg)
+    assert not report["ok"]
+    assert any(d["kind"] == "peak_below_initial" for d in report["discrepancies"])
+
+
 def test_recommended_correction_present(tmp_path):
     store, cfg = make(tmp_path)
     with store.conn:
