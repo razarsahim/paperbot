@@ -284,6 +284,7 @@ def _reset_lab(args, cfg: ProSettings) -> None:
     forward-paper experiment. Default: dry-run (mutates nothing). --apply:
     archive (verified) + reinit the LIVE DB in one transaction. Stop the lab
     engine before --apply so there is no competing writer."""
+    import os
     import time
     from .lab.config import LabSettings
     from .lab.store import LabStore
