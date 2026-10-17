@@ -73,3 +73,19 @@ def test_api_reports_the_effective_flag(tmp_path):
     assert compute_lab(store, cfg)["status"]["auto_entry"] is False
     store.set("lab_auto_entry", True)
     assert compute_lab(store, cfg)["status"]["auto_entry"] is True
+
+
+def test_health_and_settings_reflect_the_effective_lab_flag(tmp_path):
+    """The health lab badge and /api/settings must show the same effective
+    auto-entry the engine uses — not the stale config default."""
+    from fastapi.testclient import TestClient
+    from paperbot_pro.api import create_app
+    from paperbot_pro.config import ProSettings
+    pro = replace(ProSettings(), db_path=str(tmp_path / "pro.sqlite"),
+                  legacy_db_path=str(tmp_path / "paper.sqlite"),
+                  validation_report_path=str(tmp_path / "v.json"))
+    lab = replace(LabSettings(), db_path=str(tmp_path / "lab.sqlite"), main_db_path=pro.db_path)
+    LabStore(lab.db_path, lab).set("lab_auto_entry", True)
+    client = TestClient(create_app(pro, lab))
+    assert client.get("/api/health").json()["engines"]["lab"]["auto_entry_enabled"] is True
+    assert client.get("/api/settings").json()["lab_auto_entry"] is True

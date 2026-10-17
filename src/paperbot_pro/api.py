@@ -382,7 +382,8 @@ def create_app(cfg: ProSettings, lab_cfg=None, research_cfg=None) -> FastAPI:
                                         now - lab_store.get("last_scan_ms") <
                                         lab_cfg.monitor_interval_seconds * 3000),
                         "last_scan_ms": lab_store.get("last_scan_ms"),
-                        "auto_entry_enabled": lab_cfg.auto_entry,
+                        "auto_entry_enabled": bool(lab_store.get("lab_auto_entry",
+                                                                 lab_cfg.auto_entry)),
                         "locked": bool(lab_store.get("lab_locked"))},
             },
             "data_sources": sources,
@@ -560,6 +561,11 @@ def create_app(cfg: ProSettings, lab_cfg=None, research_cfg=None) -> FastAPI:
     @app.get("/api/settings")
     def settings():
         d = asdict(cfg)
+        # `auto_entry` above is the MAIN engine's flag. Surface the unified
+        # Extreme Lab's effective (persistent) auto-entry separately so the
+        # Settings view is unambiguous and matches the engine + lab dashboard.
+        d["lab_auto_entry"] = bool(lab_store.get("lab_auto_entry", lab_cfg.auto_entry))
+        d["lab_manual_pause"] = bool(lab_store.get("lab_manual_pause"))
         d["note"] = "PAPER ONLY — read-only display; no credentials exist in this system"
         return d
 
