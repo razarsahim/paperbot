@@ -90,6 +90,14 @@ def main():
     ml.add_argument("--apply", action="store_true",
                     help="Apply to the LIVE Extreme DB (stop the lab engine first)")
     ml.add_argument("--research-db", default="state/research_lab.sqlite")
+    rl = sub.add_parser("reset-lab",
+                        help="Archive the Extreme Lab and start a FRESH $500/10-sleeve "
+                             "experiment (PAPER). Default is a dry-run; --apply mutates live.")
+    rl.add_argument("--apply", action="store_true",
+                    help="Apply: archive + reinit the LIVE Extreme DB (stop the lab engine first)")
+    rl.add_argument("--research-db", default="state/research_lab.sqlite")
+    rl.add_argument("--archive-dir", default=None,
+                    help="Where to archive (default archives/fresh-start-<ts>)")
     sub.add_parser("migrate-lab",
                    help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
     sub.add_parser("audit-accounting",
@@ -117,6 +125,9 @@ def main():
         return
     if args.command == "merge-labs":
         _merge_labs(args, cfg)
+        return
+    if args.command == "reset-lab":
+        _reset_lab(args, cfg)
         return
     if args.command == "api":
         import uvicorn
@@ -264,6 +275,53 @@ def _merge_labs(args, cfg: ProSettings) -> None:
         if not rec["ok"]:
             for d in rec["discrepancies"]:
                 print(f"    DISCREPANCY: {d['kind']} {d['detail']}")
+    finally:
+        lab.close()
+
+
+def _reset_lab(args, cfg: ProSettings) -> None:
+    """Archive the current Extreme Lab and reinitialise a FRESH $500/10-sleeve
+    forward-paper experiment. Default: dry-run (mutates nothing). --apply:
+    archive (verified) + reinit the LIVE DB in one transaction. Stop the lab
+    engine before --apply so there is no competing writer."""
+    import time
+    from .lab.config import LabSettings
+    from .lab.store import LabStore
+    from .lab.reset import reset_lab, plan_reset
+    from .reconcile import reconcile_lab
+
+    lab_cfg = LabSettings.from_env()
+    if not args.apply:
+        plan = plan_reset(lab_cfg.db_path, args.research_db)
+        c, f = plan["current"], plan["fresh"]
+        print("DRY-RUN reset (live DBs untouched):")
+        print("  WILL ARCHIVE (current experiment):")
+        print(f"    strategies {c['strategies']} · cash ${c['total_cash']:.4f} · "
+              f"realized ${c['total_realized_pnl']:.4f} · peak ${c['peak_equity']}")
+        print(f"    open positions {c['open_positions']} {c['position_symbols']} · "
+              f"trades {c['completed_trades']} · equity_history {c['equity_history_rows']} rows "
+              f"· audit {c['audit_rows']} rows")
+        print("  WILL CREATE (fresh experiment):")
+        print(f"    ${f['total_cash']:.0f} across {f['strategies']} sleeves (${f['allocation_per_strategy']:.0f} each), "
+              f"realized $0, 0 positions, 0 trades")
+        print(f"    peak ${f['peak_equity']:.0f} · threshold ${f['threshold']:.0f} · entries PAUSED")
+        print(f"  research archive present: {plan['research_present']}")
+        print("\nRe-run with --apply (after stopping `propaper lab-run`) to commit.")
+        return
+    archive_dir = args.archive_dir or os.path.join("archives", f"fresh-start-{int(time.time())}")
+    lab = LabStore(lab_cfg.db_path, lab_cfg)
+    try:
+        report = reset_lab(lab, args.research_db, archive_dir)
+        rec = reconcile_lab(lab, lab_cfg)
+        print(f"RESET APPLIED. Archived to: {archive_dir}")
+        print(f"  archived: peak ${report['old']['peak_equity']} cash ${report['old']['total_cash']:.2f} "
+              f"positions {report['old']['open_positions']} trades {report['old']['completed_trades']}")
+        print(f"  fresh: ${report['fresh']['total_cash']:.0f}/{report['fresh']['strategies']} sleeves "
+              f"peak ${report['fresh']['peak_equity']:.0f} threshold ${report['fresh']['threshold']:.0f} "
+              f"entries PAUSED")
+        print(f"  backup integrity: lab={report['lab_backup']['integrity_check']} "
+              f"research={(report['research_backup'] or {}).get('integrity_check')}")
+        print(f"  fresh DB reconciles: {rec['ok']}")
     finally:
         lab.close()
 
