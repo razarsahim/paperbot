@@ -158,6 +158,8 @@ def compute_lab(store, lab_cfg) -> dict:
             "locked": bool(store.get("lab_locked")),
             "lock_reason": store.get("lab_lock_reason"),
             "manual_pause": bool(store.get("lab_manual_pause")),
+            "integrity_locked": bool(store.get("integrity_locked")),
+            "integrity_reason": store.get("integrity_reason"),
         },
         "capital": {
             "initial_usd": lab_cfg.starting_capital_usd,
@@ -215,6 +217,8 @@ def compute_research(store, research_cfg) -> dict:
             "locked": bool(store.get("lab_locked")),
             "lock_reason": store.get("lab_lock_reason"),
             "manual_pause": bool(store.get("research_manual_pause")),
+            "integrity_locked": bool(store.get("integrity_locked")),
+            "integrity_reason": store.get("integrity_reason"),
         },
         "capital": {
             "initial_usd": research_cfg.starting_capital_usd,

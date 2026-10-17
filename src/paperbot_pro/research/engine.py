@@ -413,6 +413,13 @@ class ResearchEngine:
                                   equity_now - self.db.total_cash() - margin_used,
                                   hwm["peak_equity"], hwm["threshold"])
         self.db.set("marks", marks)
+        try:
+            from ..integrity import check_integrity
+            from ..reconcile import reconcile_research
+            check_integrity(self.db, self.cfg, reconcile_research, now_ms)
+        except Exception as exc:
+            self.db.audit("warning", "integrity",
+                          f"integrity check skipped: {type(exc).__name__}: {exc}", ts_ms=now_ms)
         self.db.set("last_scan_ms", now_ms)
         return summary
 

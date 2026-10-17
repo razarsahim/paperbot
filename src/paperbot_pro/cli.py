@@ -88,6 +88,10 @@ def main():
                    help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
     sub.add_parser("audit-accounting",
                    help="READ-ONLY financial reconciliation of both labs (changes nothing)")
+    clr = sub.add_parser("audit-clear",
+                         help="Clear an accounting-integrity lock AFTER review")
+    clr.add_argument("--lab", choices=["extreme", "research"], required=True)
+    clr.add_argument("--note", required=True, help="Required review note")
     sub.add_parser("research-run", help="Continuous Strategy Research Lab paper engine")
     sub.add_parser("research-once", help="One Research Lab monitor/scan cycle")
     sub.add_parser("research-status", help="Research Lab capital, HWM and 5 strategies")
@@ -115,6 +119,8 @@ def main():
     try:
         if args.command == "audit-accounting":
             _audit_accounting(cfg)
+        elif args.command == "audit-clear":
+            _audit_clear(args, cfg)
         elif args.command == "migrate-lab":
             _migrate_lab(store, cfg)
         elif args.command == "pause":
@@ -175,6 +181,27 @@ def main():
                         print(f"SAFE ERROR (no entries): {type(exc).__name__}: {exc}",
                               file=sys.stderr, flush=True)
                         time.sleep(min(cfg.scan_interval_seconds * 2 ** min(failures, 5), 1800))
+    finally:
+        store.close()
+
+
+def _audit_clear(args, cfg: ProSettings) -> None:
+    from dataclasses import replace as _replace
+    from .integrity import clear_integrity_lock
+    if args.lab == "extreme":
+        from .lab.config import LabSettings
+        from .lab.store import LabStore
+        lab_cfg = _replace(LabSettings.from_env(), main_db_path=cfg.db_path)
+        store = LabStore(lab_cfg.db_path, lab_cfg)
+    else:
+        from .research.config import ResearchSettings
+        from .research.store import ResearchStore
+        lab_cfg = _replace(ResearchSettings.from_env(), main_db_path=cfg.db_path)
+        store = ResearchStore(lab_cfg.db_path, lab_cfg)
+    try:
+        clear_integrity_lock(store, note=args.note)
+        print(f"Integrity lock cleared for the {args.lab} lab. New entries re-enabled "
+              "(subject to all other rails).")
     finally:
         store.close()
 

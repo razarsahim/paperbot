@@ -482,5 +482,14 @@ class LabEngine:
                                   equity_now - self.db.total_cash() - margin_used,
                                   state["peak_equity"], state["threshold"])
         self.db.set("marks", marks)
+        # Phase 5: per-cycle accounting-integrity check (read-only reconcile;
+        # a material breach blocks NEW entries via the governor, exits continue)
+        try:
+            from ..integrity import check_integrity
+            from ..reconcile import reconcile_lab
+            check_integrity(self.db, self.cfg, reconcile_lab, now_ms)
+        except Exception as exc:
+            self.db.audit("warning", "integrity",
+                          f"integrity check skipped: {type(exc).__name__}: {exc}", ts_ms=now_ms)
         self.db.set("last_scan_ms", now_ms)
         return summary

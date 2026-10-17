@@ -113,6 +113,9 @@ class ResearchGovernor:
         return verdict
 
     def _evaluate(self, planned: dict) -> Verdict:
+        if self.db.get("integrity_locked"):
+            return Verdict(False, "accounting integrity lock: new entries blocked "
+                                  "pending reconciliation review")
         if self.db.get("lab_locked"):
             return Verdict(False, "Lab locked (trailing drawdown): manual reset required")
         if self.db.get("research_manual_pause"):
