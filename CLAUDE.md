@@ -22,6 +22,21 @@ breach locks everything, emergency-exits at observed quotes, and requires
 is Lab-only and must never weaken the main portfolio's validation gate.
 Aggregate after `propaper migrate-lab`: main $750 + Lab $250 = $1,000.
 
+## Strategy Research Lab (2026-10-17)
+Second isolated experimental lab (`src/paperbot_pro/research`, own DB
+`state/research_lab.sqlite`): $250, five NEW strategies (regime trend,
+volatility breakout, trend pullback, range reversion, order-flow imbalance)
+at $50 each, $2/trade planned risk, a $30 per-strategy equity floor (=$20
+cumulative loss → exit+lock), a $40 warning, and a lab-level $50 trailing
+drawdown. Fully isolated from main ($750) and the Extreme Lab ($250);
+aggregate is now ~$1,275 (user kept main at $750 rather than reduce to
+$500). Reuses the perp math, live WS pipeline and validation. Auto-entry
+flag `PAPERBOT_RESEARCH_AUTO_ENTRY` is lab-only, OFF by default. Live
+validation is NEGATIVE (3 of 4 testable strategies lose heavily); treat as
+unvalidated hypotheses. CLI: `propaper research-run|once|status|pause|
+resume|reset`. API: `/api/research`, `/api/research/stream`,
+`/api/strategies` (10-way comparison).
+
 ## Developer commands
 - Install: `python3 -m pip install -e '.[dev,pro]'`
 - Tests: `python3 -m pytest -q` (legacy 40 tests must always pass)

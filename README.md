@@ -47,6 +47,29 @@ The main portfolio's negative-validation safeguard is untouched; the Lab
 flag affects only the Lab. Negative results are expected and reported
 honestly — this is speculative research, not investment advice.
 
+### Strategy Research Lab (second isolated $250 lab)
+
+Five additional strategies (regime-aware trend, volatility breakout, trend
+pullback, range mean-reversion, order-flow imbalance), $50 each, $2 planned
+risk/trade, a **$30 per-strategy equity floor** ($20 cumulative loss →
+exit + lock that strategy) plus a lab-wide **$50 trailing drawdown**. Own
+DB (`state/research_lab.sqlite`), fully isolated from main and the Extreme
+Lab. Live validation on ~18 months of real Bybit data is **negative** (3 of
+4 testable strategies lose heavily), so these are unvalidated hypotheses.
+
+```bash
+propaper research-once                      # one observation cycle (auto-entry off)
+export PAPERBOT_RESEARCH_AUTO_ENTRY=1       # research-lab-only opt-in
+propaper research-run                       # autonomous engine (live WS P&L)
+propaper research-status                    # capital, HWM, 5 strategies
+propaper research-pause | research-resume
+propaper research-reset --note "reviewed …"
+```
+
+Dashboard: **Strategy Analytics** (`/strategies`) compares all 10
+strategies; **Research Lab** (`/research`) is the live page. Auto-entry is
+OFF by default and only ever affects this lab.
+
 # Legacy engine: BTC/GBP, no leverage
 
 **Paper trading only.** This bot cannot place real orders. It has no API-key handling or exchange trade methods. It reads public spot market data, applies an illustrative, unvalidated strategy, simulates entries/exits, stores simulated positions and trades in SQLite, and shows a local dashboard.
