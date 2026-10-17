@@ -91,6 +91,36 @@ def test_crash_detection_and_bounded_restarts(tmp_path):
     assert ctl.restart_counts['dummy'] == ctl.max_restarts  # bounded, not infinite
 
 
+def test_own_match_recognizes_title_rewriting_processes(tmp_path):
+    """Processes like next-server rewrite their cmdline; a pid we started
+    (pidfile) may be verified via own_match, but external adoption must stay
+    strict so similar unrelated processes are never matched."""
+    script = tmp_path / 'rename.sh'
+    # exec a bash with a rewritten argv[0] to simulate a title rewrite
+    script.write_text(
+        "#!/bin/bash\nexec -a fake-server-title bash -c 'while :; do sleep 1; done'\n")
+    script.chmod(0o755)
+    svc = ServiceDef(key='web', name='Web', cmd=[str(script)], cwd=str(tmp_path),
+                     match=str(script), own_match=['fake-server-title'],
+                     log=str(tmp_path / 'web.log'))
+    ctl = Controller([svc], run_dir=str(tmp_path / 'run'))
+    ctl.start('web')
+    time.sleep(0.5)
+    st = ctl.status()['web']
+    assert st['state'] == 'running' and st['adopted'] is False  # via pidfile+own_match
+    # an EXTERNAL process with the same rewritten title is NOT adopted
+    external = subprocess.Popen(
+        ['bash', '-c', 'exec -a fake-server-title bash -c "while :; do sleep 1; done"'])
+    try:
+        time.sleep(0.3)
+        assert ctl.status()['web']['duplicates'] == 0
+        ctl.stop('web')
+        time.sleep(0.5)
+        assert external.poll() is None      # bystander with same title untouched
+    finally:
+        external.kill()
+
+
 def test_logs_are_written_per_service(tmp_path):
     script = tmp_path / 'talker.sh'
     script.write_text("#!/bin/bash\necho hello-from-service\nsleep 5\n")

@@ -4,16 +4,17 @@ A menu-bar app (📈) that starts, stops and supervises every PaperBot
 service in the background — no Terminal windows. All trading stays PAPER
 ONLY; the launcher never modifies balances, databases or positions.
 
-## One-time setup (two steps)
+The project lives at `/Users/raza/paperbot` (moved out of ~/Downloads so
+macOS needs no Full Disk Access grant — it just works).
 
-1. **Grant folder access** (macOS protects ~/Downloads, where the project
-   lives): System Settings → Privacy & Security → **Full Disk Access** →
-   "+" → select `/Users/raza/Downloads/crypto-paper-bot/PaperBot Pro.app`
-   → toggle it ON. (Alternative: if macOS shows an access prompt on first
-   launch, just click Allow.)
-2. **Add to Dock**: drag `PaperBot Pro.app` from the project folder onto
-   the Dock (optionally ⌘-drag the app into /Applications first — the
-   bundle uses absolute paths, so both locations work).
+## One-time setup (one step)
+
+**Add to Dock**: open `/Users/raza/paperbot` in Finder, drag
+`PaperBot Pro.app` onto the Dock. (Optional: ⌘-drag it into /Applications
+first — the bundle uses absolute paths to `/Users/raza/paperbot`, so both
+locations work. If you ever move the project folder, re-run
+`python launcher/build_app.py` or ask to regenerate the bundle, since the
+launch path is baked in.)
 
 ## Using it
 
@@ -61,5 +62,6 @@ that they're marked 🔴 failed for manual attention.
 - 🔴 with "exit N": open View Logs → that service's file.
 - "⚠ duplicate!": you have an extra copy running in some terminal — close
   it there (Ctrl+C); the launcher will keep the survivor adopted.
-- App does nothing from the Dock: the Full Disk Access grant above is
-  missing.
+- App does nothing from the Dock: check `logs/launcher/menubar.log`. If it
+  mentions a path error, the project folder was moved — regenerate the
+  bundle so the baked-in launch path matches.

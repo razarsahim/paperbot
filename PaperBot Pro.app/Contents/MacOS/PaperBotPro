@@ -1,11 +1,10 @@
 #!/bin/bash
-# PaperBot Pro launcher — PAPER TRADING ONLY. Runs the menu-bar controller
-# from the project venv; all paths are absolute to this checkout.
-REPO="/Users/raza/Downloads/crypto-paper-bot"
+# PaperBot Pro launcher — PAPER TRADING ONLY.
+REPO="/Users/raza/paperbot"
 LOG="$REPO/logs/launcher/menubar.log"
-mkdir -p "$(dirname "$LOG")"
-# single-instance: if the menubar app is already running, just activate it
-if pgrep -f "$REPO/launcher/menubar.py" >/dev/null; then
+mkdir -p "$(dirname "$LOG")" 2>/dev/null
+if /usr/bin/pgrep -f "$REPO/launcher/menubar.py" >/dev/null; then
   exit 0
 fi
-exec "$REPO/.venv/bin/python" "$REPO/launcher/menubar.py" >> "$LOG" 2>&1
+"$REPO/.venv/bin/python" "$REPO/launcher/menubar.py" >> "$LOG" 2>&1 &
+wait $!

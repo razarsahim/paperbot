@@ -36,6 +36,16 @@ class ServiceDef:
     env: dict = field(default_factory=dict)
     health_url: str | None = None   # optional HTTP health probe
     optional: bool = False          # excluded from Start All unless enabled
+    # extra patterns accepted ONLY when verifying our own pidfile pid —
+    # for processes that rewrite their title (e.g. next-server). External
+    # adoption never uses these, so lookalike processes stay untouched.
+    own_match: list[str] = field(default_factory=list)
+    # Some servers (Next's `next start`) fork a DETACHED worker and the
+    # launched process exits. When set, after start we find the pid listening
+    # on this port, confirm its command contains an own_match fingerprint,
+    # and record THAT pid — so tracking follows the real server, not the
+    # wrapper. The port is used only to DISCOVER the pid, never to kill one.
+    resolve_listen_port: int | None = None
 
     @property
     def matches(self) -> list[str]:
@@ -81,26 +91,64 @@ class Controller:
         return [(pid, cmd) for pid, cmd in self._proc_table()
                 if pid != me and any(m in cmd for m in svc.matches)]
 
-    def _owned_pid(self, svc: ServiceDef) -> int | None:
-        """Pid from our pidfile, verified against the live cmdline (a stale
-        pidfile pointing at an unrelated or dead process is ignored)."""
+    def _read_pidfile(self, svc: ServiceDef) -> dict | None:
         pf = self._pidfile(svc)
         if not pf.exists():
             return None
         try:
-            rec = json.loads(pf.read_text())
+            return json.loads(pf.read_text())
         except (json.JSONDecodeError, OSError):
             return None
-        pid = rec.get("pid")
+
+    def _owned_pid(self, svc: ServiceDef) -> int | None:
+        """Pid from our pidfile, verified live. A process we started may have
+        rewritten its title (next-server) — accept it if it is still in our
+        recorded process group, or matches a cmdline fingerprint. A stale
+        pidfile pointing at an unrelated or dead process is ignored."""
+        rec = self._read_pidfile(svc)
+        if rec is None:
+            return None
+        pid, pgid = rec.get("pid"), rec.get("pgid")
+        accepted = svc.matches + svc.own_match
         for live_pid, cmd in self._proc_table():
-            if live_pid == pid and any(m in cmd for m in svc.matches):
+            if live_pid != pid:
+                continue
+            if any(m in cmd for m in accepted):
                 return pid
+            # title-rewritten but still in the session we created
+            if pgid is not None:
+                try:
+                    if os.getpgid(pid) == pgid:
+                        return pid
+                except ProcessLookupError:
+                    return None
         return None
 
     # ---------------- lifecycle ----------------
+    def _listener_owned(self, svc: ServiceDef) -> int | None:
+        """Pid listening on the service's port IFF it looks like our server
+        (own_match/matches). Lets us adopt a detached server that has no
+        pidfile and a rewritten title — and refuse to start a duplicate."""
+        if svc.resolve_listen_port is None:
+            return None
+        out = subprocess.run(
+            ["lsof", "-tnP", f"-iTCP:{svc.resolve_listen_port}", "-sTCP:LISTEN"],
+            capture_output=True, text=True).stdout.split()
+        accepted = svc.matches + svc.own_match
+        for pid_s in out:
+            try:
+                pid = int(pid_s)
+            except ValueError:
+                continue
+            for live_pid, cmd in self._proc_table():
+                if live_pid == pid and any(m in cmd for m in accepted):
+                    return pid
+        return None
+
     def start(self, key: str) -> bool:
         svc = self.services[key]
-        if self._owned_pid(svc) is not None or self._find_matching(svc):
+        if (self._owned_pid(svc) is not None or self._find_matching(svc)
+                or self._listener_owned(svc) is not None):
             return False  # running or adopted: never start a duplicate
         log_path = Path(svc.log)
         log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -116,9 +164,45 @@ class Controller:
                                 start_new_session=True)
         self._procs[key] = proc
         self._exit_codes.pop(key, None)
-        self._pidfile(svc).write_text(json.dumps(
-            {"pid": proc.pid, "cmd": svc.cmd, "started_at": time.time()}))
+        # pgid = pid because of start_new_session; used to stop the whole tree
+        # (e.g. next's wrapper + server worker) without any port-based matching.
+        rec = {"pid": proc.pid, "pgid": proc.pid, "cmd": svc.cmd,
+               "started_at": time.time()}
+        if svc.resolve_listen_port is not None:
+            resolved = self._resolve_listener(svc, proc)
+            if resolved is not None:
+                rec["pid"], rec["pgid"] = resolved
+                self._procs.pop(key, None)  # wrapper exited; track the server
+        self._pidfile(svc).write_text(json.dumps(rec))
         return True
+
+    def _resolve_listener(self, svc: ServiceDef, proc, timeout: float = 30.0):
+        """Wait for the service to listen, then return (pid, pgid) of the
+        listener IFF its command matches a fingerprint we own — otherwise
+        None. Discovery only; nothing is killed here."""
+        deadline = time.time() + timeout
+        accepted = svc.matches + svc.own_match
+        while time.time() < deadline:
+            out = subprocess.run(
+                ["lsof", "-tnP", f"-iTCP:{svc.resolve_listen_port}", "-sTCP:LISTEN"],
+                capture_output=True, text=True).stdout.split()
+            for pid_s in out:
+                try:
+                    pid = int(pid_s)
+                except ValueError:
+                    continue
+                for live_pid, cmd in self._proc_table():
+                    if live_pid == pid and any(m in cmd for m in accepted):
+                        try:
+                            return pid, os.getpgid(pid)
+                        except ProcessLookupError:
+                            return None
+            if proc.poll() is not None and not out:
+                # wrapper died before anything listened and nothing is up yet
+                time.sleep(0.4)
+            else:
+                time.sleep(0.4)
+        return None
 
     def stop(self, key: str, timeout: float = 12.0) -> bool:
         """Graceful: SIGINT (engines handle KeyboardInterrupt cleanly), then
@@ -126,8 +210,27 @@ class Controller:
         svc = self.services[key]
         pids = set()
         owned = self._owned_pid(svc)
+        rec = self._read_pidfile(svc)
+        # a detached server (next) whose pidfile was lost is still ours if it
+        # listens on our port with our fingerprint — adopt its pid to stop it
+        listener = self._listener_owned(svc)
+        if listener is not None:
+            pids.add(listener)
         if owned is not None:
             pids.add(owned)
+        for root in (owned, listener):
+            if root is None:
+                continue
+            try:
+                root_pgid = os.getpgid(root)
+            except ProcessLookupError:
+                continue
+            for live_pid, _cmd in self._proc_table():
+                try:
+                    if os.getpgid(live_pid) == root_pgid:
+                        pids.add(live_pid)
+                except ProcessLookupError:
+                    continue
         pids.update(pid for pid, _ in self._find_matching(svc))
         if not pids:
             self._pidfile(svc).unlink(missing_ok=True)
@@ -179,10 +282,13 @@ class Controller:
                 self._exit_codes[key] = handle.returncode
             owned = self._owned_pid(svc)
             matching = self._find_matching(svc)
+            listener = self._listener_owned(svc)
             if owned is not None:
                 state, pid, adopted = "running", owned, False
             elif matching:
                 state, pid, adopted = "running", matching[0][0], True
+            elif listener is not None:
+                state, pid, adopted = "running", listener, True
             elif key in self._exit_codes and self._exit_codes[key] != 0:
                 state, pid, adopted = "failed", None, False
             else:
@@ -277,12 +383,15 @@ def real_services() -> list[ServiceDef]:
             optional=not cfg["legacy_enabled"]),
         ServiceDef(
             key="web", name="Dashboard (3000, production)",
-            cmd=["/usr/bin/env", "npx", "next", "start", "-p", "3000"],
+            cmd=[str(REPO / "web" / "node_modules" / ".bin" / "next"),
+                 "start", "-p", "3000"],
             cwd=str(REPO / "web"),
             match=[f"{REPO}/web/node_modules/.bin/next start",
                    f"{REPO}/web/node_modules/next/dist/bin/next start",
                    f"{REPO}/web/node_modules/.bin/next dev",
                    f"{REPO}/web/.next/dev"],   # dev server adopted, not duplicated
+            own_match=["next-server"],         # prod next rewrites its title
+            resolve_listen_port=3000,          # next forks a detached server
             log=str(LOGS / "web.log"),
             health_url="http://127.0.0.1:3000"),
     ]
