@@ -250,8 +250,12 @@ def _lab_main(args, cfg: ProSettings) -> None:
         elif args.command == "lab-run":
             engine = LabEngine(store, lab_cfg)
             print("EXTREME LAB — PAPER ONLY, virtual $250, experimental. "
-                  f"Auto-entry: {'ON' if lab_cfg.auto_entry else 'OFF'}. Ctrl+C stops.",
-                  flush=True)
+                  f"Auto-entry: {'ON' if lab_cfg.auto_entry else 'OFF'}. "
+                  f"Live ticker stream: {'ON' if lab_cfg.ws_enabled else 'OFF'}. "
+                  "Ctrl+C stops.", flush=True)
+            if lab_cfg.ws_enabled:
+                engine.start_live_components()
+                engine.start_live_feed()
             with single_instance(lab_cfg.db_path):
                 failures = 0
                 while True:

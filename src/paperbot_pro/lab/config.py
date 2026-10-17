@@ -55,6 +55,11 @@ class LabSettings:
     db_path: str = "state/extreme_lab.sqlite"
     main_db_path: str = "state/paperbot_pro.sqlite"  # read-only: universe/instruments
     auto_entry: bool = False                  # PAPERBOT_LAB_AUTO_ENTRY=1, Lab-only
+    ws_enabled: bool = True                   # public ticker stream (read-only)
+    ws_url: str = "wss://stream.bybit.com/v5/public/linear"
+    ws_max_topics: int = 15                   # positions + top universe, bounded
+    live_state_path: str = "state/lab_live.json"
+    live_publish_interval_s: float = 0.2      # UI-facing throttle (100-250ms band)
 
     @classmethod
     def from_env(cls) -> "LabSettings":
@@ -62,6 +67,8 @@ class LabSettings:
         updates = {}
         if os.getenv("PAPERBOT_LAB_AUTO_ENTRY") is not None:
             updates["auto_entry"] = os.getenv("PAPERBOT_LAB_AUTO_ENTRY") == "1"
+        if os.getenv("PAPERBOT_LAB_WS") is not None:
+            updates["ws_enabled"] = os.getenv("PAPERBOT_LAB_WS") == "1"
         for name, cast in (("db_path", str), ("main_db_path", str),
                            ("monitor_interval_seconds", int)):
             raw = os.getenv(f"PAPERBOT_LAB_{name.upper()}")

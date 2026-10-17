@@ -11,6 +11,7 @@ real observed quotes — or honestly reports that it cannot, and retries.
 from __future__ import annotations
 import json
 import sqlite3
+import threading
 import time
 from pathlib import Path
 from paperbot.models import Candle
@@ -50,6 +51,96 @@ class LabEngine:
         self.instruments_provider = (instruments_provider or
                                      (lambda: main_db_instruments(cfg.main_db_path)))
         self.governor = LabGovernor(store, cfg)
+        # live (tick-driven) components; created by start_live_components()
+        self.live_book = None
+        self.live_valuator = None
+        self.live_publisher = None
+        self.live_feed = None
+        self.live_lock = threading.Lock()
+        self._live_pos_cache: dict[str, dict] = {}
+
+    # ---------------- live tick path ----------------
+    def start_live_components(self, publisher_clock=None) -> None:
+        """Book/valuator/publisher without a network feed (tests inject ticks
+        via on_live_ticker; production also calls start_live_feed)."""
+        from .live import LiveStatePublisher, LiveValuator, TickerBook
+        self.live_book = TickerBook()
+        self.live_valuator = LiveValuator(self.db, self.cfg, self.governor)
+        kwargs = {"min_interval_s": self.cfg.live_publish_interval_s}
+        if publisher_clock is not None:
+            kwargs["clock"] = publisher_clock
+        self.live_publisher = LiveStatePublisher(self.cfg.live_state_path, **kwargs)
+        self._refresh_live_cache()
+
+    def start_live_feed(self) -> None:
+        """Attach the real public WebSocket feed (bounded topics)."""
+        from .feed import BybitTickerFeed
+        from .live import LiveValuator
+        symbols = [LiveValuator._book_symbol(p["symbol"])
+                   for p in self.db.open_positions()]
+        for inst in self.instruments_provider():
+            if inst.get("exchange") == "bybit":
+                symbols.append(LiveValuator._book_symbol(inst["symbol"]))
+        symbols = list(dict.fromkeys(symbols))[:self.cfg.ws_max_topics]
+
+        def on_status(status, detail):
+            self.db.audit("info" if status == "connected" else "warning",
+                          "stream", f"market stream {status}: {detail}")
+            if self.live_publisher is not None and self.live_valuator is not None:
+                state = self.live_valuator.value(self.live_book,
+                                                 int(time.time() * 1000))
+                state["stream_status"] = status
+                self.live_publisher.publish(state)
+        self.live_feed = BybitTickerFeed(symbols, self.on_live_ticker,
+                                         on_status=on_status, url=self.cfg.ws_url)
+        self.live_feed.start()
+
+    def _refresh_live_cache(self) -> None:
+        from .live import LiveValuator
+        self._live_pos_cache = {LiveValuator._book_symbol(p["symbol"]): p
+                                for p in self.db.open_positions()}
+
+    def on_live_ticker(self, symbol: str, fields: dict, ts_ms: int, kind: str) -> None:
+        """Per-tick: merge into the book, enforce stop/liquidation for the
+        affected position, let the valuator ratchet/check the HWM, publish.
+        No per-tick SQLite writes unless an accounting event occurred."""
+        if self.live_book is None or not self.live_book.apply(symbol, fields, ts_ms, kind):
+            return
+        with self.live_lock:
+            now_ms = int(time.time() * 1000)
+            pos = self._live_pos_cache.get(symbol)
+            if pos is not None:
+                pos = self.db.position(pos["symbol"])  # fresh row; may be gone
+            if pos is not None:
+                ticker = self.live_book.get(symbol)
+                observed = (ticker.get("bid1Price") if pos["side"] == "long"
+                            else ticker.get("ask1Price")) or ticker.get("lastPrice")
+                if observed is not None:
+                    event = check_exit(pos, float(observed), self.cfg, pos["taker_fee"])
+                    if event is not None:
+                        self.close_position(pos, event, now_ms)
+                        self._refresh_live_cache()
+            state = self.live_valuator.value(self.live_book, now_ms)
+            if state["locked"] and self._live_pos_cache:
+                self._emergency_exit_from_book(now_ms)
+                state = self.live_valuator.value(self.live_book, now_ms)
+            self.live_publisher.publish(state)
+
+    def _emergency_exit_from_book(self, now_ms: int) -> None:
+        from .live import LiveValuator
+        for pos in self.db.open_positions():
+            ticker = self.live_book.get(LiveValuator._book_symbol(pos["symbol"]))
+            if ticker is None:
+                self.db.audit("error", "risk",
+                              f"EMERGENCY EXIT DEFERRED: {pos['symbol']} has no live "
+                              "quote; cannot be verified, will retry", ts_ms=now_ms)
+                continue
+            observed = (ticker.get("bid1Price") if pos["side"] == "long"
+                        else ticker.get("ask1Price")) or ticker.get("lastPrice")
+            if observed is None:
+                continue
+            self._force_exit(pos, float(observed), now_ms)
+        self._refresh_live_cache()
 
     # ---------------- accounting ----------------
     def equity(self, marks: dict[str, float]) -> float:
@@ -89,6 +180,13 @@ class LabEngine:
                       f"{plan.qty} @ {plan.entry_price:.6g}, stop {plan.stop:.6g}, "
                       f"no fixed target, liq est {plan.liq_price_est:.6g}, "
                       f"margin ${plan.margin_usd:.2f}", ts_ms=now_ms)
+        self._refresh_live_cache()
+        if self.live_feed is not None:
+            from .live import LiveValuator
+            self.live_feed.set_symbols(list(dict.fromkeys(
+                [LiveValuator._book_symbol(p["symbol"]) for p in self.db.open_positions()]
+                + [s for s in (self.live_book.symbols() if self.live_book else [])]))
+                [:self.cfg.ws_max_topics])
 
     def close_position(self, pos: dict, event: ExitEvent, now_ms: int) -> None:
         if event.reason == "LIQUIDATION":
@@ -117,6 +215,7 @@ class LabEngine:
             self.db.conn.execute("DELETE FROM positions WHERE id=?", (pos["id"],))
             self._adjust_strategy_cash(pos["strategy"], credit, realized=event.pnl_usd)
         self.db.set(f"lab_last_exit:{pos['symbol']}", now_ms)
+        self._refresh_live_cache()
         self.db.audit("warning" if event.pnl_usd < 0 else "info", "trade",
                       f"[{pos['strategy']}] SIMULATED EXIT ({event.reason}) {pos['symbol']} "
                       f"@ {event.exit_price:.6g}; net P&L {event.pnl_usd:+.2f}", ts_ms=now_ms)
@@ -217,20 +316,24 @@ class LabEngine:
                 rate = funding.get("fundingRate") if funding else None
             except Exception:
                 rate = None
-            self.apply_funding_due(pos, now_ms, rate, float(last))
             observed = float(bid if pos["side"] == "long" and bid else
                              ask if pos["side"] == "short" and ask else last)
             sign = 1 if pos["side"] == "long" else -1
-            with self.db.conn:
-                self.db.conn.execute(
-                    "UPDATE positions SET mfe_price = CASE WHEN ?*? > ?*mfe_price THEN ? ELSE mfe_price END, "
-                    "mae_price = CASE WHEN ?*? < ?*mae_price THEN ? ELSE mae_price END WHERE id=?",
-                    (sign, observed, sign, observed, sign, observed, sign, observed, pos["id"]))
-            pos = self.db.position(pos["symbol"])
-            event = check_exit(pos, observed, self.cfg, pos["taker_fee"])
-            if event is not None:
-                self.close_position(pos, event, now_ms)
-                summary["closed"] += 1
+            with self.live_lock:  # serialize with the tick thread
+                pos = self.db.position(pos["symbol"])
+                if pos is None:
+                    continue  # closed by a live tick meanwhile
+                self.apply_funding_due(pos, now_ms, rate, float(last))
+                with self.db.conn:
+                    self.db.conn.execute(
+                        "UPDATE positions SET mfe_price = CASE WHEN ?*? > ?*mfe_price THEN ? ELSE mfe_price END, "
+                        "mae_price = CASE WHEN ?*? < ?*mae_price THEN ? ELSE mae_price END WHERE id=?",
+                        (sign, observed, sign, observed, sign, observed, sign, observed, pos["id"]))
+                pos = self.db.position(pos["symbol"])
+                event = check_exit(pos, observed, self.cfg, pos["taker_fee"])
+                if event is not None:
+                    self.close_position(pos, event, now_ms)
+                    summary["closed"] += 1
         # ---- pass 2: strategy scan on completed candles ----
         for inst in self.instruments_provider():
             symbol, exchange = inst["symbol"], inst["exchange"]
