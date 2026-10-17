@@ -154,7 +154,7 @@ def compute_lab(store, lab_cfg) -> dict:
             "live": bool(last_scan and now_ms - last_scan <
                          lab_cfg.monitor_interval_seconds * 3000),
             "last_scan_ms": last_scan,
-            "auto_entry": lab_cfg.auto_entry,
+            "auto_entry": bool(store.get("lab_auto_entry", lab_cfg.auto_entry)),
             "locked": bool(store.get("lab_locked")),
             "lock_reason": store.get("lab_lock_reason"),
             "manual_pause": bool(store.get("lab_manual_pause")),

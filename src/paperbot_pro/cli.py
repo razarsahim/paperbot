@@ -80,6 +80,9 @@ def main():
     sub.add_parser("lab-status", help="Extreme Lab capital, HWM/threshold and strategies")
     sub.add_parser("lab-pause", help="Manually block new Lab entries")
     sub.add_parser("lab-resume", help="Lift the Lab manual pause")
+    ae = sub.add_parser("lab-autoentry",
+                        help="Enable/disable automatic simulated entries (persistent, PAPER)")
+    ae.add_argument("state", choices=["on", "off"])
     lab_reset = sub.add_parser("lab-reset",
                                help="Clear the trailing-drawdown lockout AFTER manual review")
     lab_reset.add_argument("--note", required=True,
@@ -509,6 +512,15 @@ def _lab_main(args, cfg: ProSettings) -> None:
             store.set("lab_manual_pause", False)
             store.audit("info", "risk", "Lab manual pause lifted")
             print("Lab resumed (subject to all rails and the trailing lockout).")
+        elif args.command == "lab-autoentry":
+            on = args.state == "on"
+            store.set("lab_auto_entry", on)
+            store.audit("warning" if on else "info", "risk",
+                        f"Lab auto-entry {'ENABLED' if on else 'DISABLED'} "
+                        "(persistent; engine + dashboard honour this)")
+            print(f"Lab auto-entry {'ENABLED' if on else 'DISABLED'}. "
+                  + ("New simulated entries allowed (subject to pause + all rails). PAPER ONLY."
+                     if on else "No new simulated entries; monitoring and exits continue."))
         elif args.command == "lab-reset":
             from .api import compute_lab
             equity = compute_lab(store, lab_cfg)["capital"]["equity_usd"]

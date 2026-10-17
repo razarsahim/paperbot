@@ -181,6 +181,12 @@ class LabEngine:
             "realized_pnl_usd = realized_pnl_usd + ? WHERE key=?",
             (delta, realized, strategy))
 
+    def _auto_entry_enabled(self) -> bool:
+        """Effective auto-entry: the persistent DB flag `lab_auto_entry` if set,
+        else the env/config default. Single source of truth shared with the API,
+        so engine and dashboard never disagree and it survives restarts."""
+        return bool(self.db.get("lab_auto_entry", self.cfg.auto_entry))
+
     def strategy_equity(self, marks: dict[str, float]) -> dict[str, float]:
         """Per-strategy net equity = its cash + its open positions' margin + uPnL.
         Only strategies present in the ledger are included (transition-safe)."""
@@ -503,9 +509,9 @@ class LabEngine:
                     self.db.log_signal(now_ms, strategy_def.key, symbol, signal.action,
                                        False, "re-entry cooldown", signal.reason)
                     continue
-                if not self.cfg.auto_entry:
+                if not self._auto_entry_enabled():
                     self.db.log_signal(now_ms, strategy_def.key, symbol, signal.action,
-                                       False, "Lab auto-entry disabled (PAPERBOT_LAB_AUTO_ENTRY)",
+                                       False, "Lab auto-entry disabled",
                                        signal.reason)
                     continue
                 if tick_age > self.cfg.price_fresh_seconds:
