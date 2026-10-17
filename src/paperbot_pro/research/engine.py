@@ -24,6 +24,10 @@ FUNDING_INTERVAL_MS = 8 * 3_600_000
 CANDLE_LIMIT = 220
 
 
+class _SettledAlready(Exception):
+    """Internal: the position was already removed, abort settlement."""
+
+
 def main_db_instruments(main_db_path: str) -> list[dict]:
     p = Path(main_db_path)
     if not p.exists():
@@ -108,26 +112,32 @@ class ResearchEngine:
         entry = pos["entry_price"]
         mfe = (sign * (pos["mfe_price"] - entry) / entry * 100) if pos.get("mfe_price") else None
         mae = (sign * (pos["mae_price"] - entry) / entry * 100) if pos.get("mae_price") else None
-        with self.db.conn:
-            # Idempotency guard (see lab engine): only book + credit if THIS
-            # call removed the row, so a double-close can't double-credit.
-            if self.db.conn.execute("DELETE FROM positions WHERE id=?",
-                                    (pos["id"],)).rowcount == 0:
-                return
-            self.db.conn.execute(
-                """INSERT INTO trades(strategy, symbol, side, leverage, qty, entry_price,
-                   exit_price, stop_initial, stop_final, target, margin_usd, notional_usd,
-                   entry_fee_usd, exit_fee_usd, funding_usd, net_pnl_usd, mfe_pct, mae_pct,
-                   entry_ms, exit_ms, exit_reason, rationale, indicator_snapshot)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                (pos["strategy"], pos["symbol"], pos["side"], pos["leverage"], pos["qty"],
-                 entry, event.exit_price, pos["initial_stop"], pos["stop"], pos["target"],
-                 pos["margin_usd"], pos["notional_usd"], pos["entry_fee_usd"], event.exit_fee_usd,
-                 pos["funding_paid_usd"], event.pnl_usd, mfe, mae, pos["opened_ms"], now_ms,
-                 event.reason, pos["rationale"],
-                 pos.get("indicator_snapshot") if isinstance(pos.get("indicator_snapshot"), str)
-                 else json.dumps(pos.get("indicator_snapshot"))))
-            self._adjust(pos["strategy"], credit, realized=event.pnl_usd)
+        # DB-level cross-process idempotency via the settlements PK (see lab
+        # engine). One transaction; failure rolls back with no partial credit.
+        try:
+            with self.db.conn:
+                self.db.conn.execute(
+                    "INSERT INTO settlements(position_id, symbol, settled_ms, exit_reason) "
+                    "VALUES(?,?,?,?)", (pos["id"], pos["symbol"], now_ms, event.reason))
+                if self.db.conn.execute("DELETE FROM positions WHERE id=?",
+                                        (pos["id"],)).rowcount == 0:
+                    raise _SettledAlready
+                self.db.conn.execute(
+                    """INSERT INTO trades(strategy, symbol, side, leverage, qty, entry_price,
+                       exit_price, stop_initial, stop_final, target, margin_usd, notional_usd,
+                       entry_fee_usd, exit_fee_usd, funding_usd, net_pnl_usd, mfe_pct, mae_pct,
+                       entry_ms, exit_ms, exit_reason, rationale, indicator_snapshot)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    (pos["strategy"], pos["symbol"], pos["side"], pos["leverage"], pos["qty"],
+                     entry, event.exit_price, pos["initial_stop"], pos["stop"], pos["target"],
+                     pos["margin_usd"], pos["notional_usd"], pos["entry_fee_usd"], event.exit_fee_usd,
+                     pos["funding_paid_usd"], event.pnl_usd, mfe, mae, pos["opened_ms"], now_ms,
+                     event.reason, pos["rationale"],
+                     pos.get("indicator_snapshot") if isinstance(pos.get("indicator_snapshot"), str)
+                     else json.dumps(pos.get("indicator_snapshot"))))
+                self._adjust(pos["strategy"], credit, realized=event.pnl_usd)
+        except (sqlite3.IntegrityError, _SettledAlready):
+            return   # already settled by another path/process
         self.db.set(f"research_last_exit:{pos['symbol']}", now_ms)
         self.db.audit("warning" if event.pnl_usd < 0 else "info", "trade",
                       f"[{pos['strategy']}] SIMULATED EXIT ({event.reason}) {pos['symbol']} @ "

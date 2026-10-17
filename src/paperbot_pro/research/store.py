@@ -48,6 +48,9 @@ CREATE TABLE IF NOT EXISTS equity_history (
 CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT, ts_ms INTEGER NOT NULL, level TEXT NOT NULL,
     category TEXT NOT NULL, message TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS settlements (
+    position_id INTEGER PRIMARY KEY, symbol TEXT NOT NULL, settled_ms INTEGER NOT NULL,
+    exit_reason TEXT NOT NULL);
 """
 
 
