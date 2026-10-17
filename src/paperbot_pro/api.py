@@ -328,6 +328,19 @@ def create_app(cfg: ProSettings, lab_cfg=None, research_cfg=None) -> FastAPI:
                        allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
                        allow_methods=["GET"], allow_headers=["*"])
 
+    @app.middleware("http")
+    async def _private_network_access(request, call_next):
+        # Chrome's Private Network Access blocks a localhost page from calling
+        # a localhost API unless the (pre)flight is answered with this header.
+        # Everything here is 127.0.0.1-bound, so granting it is local-only.
+        if request.headers.get("access-control-request-private-network") == "true":
+            from starlette.responses import Response
+            resp = Response(status_code=200)
+        else:
+            resp = await call_next(request)
+        resp.headers["Access-Control-Allow-Private-Network"] = "true"
+        return resp
+
     @app.get("/api/health")
     def health():
         legacy = _read_legacy(cfg.legacy_db_path)
