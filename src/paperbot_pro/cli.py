@@ -84,6 +84,12 @@ def main():
                                help="Clear the trailing-drawdown lockout AFTER manual review")
     lab_reset.add_argument("--note", required=True,
                            help="Required review note recorded in the audit log")
+    ml = sub.add_parser("merge-labs",
+                        help="Consolidate the Research Lab into the Extreme Lab (PAPER). "
+                             "Default is a dry-run on copies; --apply mutates the live DB.")
+    ml.add_argument("--apply", action="store_true",
+                    help="Apply to the LIVE Extreme DB (stop the lab engine first)")
+    ml.add_argument("--research-db", default="state/research_lab.sqlite")
     sub.add_parser("migrate-lab",
                    help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
     sub.add_parser("audit-accounting",
@@ -108,6 +114,9 @@ def main():
         return
     if args.command and args.command.startswith("research-"):
         _research_main(args, cfg)
+        return
+    if args.command == "merge-labs":
+        _merge_labs(args, cfg)
         return
     if args.command == "api":
         import uvicorn
@@ -204,6 +213,59 @@ def _audit_clear(args, cfg: ProSettings) -> None:
               "(subject to all other rails).")
     finally:
         store.close()
+
+
+def _merge_labs(args, cfg: ProSettings) -> None:
+    """Consolidate the Research Lab into the Extreme Lab. Default: dry-run on
+    copies (mutates nothing). --apply: back up, then merge the LIVE Extreme DB
+    in one transaction. Stop the lab engine before --apply so there is no
+    competing writer (the merge is idempotent either way)."""
+    import sqlite3
+    from dataclasses import replace as _replace
+    from .lab.config import LabSettings
+    from .lab.store import LabStore
+    from .lab.merge_migration import plan_merge, merge_research_into_lab
+    from .reconcile import reconcile_lab
+
+    lab_cfg = LabSettings.from_env()
+    if not args.apply:
+        plan = plan_merge(lab_cfg.db_path, args.research_db)
+        b, a = plan["before"], plan["after"]
+        print("DRY-RUN merge (live DBs untouched):")
+        print(f"  strategies : {b['strategies']} -> {a['strategies']}")
+        print(f"  total_cash : ${b['total_cash']:.4f} -> ${a['total_cash']:.4f}")
+        print(f"  realized   : ${b['realized']:.4f} -> ${a['realized']:.4f} (transfer is NOT profit)")
+        print(f"  peak/thresh: ${b['peak_equity']:.4f} -> ${a['peak_equity']:.4f} / ${a['threshold']:.4f}")
+        print(f"  positions  : {b['positions']} -> {a['positions']} (preserved)")
+        print(f"  reconciles : {a['reconciles']}")
+        if a["discrepancies"]:
+            for d in a["discrepancies"]:
+                print(f"    DISCREPANCY: {d['kind']} {d['detail']}")
+        print("\nRe-run with --apply (after stopping `propaper lab-run`) to commit.")
+        return
+    # --apply: fresh WAL-consistent backup first, then merge the live DB.
+    import os, time
+    bk_dir = os.path.join("backups", f"merge-apply-{int(time.time())}")
+    os.makedirs(bk_dir, exist_ok=True)
+    for src in (lab_cfg.db_path, args.research_db):
+        s = sqlite3.connect(f"file:{src}?mode=ro", uri=True)
+        d = sqlite3.connect(os.path.join(bk_dir, os.path.basename(src)))
+        with d:
+            s.backup(d)
+        s.close(); d.close()
+    print(f"backup: {bk_dir}")
+    lab = LabStore(lab_cfg.db_path, lab_cfg)
+    try:
+        report = merge_research_into_lab(lab, args.research_db)
+        rec = reconcile_lab(lab, lab_cfg)
+        print("APPLIED merge to live Extreme DB:")
+        print(f"  {json.dumps(report, default=float)}")
+        print(f"  reconciles: {rec['ok']}")
+        if not rec["ok"]:
+            for d in rec["discrepancies"]:
+                print(f"    DISCREPANCY: {d['kind']} {d['detail']}")
+    finally:
+        lab.close()
 
 
 def _audit_accounting(cfg: ProSettings) -> None:
