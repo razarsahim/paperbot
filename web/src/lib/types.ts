@@ -246,6 +246,117 @@ export interface AuditEntry {
 // ---------- /api/settings ----------
 export type Settings = Record<string, string | number | boolean>;
 
+// ---------- /api/lab ----------
+// Extreme Lab: a speculative PAPER-ONLY research simulation (virtual $250).
+export interface LabStatus {
+  live: boolean;
+  last_scan_ms: number | null;
+  auto_entry: boolean;
+  locked: boolean;
+  lock_reason: string | null;
+  manual_pause: boolean;
+}
+
+export interface LabCapital {
+  initial_usd: number;
+  equity_usd: number;
+  cash_usd: number;
+  margin_used_usd: number;
+  unrealized_usd: number;
+  peak_equity_usd: number;
+  threshold_usd: number;
+  remaining_allowance_usd: number;
+}
+
+export interface LabStrategy {
+  key: string;
+  name: string;
+  display_name: string;
+  description: string;
+  allocation_usd: number;
+  cash_usd: number;
+  realized_pnl_usd: number;
+  open_symbols: string[];
+}
+
+export interface LabPosition {
+  id: number;
+  strategy: string;
+  symbol: string;
+  side: "long" | "short";
+  leverage: number;
+  qty: number;
+  entry_price: number;
+  margin_usd: number;
+  notional_usd: number;
+  stop: number;
+  target: number | null;
+  liq_price_est: number;
+  funding_paid_usd: number;
+  planned_risk_usd: number;
+  opened_ms: number;
+  mark_price: number | null;
+  unrealized_pnl_usd: number | null;
+}
+
+export interface LabSignal {
+  id: number;
+  ts_ms: number;
+  strategy: string;
+  symbol: string;
+  action: string;
+  approved: boolean;
+  reject_reason: string | null;
+  details: string;
+}
+
+export interface LabTrade {
+  id: number;
+  strategy: string;
+  symbol: string;
+  side: string;
+  leverage: number;
+  qty: number;
+  entry_price: number;
+  exit_price: number;
+  stop_initial: number;
+  stop_final: number;
+  target: number | null;
+  margin_usd: number;
+  notional_usd: number;
+  entry_fee_usd: number;
+  exit_fee_usd: number;
+  funding_usd: number;
+  net_pnl_usd: number;
+  mfe_pct: number | null;
+  mae_pct: number | null;
+  entry_ms: number;
+  exit_ms: number;
+  exit_reason: string;
+  rationale: string;
+}
+
+export interface LabAudit {
+  id: number;
+  ts_ms: number;
+  level: string;
+  category: string;
+  message: string;
+}
+
+export interface Lab {
+  status: LabStatus;
+  capital: LabCapital;
+  strategies: LabStrategy[];
+  positions: LabPosition[];
+  signals: LabSignal[];
+  trades: LabTrade[];
+  opportunities: Record<string, Record<string, { action: string | null; reason: string }>>;
+  /** [ts_ms, equity_usd, threshold_usd] */
+  equity_curve: [number, number, number][];
+  audit: LabAudit[];
+}
+
 // ---------- /api/candles ----------
 export interface CandleMarker {
   ts_ms: number;

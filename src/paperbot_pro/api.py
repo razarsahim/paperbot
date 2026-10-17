@@ -123,9 +123,73 @@ def compute_overview(store: ProStore, cfg: ProSettings) -> dict:
     }
 
 
-def create_app(cfg: ProSettings) -> FastAPI:
+def compute_lab(store, lab_cfg) -> dict:
+    """Extreme Lab snapshot: capital, HWM/threshold, strategies, state."""
+    from .perp import unrealized_pnl as _upnl
+    marks = store.get("marks", {}) or {}
+    positions = store.open_positions()
+    margin_used = sum(p["margin_usd"] for p in positions)
+    unrealized = 0.0
+    out_positions = []
+    for p in positions:
+        mark = marks.get(p["symbol"])
+        u = _upnl(p["side"], p["entry_price"], mark, p["qty"]) if mark is not None else None
+        if u is not None:
+            unrealized += u
+        out_positions.append({**{k: p[k] for k in (
+            "id", "strategy", "symbol", "side", "leverage", "qty", "entry_price",
+            "margin_usd", "notional_usd", "stop", "target", "liq_price_est",
+            "funding_paid_usd", "planned_risk_usd", "opened_ms")},
+            "mark_price": mark, "unrealized_pnl_usd": u})
+    cash = store.total_cash()
+    equity = cash + margin_used + unrealized
+    peak = max(float(store.get("peak_equity", lab_cfg.starting_capital_usd)), equity)
+    threshold = peak - lab_cfg.trailing_drawdown_usd
+    last_scan = store.get("last_scan_ms")
+    now_ms = time.time() * 1000
+    ledger = store.strategy_ledger()
+    from .lab.config import STRATEGIES
+    return {
+        "status": {
+            "live": bool(last_scan and now_ms - last_scan <
+                         lab_cfg.monitor_interval_seconds * 3000),
+            "last_scan_ms": last_scan,
+            "auto_entry": lab_cfg.auto_entry,
+            "locked": bool(store.get("lab_locked")),
+            "lock_reason": store.get("lab_lock_reason"),
+            "manual_pause": bool(store.get("lab_manual_pause")),
+        },
+        "capital": {
+            "initial_usd": lab_cfg.starting_capital_usd,
+            "equity_usd": equity, "cash_usd": cash,
+            "margin_used_usd": margin_used, "unrealized_usd": unrealized,
+            "peak_equity_usd": peak, "threshold_usd": threshold,
+            "remaining_allowance_usd": max(0.0, equity - threshold),
+        },
+        "strategies": [{**ledger[s.key], "display_name": s.name,
+                        "description": s.description,
+                        "open_symbols": [p["symbol"] for p in positions
+                                         if p["strategy"] == s.key]}
+                       for s in STRATEGIES if s.key in ledger],
+        "positions": out_positions,
+        "signals": store.signals(100),
+        "trades": store.trades(200),
+        "opportunities": store.get("lab_opportunities", {}),
+        "equity_curve": [[r["ts_ms"], r["equity_usd"], r["threshold_usd"]]
+                         for r in store.equity_history(5000)],
+        "audit": store.audit_log(100),
+    }
+
+
+def create_app(cfg: ProSettings, lab_cfg=None) -> FastAPI:
+    from dataclasses import replace as _replace
+    from .lab.config import LabSettings
+    from .lab.store import LabStore
     cfg.validate()
     store = ProStore(cfg.db_path, cfg)
+    if lab_cfg is None:
+        lab_cfg = _replace(LabSettings.from_env(), main_db_path=cfg.db_path)
+    lab_store = LabStore(lab_cfg.db_path, lab_cfg)
     app = FastAPI(title="PaperBot Pro (PAPER ONLY)", docs_url="/api/docs")
     app.add_middleware(CORSMiddleware,
                        allow_origins=[f"http://{host}:{port}" for host in
@@ -148,6 +212,12 @@ def create_app(cfg: ProSettings) -> FastAPI:
                 "pro": {"running": bool(last_scan and now - last_scan < cfg.scan_interval_seconds * 3000),
                         "last_scan_ms": last_scan,
                         "auto_entry_enabled": auto_entry_gate(cfg)[0]},
+                "lab": {"running": bool(lab_store.get("last_scan_ms") and
+                                        now - lab_store.get("last_scan_ms") <
+                                        lab_cfg.monitor_interval_seconds * 3000),
+                        "last_scan_ms": lab_store.get("last_scan_ms"),
+                        "auto_entry_enabled": lab_cfg.auto_entry,
+                        "locked": bool(lab_store.get("lab_locked"))},
             },
             "data_sources": sources,
         }
@@ -155,6 +225,10 @@ def create_app(cfg: ProSettings) -> FastAPI:
     @app.get("/api/overview")
     def overview():
         return compute_overview(store, cfg)
+
+    @app.get("/api/lab")
+    def lab():
+        return compute_lab(lab_store, lab_cfg)
 
     @app.get("/api/positions")
     def positions():
@@ -323,8 +397,12 @@ def create_app(cfg: ProSettings) -> FastAPI:
         async def stream():
             sent = 0
             while limit is None or sent < limit:
-                payload = json.dumps(compute_overview(store, cfg))
-                yield f"event: overview\ndata: {payload}\n\n"
+                yield (f"event: overview\ndata: "
+                       f"{json.dumps(compute_overview(store, cfg))}\n\n")
+                sent += 1
+                if limit is not None and sent >= limit:
+                    break
+                yield f"event: lab\ndata: {json.dumps(compute_lab(lab_store, lab_cfg))}\n\n"
                 sent += 1
                 if limit is None or sent < limit:
                     await asyncio.sleep(10)

@@ -8,6 +8,7 @@ import type {
   CandleResponse,
   Health,
   HypeRadar,
+  Lab,
   Overview,
   Position,
   Settings,
@@ -398,6 +399,282 @@ export const mockSettings: Settings = {
   stale_data_block_s: 120,
   never_widen_stops: true,
   never_average_down: true,
+};
+
+// ---------- Extreme Lab (DEMO) ----------
+// Clearly synthetic $250 PAPER-ONLY lab snapshot. Negative results on purpose:
+// the Lab exists to study failure modes, not to imply profitability.
+
+function labCurve(): [number, number, number][] {
+  const points = 72; // ~18 days at 6h
+  const out: [number, number, number][] = [];
+  let peak = 250;
+  for (let i = 0; i < points; i++) {
+    const t = i / (points - 1);
+    const base = 250 + 9 * Math.sin(t * 2.2) - 14 * t; // drifts down to ~244
+    const w = Math.sin(i * 1.9) * 1.8 + Math.sin(i * 0.37) * 2.6;
+    const equity = Math.round((base + w) * 100) / 100;
+    peak = Math.max(peak, equity);
+    const threshold = Math.round(peak * 0.9 * 100) / 100; // 10% trailing drawdown line
+    out.push([NOW - (points - 1 - i) * 6 * HOUR, equity, threshold]);
+  }
+  return out;
+}
+
+const labEq = labCurve();
+const labEquityNow = labEq[labEq.length - 1][1];
+const labPeak = Math.max(...labEq.map((p) => p[1]));
+const labThreshold = labEq[labEq.length - 1][2];
+
+export const mockLab: Lab = {
+  status: {
+    live: true,
+    last_scan_ms: NOW - 24_000,
+    auto_entry: false,
+    locked: false,
+    lock_reason: null,
+    manual_pause: false,
+  },
+  capital: {
+    initial_usd: 250.0,
+    equity_usd: labEquityNow,
+    cash_usd: Math.round((labEquityNow - 21.5 - 0.42) * 100) / 100,
+    margin_used_usd: 21.5,
+    unrealized_usd: -0.42,
+    peak_equity_usd: labPeak,
+    threshold_usd: labThreshold,
+    remaining_allowance_usd: Math.round((labEquityNow - labThreshold) * 100) / 100,
+  },
+  strategies: [
+    {
+      key: "breakout",
+      name: "vol_breakout",
+      display_name: "Volatility Breakout",
+      description: "Enters on range expansion beyond a prior-bar volatility band; hard stop at band midpoint.",
+      allocation_usd: 50.0,
+      cash_usd: 27.1,
+      realized_pnl_usd: -1.36,
+      open_symbols: ["BTC/USDT:USDT"],
+    },
+    {
+      key: "trend",
+      name: "trend_rider",
+      display_name: "Trend Rider",
+      description: "Rides established EMA-stacked trends with a trailing stop; never adds to losers.",
+      allocation_usd: 50.0,
+      cash_usd: 51.84,
+      realized_pnl_usd: 1.84,
+      open_symbols: [],
+    },
+    {
+      key: "meanrev",
+      name: "mean_reversion",
+      display_name: "Mean Reversion",
+      description: "Fades RSI extremes back toward the 20-bar mean; strict time stop at 24h.",
+      allocation_usd: 50.0,
+      cash_usd: 46.9,
+      realized_pnl_usd: -3.1,
+      open_symbols: [],
+    },
+    {
+      key: "funding",
+      name: "funding_skew",
+      display_name: "Funding Skew",
+      description: "Positions against crowded funding extremes on perp data; exits when skew normalises.",
+      allocation_usd: 50.0,
+      cash_usd: 49.52,
+      realized_pnl_usd: -0.48,
+      open_symbols: [],
+    },
+    {
+      key: "momo",
+      name: "momentum_burst",
+      display_name: "Momentum Burst",
+      description: "Short-horizon continuation after volume-confirmed bursts; tightest stop in the lab.",
+      allocation_usd: 50.0,
+      cash_usd: 47.73,
+      realized_pnl_usd: -2.27,
+      open_symbols: [],
+    },
+  ],
+  positions: [
+    {
+      id: 501,
+      strategy: "breakout",
+      symbol: "BTC/USDT:USDT",
+      side: "long",
+      leverage: 10,
+      qty: 0.0032,
+      entry_price: 67120.0,
+      margin_usd: 21.5,
+      notional_usd: 214.8,
+      stop: 66210.0,
+      target: 69350.0,
+      liq_price_est: 61140.0,
+      funding_paid_usd: -0.06,
+      planned_risk_usd: 2.91,
+      opened_ms: NOW - 5 * HOUR,
+      mark_price: 66988.5,
+      unrealized_pnl_usd: -0.42,
+    },
+  ],
+  signals: [
+    {
+      id: 9007,
+      ts_ms: NOW - 9 * MIN,
+      strategy: "trend",
+      symbol: "ETH/USDT:USDT",
+      action: "long",
+      approved: false,
+      reject_reason: "Remaining drawdown allowance below per-trade risk floor",
+      details: "EMA stack intact but lab allowance $13 < required $15 buffer",
+    },
+    {
+      id: 9006,
+      ts_ms: NOW - 42 * MIN,
+      strategy: "momo",
+      symbol: "DOGE/USDT:USDT",
+      action: "long",
+      approved: false,
+      reject_reason: "Auto-entry disabled",
+      details: "Volume burst 3.1x average; signal logged only",
+    },
+    {
+      id: 9005,
+      ts_ms: NOW - 5 * HOUR,
+      strategy: "breakout",
+      symbol: "BTC/USDT:USDT",
+      action: "long",
+      approved: true,
+      reject_reason: null,
+      details: "Range expansion above 20-bar band; risk $2.91, 10x margin cap OK",
+    },
+    {
+      id: 9004,
+      ts_ms: NOW - 8 * HOUR,
+      strategy: "funding",
+      symbol: "SOL/USDT:USDT",
+      action: "short",
+      approved: false,
+      reject_reason: "Funding data stale (>120s)",
+      details: "Default to no trade on stale feed",
+    },
+  ],
+  trades: [
+    {
+      id: 701,
+      strategy: "trend",
+      symbol: "BTC/USDT:USDT",
+      side: "long",
+      leverage: 10,
+      qty: 0.003,
+      entry_price: 65840.0,
+      exit_price: 66710.0,
+      stop_initial: 65020.0,
+      stop_final: 66010.0,
+      target: 68200.0,
+      margin_usd: 19.75,
+      notional_usd: 197.5,
+      entry_fee_usd: 0.1,
+      exit_fee_usd: 0.1,
+      funding_usd: -0.09,
+      net_pnl_usd: 2.32,
+      mfe_pct: 1.9,
+      mae_pct: -0.4,
+      entry_ms: NOW - 4 * DAY - 18 * HOUR,
+      exit_ms: NOW - 4 * DAY,
+      exit_reason: "trailing_stop",
+      rationale: "EMA20>EMA50>EMA200 stack on prior close; trailed to lock gains.",
+    },
+    {
+      id: 702,
+      strategy: "meanrev",
+      symbol: "SOL/USDT:USDT",
+      side: "short",
+      leverage: 10,
+      qty: 1.4,
+      entry_price: 148.2,
+      exit_price: 150.6,
+      stop_initial: 150.55,
+      stop_final: 150.55,
+      target: 142.8,
+      margin_usd: 20.75,
+      notional_usd: 207.5,
+      entry_fee_usd: 0.1,
+      exit_fee_usd: 0.11,
+      funding_usd: 0.03,
+      net_pnl_usd: -3.1,
+      mfe_pct: 0.6,
+      mae_pct: -1.7,
+      entry_ms: NOW - 7 * DAY - 9 * HOUR,
+      exit_ms: NOW - 7 * DAY,
+      exit_reason: "stop",
+      rationale: "RSI 76 fade toward 20-bar mean; invalidated on continuation.",
+    },
+    {
+      id: 703,
+      strategy: "momo",
+      symbol: "DOGE/USDT:USDT",
+      side: "long",
+      leverage: 10,
+      qty: 1800,
+      entry_price: 0.1085,
+      exit_price: 0.1071,
+      stop_initial: 0.1066,
+      stop_final: 0.1066,
+      target: 0.1128,
+      margin_usd: 19.53,
+      notional_usd: 195.3,
+      entry_fee_usd: 0.1,
+      exit_fee_usd: 0.1,
+      funding_usd: -0.04,
+      net_pnl_usd: -2.27,
+      mfe_pct: 0.5,
+      mae_pct: -1.4,
+      entry_ms: NOW - 10 * DAY - 6 * HOUR,
+      exit_ms: NOW - 10 * DAY,
+      exit_reason: "EMERGENCY",
+      rationale: "Flattened by lab-wide emergency rule when intraday drawdown spiked.",
+    },
+  ],
+  opportunities: {
+    "BTC/USDT:USDT": {
+      breakout: { action: "long", reason: "Price pressing 20-bar band upper edge with rising ATR" },
+      trend: { action: null, reason: "EMA stack intact but pullback not complete" },
+      meanrev: { action: null, reason: "RSI 58 — no extreme to fade" },
+      funding: { action: null, reason: "Funding 0.01%/8h — no crowded skew" },
+      momo: { action: null, reason: "Volume 1.1x average — below 2x burst gate" },
+    },
+    "ETH/USDT:USDT": {
+      breakout: { action: null, reason: "Inside prior range; no expansion" },
+      trend: { action: "long", reason: "EMA20>EMA50>EMA200 with higher-low structure" },
+      meanrev: { action: null, reason: "RSI 54 — neutral" },
+      funding: { action: null, reason: "Funding near flat" },
+      momo: { action: null, reason: "No volume burst in window" },
+    },
+    "SOL/USDT:USDT": {
+      breakout: { action: null, reason: "ATR contracting; breakout filter off" },
+      trend: { action: null, reason: "EMAs flat and interleaved" },
+      meanrev: { action: "short", reason: "RSI 74 against declining 20-bar mean" },
+      funding: { action: "short", reason: "Funding +0.09%/8h crowded long" },
+      momo: { action: null, reason: "Burst gate not met" },
+    },
+    "DOGE/USDT:USDT": {
+      breakout: { action: null, reason: "Spread 0.14% above execution limit" },
+      trend: { action: null, reason: "No established trend" },
+      meanrev: { action: null, reason: "RSI 61 — neutral zone" },
+      funding: { action: null, reason: "Funding data stale — default no trade" },
+      momo: { action: "long", reason: "Volume 3.1x average with range break (auto-entry off)" },
+    },
+  },
+  equity_curve: labEq,
+  audit: [
+    { id: 41, ts_ms: NOW - 4 * MIN, level: "info", category: "scanner", message: "Lab scan complete: 4 symbols × 5 strategies, 4 candidate signals, 0 entries (auto-entry off)" },
+    { id: 40, ts_ms: NOW - 9 * MIN, level: "warning", category: "risk", message: "Remaining drawdown allowance $13.02 below $15 soft floor — new entries gated" },
+    { id: 39, ts_ms: NOW - 2 * HOUR, level: "info", category: "execution", message: "Mark-to-market: BTC breakout position −$0.42 unrealized, stop unchanged" },
+    { id: 38, ts_ms: NOW - 8 * HOUR, level: "error", category: "data", message: "Funding feed stale (>120s) — funding_skew entries blocked, nothing hidden" },
+    { id: 37, ts_ms: NOW - 10 * DAY, level: "error", category: "risk", message: "EMERGENCY flatten: intraday drawdown spike breached lab rule; DOGE momo closed at market" },
+  ],
 };
 
 // Deterministic pseudo-random candles so the DEMO chart is stable per symbol/tf.

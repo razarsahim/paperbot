@@ -74,9 +74,23 @@ def main():
     sub.add_parser("status", help="Print the simulated portfolio overview")
     sub.add_parser("pause", help="Manually block NEW simulated entries (exits keep running)")
     sub.add_parser("resume", help="Lift a manual pause")
+    sub.add_parser("lab-once", help="One Extreme Lab monitor/scan cycle (PAPER ONLY)")
+    sub.add_parser("lab-run", help="Continuous Extreme Lab paper engine")
+    sub.add_parser("lab-status", help="Extreme Lab capital, HWM/threshold and strategies")
+    sub.add_parser("lab-pause", help="Manually block new Lab entries")
+    sub.add_parser("lab-resume", help="Lift the Lab manual pause")
+    lab_reset = sub.add_parser("lab-reset",
+                               help="Clear the trailing-drawdown lockout AFTER manual review")
+    lab_reset.add_argument("--note", required=True,
+                           help="Required review note recorded in the audit log")
+    sub.add_parser("migrate-lab",
+                   help="One-time main-portfolio rebalance to $750 (engine must be stopped)")
     args = parser.parse_args()
     cfg = ProSettings.from_env()
     from .store import ProStore
+    if args.command and args.command.startswith("lab-"):
+        _lab_main(args, cfg)
+        return
     if args.command == "api":
         import uvicorn
         from .api import create_app
@@ -85,7 +99,9 @@ def main():
         return
     store = ProStore(cfg.db_path, cfg)
     try:
-        if args.command == "pause":
+        if args.command == "migrate-lab":
+            _migrate_lab(store, cfg)
+        elif args.command == "pause":
             store.set("manual_pause", True)
             store.audit("warning", "risk", "manual pause ENABLED: no new simulated entries")
             print("Paused: no new simulated entries. Open positions keep stop/target/"
@@ -143,6 +159,118 @@ def main():
                         print(f"SAFE ERROR (no entries): {type(exc).__name__}: {exc}",
                               file=sys.stderr, flush=True)
                         time.sleep(min(cfg.scan_interval_seconds * 2 ** min(failures, 5), 1800))
+    finally:
+        store.close()
+
+
+def _migrate_lab(store, cfg: ProSettings) -> None:
+    """One-time restructure of the RUNNING state to main $750 + Lab $250.
+    Refuses while the main engine holds its lock, and refuses when the
+    accounting is not in the known pre-migration state."""
+    import fcntl
+    lock_path = Path(cfg.db_path).with_suffix(".lock")
+    if lock_path.exists():
+        with open(lock_path, "w") as f:
+            try:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(f, fcntl.LOCK_UN)
+            except BlockingIOError:
+                print("REFUSED: the main engine is running. Stop `propaper run` "
+                      "first, migrate, then restart it.")
+                return
+    if store.open_positions() or store.trades(limit=1):
+        print("REFUSED: positions or trades exist; manual review required before "
+              "rebalancing. Nothing was changed.")
+        return
+    core, hype = float(store.get("cash_core")), float(store.get("cash_hype"))
+    if (core, hype) == (750.0, 0.0):
+        print("Already migrated (main = $750).")
+        return
+    if (core, hype) != (900.0, 100.0):
+        print(f"REFUSED: unexpected balances core={core} hype={hype}; manual review "
+              "required. Nothing was changed.")
+        return
+    with store.conn:
+        import json as _json
+        for key, value in (("cash_core", 750.0), ("cash_hype", 0.0),
+                           ("initial_balance", 750.0), ("peak_equity", 750.0),
+                           ("day_start_equity", 750.0)):
+            store.conn.execute(
+                "INSERT INTO kv(key,value) VALUES(?,?) "
+                "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                (key, _json.dumps(value)))
+        store.conn.execute(
+            "INSERT INTO audit_log(ts_ms, level, category, message) VALUES("
+            "CAST(strftime('%s','now') AS INTEGER)*1000, 'warning', 'accounting', "
+            "'RESTRUCTURE: main portfolio rebalanced $1,000 -> $750; the retired "
+            "$100 hype sleeve and $150 of core fund the $250 Extreme Lab "
+            "(state/extreme_lab.sqlite). Aggregate stays $1,000.')")
+    from .lab.config import LabSettings
+    from .lab.store import LabStore
+    lab_cfg = LabSettings.from_env()
+    LabStore(lab_cfg.db_path, lab_cfg).close()
+    print("Migrated: main $750 (peak/day anchors reset), Extreme Lab $250 "
+          f"initialized at {lab_cfg.db_path}. Restart `propaper run` and the API.")
+
+
+def _lab_main(args, cfg: ProSettings) -> None:
+    from dataclasses import replace as _replace
+    from .lab.config import LabSettings
+    from .lab.engine import LabEngine
+    from .lab.governor import LabGovernor
+    from .lab.store import LabStore
+    lab_cfg = _replace(LabSettings.from_env(), main_db_path=cfg.db_path)
+    store = LabStore(lab_cfg.db_path, lab_cfg)
+    try:
+        if args.command == "lab-status":
+            from .api import compute_lab
+            snapshot = compute_lab(store, lab_cfg)
+            snapshot["signals"] = snapshot["signals"][:5]
+            snapshot["trades"] = snapshot["trades"][:5]
+            snapshot["audit"] = snapshot["audit"][:5]
+            snapshot["equity_curve"] = snapshot["equity_curve"][-5:]
+            print(json.dumps(snapshot, indent=2))
+        elif args.command == "lab-pause":
+            store.set("lab_manual_pause", True)
+            store.audit("warning", "risk", "Lab manual pause ENABLED")
+            print("Lab paused: no new entries; monitoring and exits continue.")
+        elif args.command == "lab-resume":
+            store.set("lab_manual_pause", False)
+            store.audit("info", "risk", "Lab manual pause lifted")
+            print("Lab resumed (subject to all rails and the trailing lockout).")
+        elif args.command == "lab-reset":
+            from .api import compute_lab
+            equity = compute_lab(store, lab_cfg)["capital"]["equity_usd"]
+            LabGovernor(store, lab_cfg).reset(current_equity=equity, note=args.note)
+            print(f"Lockout cleared after review. Peak re-anchored at ${equity:.2f}; "
+                  f"new threshold ${equity - lab_cfg.trailing_drawdown_usd:.2f}.")
+        elif args.command == "lab-once":
+            with single_instance(lab_cfg.db_path):
+                print(json.dumps(LabEngine(store, lab_cfg).run_cycle()))
+        elif args.command == "lab-run":
+            engine = LabEngine(store, lab_cfg)
+            print("EXTREME LAB — PAPER ONLY, virtual $250, experimental. "
+                  f"Auto-entry: {'ON' if lab_cfg.auto_entry else 'OFF'}. Ctrl+C stops.",
+                  flush=True)
+            with single_instance(lab_cfg.db_path):
+                failures = 0
+                while True:
+                    try:
+                        summary = engine.run_cycle()
+                        print(f"{time.strftime('%H:%M:%S')} lab {summary}", flush=True)
+                        failures = 0
+                        time.sleep(lab_cfg.monitor_interval_seconds)
+                    except KeyboardInterrupt:
+                        print("Stopped.")
+                        break
+                    except Exception as exc:
+                        failures += 1
+                        store.audit("error", "engine",
+                                    f"lab cycle failed: {type(exc).__name__}: {exc}")
+                        print(f"SAFE ERROR (no entries): {type(exc).__name__}: {exc}",
+                              file=sys.stderr, flush=True)
+                        time.sleep(min(lab_cfg.monitor_interval_seconds * 2 ** min(failures, 5),
+                                       1800))
     finally:
         store.close()
 
