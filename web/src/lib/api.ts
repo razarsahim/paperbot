@@ -12,8 +12,10 @@ import {
   mockLab,
   mockOverview,
   mockPositions,
+  mockResearch,
   mockSettings,
   mockSignals,
+  mockStrategies,
   mockTrades,
   mockUniverse,
 } from "./mock";
@@ -27,8 +29,10 @@ import type {
   Lab,
   Overview,
   Position,
+  Research,
   Settings,
   SignalEvent,
+  Strategies,
   Trade,
   Universe,
 } from "./types";
@@ -95,6 +99,11 @@ export const getHype = () => getJson<HypeRadar>("/api/hype", mockHype);
 
 export const getLab = () => getJson<Lab>("/api/lab", mockLab);
 
+export const getResearch = () => getJson<Research>("/api/research", mockResearch);
+
+export const getStrategies = () =>
+  getJson<Strategies>("/api/strategies", mockStrategies);
+
 export const getAudit = (limit = 100) =>
   getJson<AuditEntry[]>(`/api/audit?limit=${limit}`, mockAudit);
 
@@ -117,3 +126,5 @@ export const tradesCsvUrl = `${API_BASE}/api/export/trades.csv`;
 export const eventsUrl = `${API_BASE}/api/events`;
 /** SSE stream of `lab_live` events (continuous Lab P&L). */
 export const labStreamUrl = `${API_BASE}/api/lab/stream`;
+/** SSE stream of `research_live` events (continuous Research Lab P&L). */
+export const researchStreamUrl = `${API_BASE}/api/research/stream`;

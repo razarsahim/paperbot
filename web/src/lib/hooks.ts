@@ -1,8 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { eventsUrl, getLab, getOverview, labStreamUrl } from "./api";
-import type { ApiResult, Lab, LabLive, Overview, Source } from "./types";
+import {
+  eventsUrl,
+  getLab,
+  getOverview,
+  getResearch,
+  labStreamUrl,
+  researchStreamUrl,
+} from "./api";
+import type { ApiResult, Lab, LabLive, Overview, Research, Source } from "./types";
 
 export interface Loadable<T> {
   data: T | null;
@@ -127,6 +134,11 @@ export function useLab(): Loadable<Lab> {
   return useSseResource(getLab, "lab");
 }
 
+/** Research Lab state: `research` SSE events with 10s polling fallback. */
+export function useResearch(): Loadable<Research> {
+  return useSseResource(getResearch, "research");
+}
+
 // ---------- Continuous Lab P&L stream (/api/lab/stream) ----------
 
 export interface LabLiveState {
@@ -143,14 +155,14 @@ const LAB_LIVE_RECONNECT_BASE_MS = 2_000;
 const LAB_LIVE_RECONNECT_MAX_MS = 30_000;
 
 /**
- * Subscribe to the `lab_live` SSE stream. Reconnects with exponential backoff
- * (2s, 4s, 8s … capped at 30s) by closing and recreating the EventSource.
- * Re-renders are throttled to at most one per 150ms; the latest payload is
- * never dropped — a trailing flush always delivers it. No prices are ever
- * fabricated or interpolated: only payloads the backend actually sent are
- * stored, each with the client receipt time for honest latency display.
+ * Subscribe to a continuous `*_live` SSE stream. Reconnects with exponential
+ * backoff (2s, 4s, 8s … capped at 30s) by closing and recreating the
+ * EventSource. Re-renders are throttled to at most one per 150ms; the latest
+ * payload is never dropped — a trailing flush always delivers it. No prices
+ * are ever fabricated or interpolated: only payloads the backend actually sent
+ * are stored, each with the client receipt time for honest latency display.
  */
-export function useLabLive(): LabLiveState {
+function useLiveStream(url: string, eventName: string): LabLiveState {
   const [state, setState] = useState<{
     live: LabLive | null;
     receivedAtMs: number | null;
@@ -206,7 +218,7 @@ export function useLabLive(): LabLiveState {
     const connect = () => {
       if (disposed) return;
       try {
-        es = new EventSource(labStreamUrl);
+        es = new EventSource(url);
       } catch {
         scheduleReconnect();
         return;
@@ -216,7 +228,7 @@ export function useLabLive(): LabLiveState {
         attempt = 0; // healthy again — reset backoff
         setConnected(true);
       };
-      es.addEventListener("lab_live", (ev) => {
+      es.addEventListener(eventName, (ev) => {
         if (disposed) return;
         try {
           push(JSON.parse((ev as MessageEvent).data) as LabLive);
@@ -241,7 +253,17 @@ export function useLabLive(): LabLiveState {
       if (flushTimer !== null) clearTimeout(flushTimer);
       es?.close();
     };
-  }, []);
+  }, [url, eventName]);
 
   return { live: state.live, connected, receivedAtMs: state.receivedAtMs };
+}
+
+/** Continuous Extreme Lab P&L via the `lab_live` SSE stream. */
+export function useLabLive(): LabLiveState {
+  return useLiveStream(labStreamUrl, "lab_live");
+}
+
+/** Continuous Research Lab P&L via the `research_live` SSE stream. */
+export function useResearchLive(): LabLiveState {
+  return useLiveStream(researchStreamUrl, "research_live");
 }

@@ -417,6 +417,63 @@ export interface LabLive {
   capital?: LabLiveCapital | null;
 }
 
+// ---------- /api/research ----------
+// Strategy Research Lab: a second PAPER-ONLY simulation (virtual $250),
+// same payload shape as /api/lab with two additions:
+//  - each strategy carries a `status` level + remaining allowance
+//  - each open position carries a correlation-cluster tag
+export interface ResearchStrategyStatus {
+  level: "ok" | "warning" | "locked";
+  remaining_allowance_usd: number;
+}
+
+export interface ResearchStrategy extends LabStrategy {
+  status: ResearchStrategyStatus;
+}
+
+export interface ResearchPosition extends LabPosition {
+  corr_cluster: string;
+}
+
+export interface Research extends Omit<Lab, "strategies" | "positions"> {
+  strategies: ResearchStrategy[];
+  positions: ResearchPosition[];
+}
+
+// ---------- /api/strategies ----------
+// Unified forward-paper comparison across both labs. NOT a backtest: every
+// row is live/simulated paper diagnostics and must never be read as a
+// validated return. Samples are explicitly flagged as too small to trust.
+export interface StrategyRow {
+  lab: "extreme" | "research";
+  key: string;
+  name: string;
+  allocation_usd: number;
+  cash_usd: number;
+  equity_usd: number;
+  unrealized_pnl_usd: number;
+  realized_pnl_usd: number;
+  return_pct: number;
+  open_positions: number;
+  leverage: number;
+  locked: boolean;
+  trade_count: number;
+  win_rate_pct: number | null;
+  profit_factor: number | null;
+  expectancy_usd: number | null;
+  max_drawdown_realized_usd: number;
+  fees_usd: number;
+  funding_usd: number;
+  sample: "insufficient" | "developing";
+  rank_by_net_pnl: number;
+}
+
+export interface Strategies {
+  count: number;
+  strategies: StrategyRow[];
+  note: string;
+}
+
 // ---------- /api/candles ----------
 export interface CandleMarker {
   ts_ms: number;
