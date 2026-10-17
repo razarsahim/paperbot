@@ -232,6 +232,7 @@ def compute_research(store, research_cfg) -> dict:
         "positions": out_positions,
         "signals": store.signals(100),
         "trades": store.trades(200),
+        "opportunities": store.get("research_opportunities", {}) or {},
         "equity_curve": [[r["ts_ms"], r["equity_usd"], r["threshold_usd"]]
                          for r in store.equity_history(5000)],
         "audit": store.audit_log(100),
@@ -321,9 +322,10 @@ def create_app(cfg: ProSettings, lab_cfg=None, research_cfg=None) -> FastAPI:
         research_cfg = _replace(ResearchSettings.from_env(), main_db_path=cfg.db_path)
     research_store = ResearchStore(research_cfg.db_path, research_cfg)
     app = FastAPI(title="PaperBot Pro (PAPER ONLY)", docs_url="/api/docs")
+    # localhost-only, any port (the dashboard dev/prod server port varies);
+    # the API binds 127.0.0.1 so this never widens beyond the local machine.
     app.add_middleware(CORSMiddleware,
-                       allow_origins=[f"http://{host}:{port}" for host in
-                                      ("localhost", "127.0.0.1") for port in (3000, 3001)],
+                       allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",
                        allow_methods=["GET"], allow_headers=["*"])
 
     @app.get("/api/health")
