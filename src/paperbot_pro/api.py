@@ -392,6 +392,44 @@ def create_app(cfg: ProSettings, lab_cfg=None) -> FastAPI:
                              "target": pos["target"] if pos else None,
                              "liq": pos["liq_price_est"] if pos else None}}
 
+    @app.get("/api/lab/stream")
+    async def lab_stream(limit: int | None = None):
+        """Live Extreme Lab state: samples the engine-published snapshot file
+        (atomic JSON, no SQLite in the hot path) every 200ms and pushes on
+        change. live_status: LIVE (fresh), STALE (old), DISCONNECTED (absent
+        or unreadable). Supports any number of concurrent clients."""
+        live_path = Path(lab_cfg.live_state_path)
+
+        def sample() -> dict:
+            now_ms = int(time.time() * 1000)
+            try:
+                state = json.loads(live_path.read_text())
+            except (OSError, json.JSONDecodeError):
+                return {"live_status": "DISCONNECTED", "server_ts_ms": now_ms,
+                        "capital": None, "positions": []}
+            age_ms = now_ms - state.get("published_at_ms", 0)
+            if age_ms > max(lab_cfg.price_fresh_seconds, 60) * 1000:
+                state["live_status"] = "STALE"
+            else:
+                state["live_status"] = "LIVE"
+            state["server_ts_ms"] = now_ms
+            state["publish_age_ms"] = age_ms
+            return state
+
+        async def stream():
+            sent = 0
+            last_payload = None
+            while limit is None or sent < limit:
+                state = sample()
+                payload = json.dumps(state)
+                if payload != last_payload or limit is not None:
+                    yield f"event: lab_live\ndata: {payload}\n\n"
+                    last_payload = payload
+                    sent += 1
+                if limit is None or sent < limit:
+                    await asyncio.sleep(0.2)
+        return StreamingResponse(stream(), media_type="text/event-stream")
+
     @app.get("/api/events")
     async def events(limit: int | None = None):
         async def stream():
