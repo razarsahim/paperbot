@@ -29,6 +29,23 @@ def test_lab_endpoint_reports_capital_hwm_and_strategies(tmp_path):
     assert len(body['strategies']) == 10
     assert all(s['cash_usd'] == 50.0 for s in body['strategies'])
     assert body['status']['locked'] is False
+
+
+def test_lab_strategies_carry_cohort_and_status_for_the_dashboard(tmp_path):
+    cfg, lab_cfg = make_cfg(tmp_path)
+    client = TestClient(create_app(cfg, lab_cfg))
+    body = client.get('/api/lab').json()
+    by_key = {s['key']: s for s in body['strategies']}
+    # cohort tags present for the leaderboard / per-cohort rules
+    assert by_key['breakout']['cohort'] == 'extreme'
+    assert by_key['regime_trend']['cohort'] == 'research'
+    # per-strategy status, leverage and leaderboard-ready P&L fields present
+    for s in body['strategies']:
+        assert s['status']['level'] in {'ok', 'warning', 'locked'}
+        assert s['leverage'] == 10.0
+        assert 'unrealized_pnl_usd' in s and 'return_pct' in s
+    # fresh research sleeve: $50 cash is above the $40 warn floor -> ok
+    assert by_key['regime_trend']['status']['level'] == 'ok'
     assert body['status']['auto_entry'] is False
     assert body['positions'] == [] and body['trades'] == []
 

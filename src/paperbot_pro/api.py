@@ -169,7 +169,17 @@ def compute_lab(store, lab_cfg) -> dict:
             "remaining_allowance_usd": max(0.0, equity - threshold),
         },
         "strategies": [{**ledger[s.key], "display_name": s.name,
-                        "description": s.description,
+                        "description": s.description, "cohort": s.cohort,
+                        "leverage": lab_cfg.leverage,
+                        "status": store.strategy_status(s.key),
+                        "unrealized_pnl_usd": sum(
+                            (_upnl(p["side"], p["entry_price"], marks.get(p["symbol"]), p["qty"])
+                             if marks.get(p["symbol"]) is not None else 0.0)
+                            for p in positions if p["strategy"] == s.key),
+                        "return_pct": ((ledger[s.key]["cash_usd"]
+                                        + sum(p["margin_usd"] for p in positions
+                                              if p["strategy"] == s.key))
+                                       / ledger[s.key]["allocation_usd"] - 1) * 100,
                         "open_symbols": [p["symbol"] for p in positions
                                          if p["strategy"] == s.key]}
                        for s in STRATEGIES if s.key in ledger],
@@ -269,23 +279,25 @@ def _strategy_stats(trades: list[dict]) -> dict:
     }
 
 
-def compute_strategies(lab_store, lab_cfg, research_store, research_cfg) -> dict:
-    """Unified comparison of all ten strategies across both labs with a net-PnL
-    ranking. Performance figures are forward-paper diagnostics, never validated
-    returns."""
+def compute_strategies(lab_store, lab_cfg, research_store=None, research_cfg=None) -> dict:
+    """Unified comparison of all ten strategies with a net-PnL ranking. Each row
+    is tagged by its cohort ('extreme'/'research'). Post-merge every strategy
+    lives in the Extreme Lab; the research store (if still passed) only fills in
+    keys the lab ledger does not yet have, so the count is 10 in either phase and
+    nothing is double-counted. Figures are forward-paper diagnostics, never
+    validated returns."""
     from .lab.config import STRATEGIES as L_STRATEGIES
-    from .research.config import STRATEGIES as R_STRATEGIES
-    rows = []
-    for store, cfg, defs, lab_name in (
-            (lab_store, lab_cfg, L_STRATEGIES, "extreme"),
-            (research_store, research_cfg, R_STRATEGIES, "research")):
+    from .perp import unrealized_pnl as _upnl
+    rows, seen = [], set()
+
+    def add_rows(store, cfg, defs, cohort_of):
         ledger = store.strategy_ledger()
         marks = store.get("marks", {}) or {}
         positions = store.open_positions()
-        from .perp import unrealized_pnl as _upnl
         for sdef in defs:
-            if sdef.key not in ledger:
+            if sdef.key not in ledger or sdef.key in seen:
                 continue
+            seen.add(sdef.key)
             led = ledger[sdef.key]
             strat_pos = [p for p in positions if p["strategy"] == sdef.key]
             margin = sum(p["margin_usd"] for p in strat_pos)
@@ -295,13 +307,18 @@ def compute_strategies(lab_store, lab_cfg, research_store, research_cfg) -> dict
             stats = _strategy_stats(store.trades(limit=100_000, strategy=sdef.key))
             locked = bool(led.get("locked")) or bool(store.get("lab_locked"))
             rows.append({
-                "lab": lab_name, "key": sdef.key, "name": sdef.name,
+                "lab": cohort_of(sdef), "key": sdef.key, "name": sdef.name,
                 "allocation_usd": led["allocation_usd"], "cash_usd": led["cash_usd"],
                 "equity_usd": equity, "unrealized_pnl_usd": unreal,
                 "return_pct": (equity / led["allocation_usd"] - 1) * 100,
                 "open_positions": len(strat_pos), "leverage": cfg.leverage,
                 "locked": locked, **stats,
             })
+
+    add_rows(lab_store, lab_cfg, L_STRATEGIES, lambda s: getattr(s, "cohort", "extreme"))
+    if research_store is not None and research_cfg is not None:
+        from .research.config import STRATEGIES as R_STRATEGIES
+        add_rows(research_store, research_cfg, R_STRATEGIES, lambda s: "research")
     ordered = sorted(rows, key=lambda r: r["realized_pnl_usd"] + r["unrealized_pnl_usd"],
                      reverse=True)
     for i, r in enumerate(ordered, 1):

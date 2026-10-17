@@ -34,25 +34,28 @@ def test_research_endpoint_reports_capital_and_five_strategies(tmp_path):
 
 
 def test_strategies_endpoint_compares_all_ten_with_ranking(tmp_path):
+    """Post-merge: all 10 strategies live in the Extreme Lab, each tagged by its
+    cohort. regime_trend is a research-cohort sleeve inside the unified lab."""
+    from paperbot_pro.lab.store import LabStore
     pro, lab, research = cfgs(tmp_path)
-    # seed a couple of research trades for stats
-    rstore = ResearchStore(research.db_path, research)
-    with rstore.conn:
+    lstore = LabStore(lab.db_path, lab)            # fresh unified lab: 10 sleeves
+    with lstore.conn:
         for pnl in (3.0, -1.0, 2.0):
-            rstore.conn.execute(
+            lstore.conn.execute(
                 """INSERT INTO trades(strategy,symbol,side,leverage,qty,entry_price,exit_price,
                    stop_initial,stop_final,target,margin_usd,notional_usd,entry_fee_usd,
                    exit_fee_usd,funding_usd,net_pnl_usd,entry_ms,exit_ms,exit_reason,rationale)
                    VALUES('regime_trend','BTC/USDT:USDT','long',10,0.1,100,?,95,95,NULL,10,100,
                    0.06,0.06,0.01,?,0,3600000,'TARGET','t')""", (100 + pnl, pnl))
-        rstore.conn.execute("UPDATE strategies SET cash_usd=54, realized_pnl_usd=4 WHERE key='regime_trend'")
-    rstore.close()
+        lstore.conn.execute("UPDATE strategies SET cash_usd=54, realized_pnl_usd=4 WHERE key='regime_trend'")
+    lstore.close()
     client = TestClient(create_app(pro, lab, research))
     body = client.get('/api/strategies').json()
     assert body['count'] == 10
     labs = {s['lab'] for s in body['strategies']}
-    assert labs == {'extreme', 'research'}
+    assert labs == {'extreme', 'research'}         # cohort tags on the unified 10
     rt = next(s for s in body['strategies'] if s['key'] == 'regime_trend')
+    assert rt['lab'] == 'research'                  # research cohort
     assert rt['trade_count'] == 3
     assert rt['win_rate_pct'] == pytest.approx(2 / 3 * 100)
     assert rt['realized_pnl_usd'] == pytest.approx(4.0)
