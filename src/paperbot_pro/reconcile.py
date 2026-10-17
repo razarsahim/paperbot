@@ -138,10 +138,15 @@ def _reconcile(store, strategy_keys, allocation: float, trailing_dd: float,
 
 
 def reconcile_lab(store, cfg) -> dict:
-    from .lab.config import STRATEGIES
-    return _reconcile(store, [s.key for s in STRATEGIES],
-                      cfg.allocation_per_strategy_usd, cfg.trailing_drawdown_usd,
-                      cfg.starting_capital_usd)
+    # Portfolio facts come from the DB ledger, not config constants, so the
+    # reconciliation is correct whether the lab holds 5 sleeves ($250, pre-merge)
+    # or 10 ($500, post-merge). The migration is the single source of truth for
+    # how many strategies exist and how much capital was allocated.
+    ledger = store.strategy_ledger()
+    keys = list(ledger.keys())
+    starting_capital = sum(s["allocation_usd"] for s in ledger.values())
+    return _reconcile(store, keys, cfg.allocation_per_strategy_usd,
+                      cfg.trailing_drawdown_usd, starting_capital)
 
 
 def reconcile_research(store, cfg) -> dict:

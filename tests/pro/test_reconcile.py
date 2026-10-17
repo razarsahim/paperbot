@@ -48,8 +48,8 @@ def test_clean_ledger_reconciles(tmp_path):
     report = reconcile_lab(store, cfg)
     assert report['ok'] is True
     assert report['discrepancies'] == []
-    # 250 + 2.82 realized - 0.12 entry fee spent on the open position
-    assert report['portfolio']['equity_usd'] == pytest.approx(250.0 + 2.82 - 0.12)
+    # 500 (10 x $50 sleeves) + 2.82 realized - 0.12 entry fee on the open position
+    assert report['portfolio']['equity_usd'] == pytest.approx(500.0 + 2.82 - 0.12)
 
 
 def test_detects_cash_identity_breach(tmp_path):
@@ -93,8 +93,8 @@ def test_peak_below_recorded_equity_is_a_note_not_a_lock(tmp_path):
     protection — it must be an informational note, never a material
     discrepancy that trips the integrity lock."""
     store, cfg = make(tmp_path)
-    store.record_equity(1000, 275.07, 250, 0, 0, 275.07, 225.07)  # inflated old snapshot
-    store.set("peak_equity", 274.56)                               # corrected (lower) peak
+    store.record_equity(1000, 525.07, 500, 0, 0, 525.07, 475.07)  # inflated old snapshot
+    store.set("peak_equity", 524.56)                               # corrected (lower) peak
     report = reconcile_lab(store, cfg)
     assert report["ok"] is True                                    # NOT a discrepancy
     assert not any(d["kind"] == "hwm_not_ratcheted" for d in report["discrepancies"])
@@ -103,7 +103,7 @@ def test_peak_below_recorded_equity_is_a_note_not_a_lock(tmp_path):
 
 def test_peak_below_initial_is_a_real_discrepancy(tmp_path):
     store, cfg = make(tmp_path)
-    store.set("peak_equity", 240.0)        # below the $250 starting capital = corruption
+    store.set("peak_equity", 480.0)        # below the $500 starting capital = corruption
     report = reconcile_lab(store, cfg)
     assert not report["ok"]
     assert any(d["kind"] == "peak_below_initial" for d in report["discrepancies"])

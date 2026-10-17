@@ -101,8 +101,8 @@ def test_tick_through_stop_closes_once_no_duplicates(tmp_path):
 
 def test_tick_breach_locks_and_emergency_exits_via_book(tmp_path):
     engine, store, cfg = engine_with_position(tmp_path)
-    store.set('peak_equity', 320.0)    # prior simulated gains: threshold 270
-    tick(engine, 277.0)                # equity ~249 < 270 -> breach FLAGGED (pending)
+    store.set('peak_equity', 550.0)    # prior simulated gains: threshold 500
+    tick(engine, 277.0)                # equity ~499.5 < 500 -> breach FLAGGED (pending)
     assert store.get('lab_locked') is False            # one tick: not yet locked
     tick(engine, 276.5)                # confirming second breached tick -> lock
     assert store.get('lab_locked') is True

@@ -11,7 +11,7 @@ def make(tmp_path, **kw):
 
 def test_settings_rails():
     LabSettings().validate()
-    assert len(STRATEGIES) == 5
+    assert len(STRATEGIES) == 10            # unified lab: 10 sleeves
     with pytest.raises(ValueError):
         LabSettings(max_risk_per_trade_usd=6.0).validate()      # > $5
     with pytest.raises(ValueError):
@@ -23,19 +23,20 @@ def test_settings_rails():
     with pytest.raises(ValueError):
         LabSettings(trailing_drawdown_usd=0).validate()
     with pytest.raises(ValueError):
-        LabSettings(allocation_per_strategy_usd=60.0).validate()  # 5x60 != 250
+        LabSettings(allocation_per_strategy_usd=60.0).validate()  # 10x60 != 500
 
 
-def test_store_initializes_five_strategy_ledgers(tmp_path):
+def test_store_initializes_ten_strategy_ledgers(tmp_path):
     store, cfg = make(tmp_path)
     ledger = store.strategy_ledger()
     assert sorted(ledger) == sorted(s.key for s in STRATEGIES)
+    assert len(ledger) == 10
     for row in ledger.values():
         assert row['cash_usd'] == pytest.approx(50.0)
         assert row['realized_pnl_usd'] == 0.0
-    assert store.get('peak_equity') == pytest.approx(250.0)
+    assert store.get('peak_equity') == pytest.approx(500.0)
     assert store.get('lab_locked') is False
-    assert store.total_cash() == pytest.approx(250.0)
+    assert store.total_cash() == pytest.approx(500.0)
 
 
 def test_store_persists_peak_and_lock_across_reopen(tmp_path):

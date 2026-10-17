@@ -70,7 +70,7 @@ class LabGovernor:
                         (key, json.dumps(value)))
                 self.db.conn.execute(
                     "INSERT INTO audit_log(ts_ms, level, category, message) VALUES(?,?,?,?)",
-                    (now_ms, "error", "risk", reason + " — all five strategies locked; "
+                    (now_ms, "error", "risk", reason + " — all strategies locked; "
                      "emergency exits will be attempted; manual reset required"))
         return {"peak_equity": peak, "threshold": threshold, "breached": breached,
                 "locked": bool(self.db.get("lab_locked")),
@@ -99,6 +99,23 @@ class LabGovernor:
                  f"{current_equity:.2f}; new threshold "
                  f"{current_equity - self.cfg.trailing_drawdown_usd:.2f}",))
 
+    # ---------------- per-strategy equity floor (research cohort) ----------
+    def strategy_equity_breaches(self, strategy_equity: dict[str, float]) -> list[str]:
+        """Research-cohort strategies whose net equity is at/below the $30 floor
+        ($20 cumulative loss). Extreme-cohort sleeves have no floor and are never
+        returned. The caller exits + locks them (atomic in the engine)."""
+        from .config import RESEARCH_KEYS
+        return [k for k, eq in strategy_equity.items()
+                if k in RESEARCH_KEYS and eq <= self.cfg.strategy_lock_floor_usd]
+
+    def lock_strategy(self, key: str, reason: str, now_ms: int) -> None:
+        with self.db.conn:
+            self.db.conn.execute(
+                "UPDATE strategies SET locked=1, lock_reason=? WHERE key=?", (reason, key))
+            self.db.conn.execute(
+                "INSERT INTO audit_log(ts_ms,level,category,message) VALUES(?,?,?,?)",
+                (now_ms, "error", "risk", f"[{key}] STRATEGY LOCKED: {reason}"))
+
     # ---------------- entry verdicts ----------------
     def approve(self, planned: dict, now_ms: int, log: bool = False,
                 action: str = "long") -> Verdict:
@@ -119,14 +136,30 @@ class LabGovernor:
             return Verdict(False, "Lab locked (trailing drawdown): manual reset required")
         if self.db.get("lab_manual_pause"):
             return Verdict(False, "Lab manually paused")
-        if planned["planned_risk_usd"] > self.cfg.max_risk_per_trade_usd + 1e-9:
+        # Per-trade cap is the SLEEVE's budget ($5 extreme / $2 research),
+        # carried on the plan; falls back to the portfolio ceiling if absent.
+        budget = planned.get("risk_budget_usd", self.cfg.max_risk_per_trade_usd)
+        if planned["planned_risk_usd"] > budget + 1e-9:
             return Verdict(False, f"planned risk ${planned['planned_risk_usd']:.2f} "
-                                  f"exceeds the $5 per-trade cap")
+                                  f"exceeds the ${budget:.0f} per-trade cap for this sleeve")
+        # Per-strategy lock (research cohort $30 floor; or an explicit lock flag).
+        status = self.db.strategy_status(planned["strategy"])
+        if status["level"] == "unknown":
+            return Verdict(False, f"unknown strategy '{planned['strategy']}'")
+        if status["level"] == "locked":
+            return Verdict(False, f"{planned['strategy']} is locked "
+                                  f"(equity floor / $20 cumulative loss)")
         positions = self.db.open_positions()
         if any(p["symbol"] == planned["symbol"] for p in positions):
             return Verdict(False, f"{planned['symbol']} already open: no duplicates/averaging")
         if len(positions) >= self.cfg.max_open_positions:
             return Verdict(False, f"position limit reached ({self.cfg.max_open_positions})")
+        # Correlation-cluster limit (applies when a plan carries a cluster tag).
+        cluster = planned.get("corr_cluster", "")
+        if cluster and any((p["corr_cluster"] if "corr_cluster" in p.keys() else "") == cluster
+                           for p in positions):
+            return Verdict(False, f"correlated exposure: a {cluster}-cluster position is "
+                                  "already open (shared risk limit)")
         combined = sum(p["planned_risk_usd"] for p in positions) + planned["planned_risk_usd"]
         if combined > self.cfg.max_combined_risk_usd + 1e-9:
             return Verdict(False, f"combined planned risk ${combined:.2f} exceeds the "

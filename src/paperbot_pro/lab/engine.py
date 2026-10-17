@@ -23,6 +23,25 @@ from .config import STRATEGIES, LabSettings
 from .governor import LabGovernor
 from .store import LabStore
 
+
+def _merged_evaluations(closed, cfg, context):
+    """Run BOTH cohort signal modules on the same completed candles and merge
+    into one {key: signal} dict covering all 10 strategies. Each module returns
+    its own cohort's signals; a module that raises degrades to no-signal for its
+    keys rather than failing the whole scan."""
+    from .strategies import evaluate_all as evaluate_extreme
+    from ..research.strategies import evaluate_all as evaluate_research
+    out = {}
+    try:
+        out.update(evaluate_extreme(closed, cfg, context))
+    except Exception:
+        pass
+    try:
+        out.update(evaluate_research(closed, cfg, context))
+    except Exception:
+        pass
+    return out
+
 FUNDING_INTERVAL_MS = 8 * 3_600_000
 CANDLE_LIMIT = 200
 
@@ -162,22 +181,59 @@ class LabEngine:
             "realized_pnl_usd = realized_pnl_usd + ? WHERE key=?",
             (delta, realized, strategy))
 
+    def strategy_equity(self, marks: dict[str, float]) -> dict[str, float]:
+        """Per-strategy net equity = its cash + its open positions' margin + uPnL.
+        Only strategies present in the ledger are included (transition-safe)."""
+        eq = {k: v["cash_usd"] for k, v in self.db.strategy_ledger().items()}
+        for p in self.db.open_positions():
+            if p["strategy"] not in eq:
+                continue
+            eq[p["strategy"]] += p["margin_usd"]
+            m = marks.get(p["symbol"])
+            if m is not None:
+                eq[p["strategy"]] += unrealized_pnl(p["side"], p["entry_price"], m, p["qty"])
+        return eq
+
+    def _lock_breached_strategies(self, marks: dict[str, float], now_ms: int,
+                                  summary: dict) -> None:
+        """Research-cohort $30 equity-floor: lock the sleeve and protectively
+        exit its positions at observed marks (deferred honestly if unverifiable).
+        Extreme sleeves are never returned by strategy_equity_breaches."""
+        eq = self.strategy_equity(marks)
+        for key in self.governor.strategy_equity_breaches(eq):
+            if self.db.strategy_ledger()[key].get("locked"):
+                continue
+            self.governor.lock_strategy(
+                key, f"equity ${eq[key]:.2f} <= ${self.cfg.strategy_lock_floor_usd:.0f} floor "
+                     "($20 cumulative loss)", now_ms)
+            for pos in [p for p in self.db.open_positions() if p["strategy"] == key]:
+                mark = marks.get(pos["symbol"])
+                if mark is not None:
+                    self._force_exit(pos, float(mark), now_ms, "STRATEGY LOCK EXIT")
+                    summary["closed"] += 1
+                else:
+                    self.db.audit("error", "risk",
+                                  f"[{key}] lock exit DEFERRED: {pos['symbol']} unverifiable, "
+                                  "will retry", ts_ms=now_ms)
+
     def open_from_plan(self, inst: dict, plan, strategy: str, rationale: str,
-                       snapshot: dict | None, bar_ts: int, now_ms: int) -> None:
+                       snapshot: dict | None, bar_ts: int, now_ms: int,
+                       cluster: str = "") -> None:
         with self.db.conn:
             self.db.conn.execute(
                 """INSERT INTO positions(strategy, symbol, side, leverage, qty, entry_price,
                    margin_usd, notional_usd, stop, initial_stop, target, liq_price_est,
                    entry_fee_usd, funding_paid_usd, planned_risk_usd, mfe_price, mae_price,
-                   opened_ms, signal_bar_ms, rationale, indicator_snapshot, exchange, taker_fee)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?)""",
+                   opened_ms, signal_bar_ms, rationale, indicator_snapshot, exchange, taker_fee,
+                   corr_cluster)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,0,?,?,?,?,?,?,?,?,?,?)""",
                 (strategy, inst["symbol"], plan.side, plan.leverage, plan.qty,
                  plan.entry_price, plan.margin_usd, plan.notional_usd, plan.stop,
                  plan.stop, plan.target, plan.liq_price_est, plan.entry_fee_usd,
                  plan.planned_risk_usd, plan.entry_price, plan.entry_price,
                  now_ms, bar_ts, rationale,
                  json.dumps(snapshot) if snapshot else None,
-                 inst["exchange"], inst["taker_fee"]))
+                 inst["exchange"], inst["taker_fee"], cluster))
             self._adjust_strategy_cash(strategy, -(plan.margin_usd + plan.entry_fee_usd))
         self.db.audit("info", "trade",
                       f"[{strategy}] SIMULATED OPEN {plan.side} {inst['symbol']} qty "
@@ -269,7 +325,8 @@ class LabEngine:
         return applied
 
     # ---------------- emergency exits ----------------
-    def _force_exit(self, pos: dict, observed: float, now_ms: int) -> None:
+    def _force_exit(self, pos: dict, observed: float, now_ms: int,
+                    label: str = "EMERGENCY (trailing drawdown)") -> None:
         event = check_exit(pos, observed, self.cfg, pos["taker_fee"])
         if event is None:  # no stop/liq crossed: forced exit at observed price
             sign = 1 if pos["side"] == "long" else -1
@@ -277,7 +334,7 @@ class LabEngine:
             exit_fee = abs(fill * pos["qty"] * pos["taker_fee"])
             pnl = realized_pnl(pos["side"], pos["entry_price"], fill, pos["qty"],
                                pos["entry_fee_usd"], exit_fee, pos["funding_paid_usd"])
-            event = ExitEvent("EMERGENCY (trailing drawdown)", fill, pnl, exit_fee)
+            event = ExitEvent(label, fill, pnl, exit_fee)
         self.close_position(pos, event, now_ms)
 
     def emergency_exit_all(self, market, now_ms: int, summary: dict) -> None:
@@ -297,6 +354,29 @@ class LabEngine:
                 continue
             self._force_exit(pos, float(observed), now_ms)
             summary["closed"] += 1
+
+    def _scan_context(self, market, exchange: str, symbol: str,
+                      funding_rate, listing_age_days) -> dict:
+        """Merged context for both cohorts: funding + listing age (extreme) and
+        orderbook + higher-timeframe trend (research). Optional market hooks
+        (htf_trend, orderbook) degrade to safe defaults when unavailable."""
+        ctx = {"funding_rate": funding_rate,
+               "listing_age_days": listing_age_days if listing_age_days is not None else 9999,
+               "orderbook": None, "htf_trend_4h": "up", "htf_trend_1h": "up"}
+        for key, tf in (("htf_trend_4h", "4h"), ("htf_trend_1h", "1h")):
+            fn = getattr(market, "htf_trend", None)
+            if fn is not None:
+                try:
+                    ctx[key] = fn(exchange, symbol, tf)
+                except Exception:
+                    pass
+        ob = getattr(market, "orderbook", None)
+        if ob is not None:
+            try:
+                ctx["orderbook"], _ = ob(exchange, symbol)
+            except Exception:
+                ctx["orderbook"] = None
+        return ctx
 
     # ---------------- main cycle ----------------
     def run_cycle(self, now_ms: int | None = None) -> dict:
@@ -352,6 +432,8 @@ class LabEngine:
                 if event is not None:
                     self.close_position(pos, event, now_ms)
                     summary["closed"] += 1
+        # ---- pass 1b: per-strategy equity-floor locks (research cohort) ----
+        self._lock_breached_strategies(marks, now_ms, summary)
         # ---- pass 2: strategy scan on completed candles ----
         for inst in self.instruments_provider():
             symbol, exchange = inst["symbol"], inst["exchange"]
@@ -395,21 +477,21 @@ class LabEngine:
             except Exception:
                 funding_rate = None
             listing_age_days = (len(raw) / 24.0) if len(raw) < CANDLE_LIMIT else None
-            context = {"funding_rate": funding_rate,
-                       "listing_age_days": listing_age_days if listing_age_days is not None
-                       else 9999}
+            context = self._scan_context(market, exchange, symbol, funding_rate,
+                                         listing_age_days)
             results = self.db.get("lab_opportunities", {}) or {}
-            evaluations = __import__("paperbot_pro.lab.strategies",
-                                     fromlist=["evaluate_all"]).evaluate_all(
-                closed, self.cfg, context)
+            evaluations = _merged_evaluations(closed, self.cfg, context)
             results[symbol] = {k: {"action": s.action, "reason": s.reason}
                                for k, s in evaluations.items()}
             self.db.set("lab_opportunities", results)
             spread_pct = ((ask - bid) / ask) if (bid and ask and ask > 0) else None
             latest_bar = closed[-1].timestamp
+            ledger_keys = set(self.db.strategy_ledger())
             for strategy_def in STRATEGIES:
-                signal = evaluations[strategy_def.key]
-                if signal.action is None:
+                if strategy_def.key not in ledger_keys:
+                    continue  # transition-safe: only strategies seeded in the DB
+                signal = evaluations.get(strategy_def.key)
+                if signal is None or signal.action is None:
                     continue
                 seen_key = f"lab_seen:{strategy_def.key}:{symbol}"
                 if self.db.get(seen_key) == latest_bar:
@@ -442,24 +524,29 @@ class LabEngine:
                 spec = ContractSpec(symbol, inst["taker_fee"], inst["maint_margin_rate"],
                                     inst["tick_size"], inst["lot_size"])
                 ledger = self.db.strategy_ledger()[strategy_def.key]
+                # Per-cohort planned-risk budget ($5 extreme / $2 research).
                 plan = plan_entry(signal.action, float(entry_quote), signal.atr, spec,
                                   self.cfg, equity=self.equity(marks),
                                   available_margin=ledger["cash_usd"],
-                                  risk_budget_usd=self.cfg.max_risk_per_trade_usd,
+                                  risk_budget_usd=strategy_def.risk_budget_usd,
                                   with_target=False)
                 if not plan.ok:
                     self.db.log_signal(now_ms, strategy_def.key, symbol, signal.action,
                                        False, plan.reason, signal.reason)
                     continue
+                # Research cohort carries a correlation-cluster tag (base asset).
+                cluster = symbol.split("/")[0] if strategy_def.cohort == "research" else ""
                 planned = {"symbol": symbol, "strategy": strategy_def.key,
                            "planned_risk_usd": plan.planned_risk_usd,
                            "margin_usd": plan.margin_usd,
-                           "entry_fee_usd": plan.entry_fee_usd}
+                           "entry_fee_usd": plan.entry_fee_usd,
+                           "risk_budget_usd": strategy_def.risk_budget_usd,
+                           "corr_cluster": cluster}
                 verdict = self.governor.approve(planned, now_ms, log=True,
                                                 action=signal.action)
                 if verdict.approved:
                     self.open_from_plan(inst, plan, strategy_def.key, signal.reason,
-                                        signal.indicators, latest_bar, now_ms)
+                                        signal.indicators, latest_bar, now_ms, cluster=cluster)
                     summary["opened"] += 1
                     break  # one entry per symbol per cycle
         # ---- pass 3: equity, HWM, breach handling ----

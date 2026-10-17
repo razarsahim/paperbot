@@ -21,12 +21,12 @@ def test_lab_endpoint_reports_capital_hwm_and_strategies(tmp_path):
     cfg, lab_cfg = make_cfg(tmp_path)
     client = TestClient(create_app(cfg, lab_cfg))
     body = client.get('/api/lab').json()
-    assert body['capital']['initial_usd'] == 250.0
-    assert body['capital']['equity_usd'] == pytest.approx(250.0)
-    assert body['capital']['peak_equity_usd'] == pytest.approx(250.0)
-    assert body['capital']['threshold_usd'] == pytest.approx(200.0)
+    assert body['capital']['initial_usd'] == 500.0
+    assert body['capital']['equity_usd'] == pytest.approx(500.0)
+    assert body['capital']['peak_equity_usd'] == pytest.approx(500.0)
+    assert body['capital']['threshold_usd'] == pytest.approx(450.0)
     assert body['capital']['remaining_allowance_usd'] == pytest.approx(50.0)
-    assert len(body['strategies']) == 5
+    assert len(body['strategies']) == 10
     assert all(s['cash_usd'] == 50.0 for s in body['strategies'])
     assert body['status']['locked'] is False
     assert body['status']['auto_entry'] is False

@@ -31,8 +31,9 @@ def fake_position(store, symbol, strategy='trend', risk=4.0, margin=20.0):
 
 def test_hwm_examples_from_spec(tmp_path):
     gov, store, cfg = make(tmp_path)
-    for equity, want_threshold in ((250.0, 200.0), (300.0, 250.0),
-                                   (350.0, 300.0), (400.0, 350.0)):
+    # $500 unified base; trailing distance is still $50
+    for equity, want_threshold in ((500.0, 450.0), (550.0, 500.0),
+                                   (600.0, 550.0), (650.0, 600.0)):
         state = gov.update_hwm(equity, now_ms=1000)
         assert state['peak_equity'] == pytest.approx(equity)
         assert state['threshold'] == pytest.approx(want_threshold)
@@ -41,16 +42,16 @@ def test_hwm_examples_from_spec(tmp_path):
 
 def test_threshold_never_decreases_even_across_restart(tmp_path):
     gov, store, cfg = make(tmp_path)
-    gov.update_hwm(330.0, now_ms=1000)
-    state = gov.update_hwm(290.0, now_ms=2000)     # reversal, above threshold 280
-    assert state['peak_equity'] == pytest.approx(330.0)
-    assert state['threshold'] == pytest.approx(280.0)
+    gov.update_hwm(580.0, now_ms=1000)
+    state = gov.update_hwm(540.0, now_ms=2000)     # reversal, above threshold 530
+    assert state['peak_equity'] == pytest.approx(580.0)
+    assert state['threshold'] == pytest.approx(530.0)
     assert state['breached'] is False
     store.close()
     gov2, store2, _ = make(tmp_path)               # restart
-    state = gov2.update_hwm(300.0, now_ms=3000)
-    assert state['peak_equity'] == pytest.approx(330.0)
-    assert state['threshold'] == pytest.approx(280.0)
+    state = gov2.update_hwm(550.0, now_ms=3000)
+    assert state['peak_equity'] == pytest.approx(580.0)
+    assert state['threshold'] == pytest.approx(530.0)
 
 
 def test_breach_locks_atomically_and_recovery_does_not_unlock(tmp_path):
@@ -68,8 +69,8 @@ def test_breach_locks_atomically_and_recovery_does_not_unlock(tmp_path):
 
 def test_gap_far_below_threshold_records_honest_loss(tmp_path):
     gov, store, cfg = make(tmp_path)
-    gov.update_hwm(250.0, now_ms=1000)
-    state = gov.update_hwm(150.0, now_ms=2000)     # gap: $50 beyond the threshold
+    gov.update_hwm(500.0, now_ms=1000)
+    state = gov.update_hwm(400.0, now_ms=2000)     # gap: $50 beyond the threshold (450)
     assert state['breached'] is True
     assert state['excess_loss_usd'] == pytest.approx(50.0)
 
@@ -92,7 +93,7 @@ def test_manual_reset_requires_lock_and_reanchors_peak(tmp_path):
 
 def test_entry_rails_slots_combined_risk_cash_duplicates(tmp_path):
     gov, store, cfg = make(tmp_path)
-    gov.update_hwm(250.0, now_ms=1000)
+    gov.update_hwm(500.0, now_ms=1000)
     assert gov.approve(planned(), now_ms=1000).approved
     fake_position(store, 'A/USDT:USDT', risk=5.5)  # inserted directly: simulates drift
     fake_position(store, 'B/USDT:USDT', risk=5.5)
@@ -110,7 +111,7 @@ def test_entry_rails_slots_combined_risk_cash_duplicates(tmp_path):
 
 def test_strategy_sleeve_cash_is_isolated(tmp_path):
     gov, store, cfg = make(tmp_path)
-    gov.update_hwm(250.0, now_ms=1000)
+    gov.update_hwm(500.0, now_ms=1000)
     with store.conn:
         store.conn.execute("UPDATE strategies SET cash_usd=10 WHERE key='trend'")
     verdict = gov.approve(planned(margin=20.0, strategy='trend'), now_ms=2000)

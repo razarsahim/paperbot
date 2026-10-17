@@ -104,8 +104,8 @@ def test_breach_triggers_emergency_exit_and_lock_persists_restart(tmp_path):
     assert pos is not None
     # a single 10x isolated position caps its loss at ~margin (<$50), so the
     # realistic breach path is a previously raised high-water mark; simulate
-    # prior gains then a reversal: peak 320 -> threshold 270 > equity ~250.
-    store.set('peak_equity', 320.0)
+    # prior gains then a reversal: peak 580 -> threshold 530 > equity ~500.
+    store.set('peak_equity', 580.0)
     summary = engine.run_cycle(now_ms=now + 60_000)
     assert store.get('lab_locked') is True
     assert store.position(SYMBOL) is None              # emergency-exited
@@ -161,6 +161,6 @@ def test_equity_history_carries_peak_and_threshold(tmp_path):
     now = breakout_rows()[-1][0] + H + 1000
     engine.run_cycle(now_ms=now)
     row = store.equity_history()[-1]
-    assert row['equity_usd'] == pytest.approx(250.0)
-    assert row['peak_equity_usd'] == pytest.approx(250.0)
-    assert row['threshold_usd'] == pytest.approx(200.0)
+    assert row['equity_usd'] == pytest.approx(500.0)       # unified $500 base, no entries
+    assert row['peak_equity_usd'] == pytest.approx(500.0)
+    assert row['threshold_usd'] == pytest.approx(450.0)

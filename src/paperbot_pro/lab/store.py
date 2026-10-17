@@ -7,12 +7,21 @@ import time
 from pathlib import Path
 from .config import STRATEGIES, LabSettings
 
+# Columns added when the Extreme Lab absorbed the research cohort. An existing
+# 5-sleeve DB predates them; _migrate_schema adds them idempotently on open.
+_ADDED_COLUMNS = {
+    "strategies": [("locked", "INTEGER NOT NULL DEFAULT 0"), ("lock_reason", "TEXT")],
+    "positions": [("corr_cluster", "TEXT NOT NULL DEFAULT ''")],
+}
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS strategies (
     key TEXT PRIMARY KEY, name TEXT NOT NULL,
     allocation_usd REAL NOT NULL, cash_usd REAL NOT NULL,
-    realized_pnl_usd REAL NOT NULL DEFAULT 0);
+    realized_pnl_usd REAL NOT NULL DEFAULT 0,
+    locked INTEGER NOT NULL DEFAULT 0,       -- research cohort: per-strategy lock
+    lock_reason TEXT);
 CREATE TABLE IF NOT EXISTS positions (
     id INTEGER PRIMARY KEY AUTOINCREMENT, strategy TEXT NOT NULL,
     symbol TEXT NOT NULL UNIQUE, side TEXT NOT NULL CHECK(side IN ('long','short')),
@@ -25,7 +34,8 @@ CREATE TABLE IF NOT EXISTS positions (
     planned_risk_usd REAL NOT NULL, mfe_price REAL, mae_price REAL,
     opened_ms INTEGER NOT NULL, signal_bar_ms INTEGER NOT NULL,
     rationale TEXT NOT NULL, indicator_snapshot TEXT,
-    exchange TEXT NOT NULL, taker_fee REAL NOT NULL);
+    exchange TEXT NOT NULL, taker_fee REAL NOT NULL,
+    corr_cluster TEXT NOT NULL DEFAULT '');  -- research cohort: correlation tag
 CREATE TABLE IF NOT EXISTS trades (
     id INTEGER PRIMARY KEY AUTOINCREMENT, strategy TEXT NOT NULL,
     symbol TEXT NOT NULL, side TEXT NOT NULL, leverage REAL NOT NULL,
@@ -62,17 +72,20 @@ CREATE TABLE IF NOT EXISTS settlements (
 class LabStore:
     def __init__(self, path: str, cfg: LabSettings):
         cfg.validate()
+        self.cfg = cfg
         Path(path).expanduser().parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(path, timeout=15, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA busy_timeout=15000")
         self.conn.executescript(SCHEMA)
+        self._migrate_schema()
         if self.get("initialized") is None:
             with self.conn:
                 for s in STRATEGIES:
                     self.conn.execute(
-                        "INSERT OR IGNORE INTO strategies VALUES(?,?,?,?,0)",
+                        "INSERT OR IGNORE INTO strategies(key,name,allocation_usd,"
+                        "cash_usd,realized_pnl_usd,locked) VALUES(?,?,?,?,0,0)",
                         (s.key, s.name, cfg.allocation_per_strategy_usd,
                          cfg.allocation_per_strategy_usd))
             self.set("initialized", True)
@@ -80,6 +93,45 @@ class LabStore:
             self.set("peak_equity", cfg.starting_capital_usd)
             self.set("lab_locked", False)
             self.set("lab_lock_reason", None)
+
+    def _migrate_schema(self) -> None:
+        """Add research-cohort columns to a pre-merge DB, idempotently. Additive
+        only (never drops/rewrites), so it is safe to run on every open."""
+        with self.conn:
+            for table, columns in _ADDED_COLUMNS.items():
+                have = {r[1] for r in self.conn.execute(f"PRAGMA table_info({table})")}
+                for name, decl in columns:
+                    if name not in have:
+                        self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {decl}")
+
+    def _cohort(self, key: str) -> str:
+        for s in STRATEGIES:
+            if s.key == key:
+                return s.cohort
+        return "extreme"
+
+    def strategy_status(self, key: str) -> dict:
+        """Cohort-aware status. Extreme sleeves have no per-strategy floor (the
+        portfolio governor + trailing drawdown protect them), so they are 'ok'
+        unless explicitly locked. Research sleeves warn at $40 and lock at the
+        $30 floor ($20 cumulative loss from $50)."""
+        row = self.conn.execute("SELECT * FROM strategies WHERE key=?", (key,)).fetchone()
+        if row is None:
+            return {"level": "unknown"}
+        cash = row["cash_usd"]
+        locked_flag = bool(row["locked"]) if "locked" in row.keys() else False
+        if self._cohort(key) != "research":
+            level = "locked" if locked_flag else "ok"
+            return {"level": level, "cash_usd": cash, "locked": locked_flag,
+                    "remaining_allowance_usd": cash}
+        if locked_flag or cash <= self.cfg.strategy_lock_floor_usd:
+            level = "locked"
+        elif cash <= self.cfg.strategy_warning_floor_usd:
+            level = "warning"
+        else:
+            level = "ok"
+        return {"level": level, "cash_usd": cash, "locked": locked_flag,
+                "remaining_allowance_usd": max(0.0, cash - self.cfg.strategy_lock_floor_usd)}
 
     # -- kv ------------------------------------------------------------
     def get(self, key: str, default=None):

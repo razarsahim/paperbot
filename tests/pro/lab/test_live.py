@@ -75,8 +75,8 @@ def test_valuation_long_short_signs_and_percent_on_margin(tmp_path):
     short_p = by_symbol['BBBUSDT']
     assert short_p['unrealized_pnl_usd'] == pytest.approx(4.0)      # (50-48)*2
     assert short_p['unrealized_pct_on_margin'] == pytest.approx(40.0)
-    # equity = cash (2*50-10.1-10.1 + 3*50) + margins (20) + uPnL (7)
-    expected_equity = (250.0 - 20.2) + 20.0 + 7.0
+    # equity = cash (8 untouched x$50 + 2 sleeves at $50-10.1) + margins (20) + uPnL (7)
+    expected_equity = (500.0 - 20.2) + 20.0 + 7.0
     assert state['capital']['equity_usd'] == pytest.approx(expected_equity)
     assert state['capital']['unrealized_usd'] == pytest.approx(7.0)
 
