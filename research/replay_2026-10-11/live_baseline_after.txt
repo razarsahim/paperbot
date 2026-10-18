@@ -1,0 +1,32 @@
+2026-10-18T21:25:40Z
+  PID STARTED                      COMMAND
+ 3069 Sat Oct 17 20:44:57 2026     next-server (v16.4.2)    
+ 9085 Sat Oct 17 21:17:55 2026     /opt/homebrew/Cellar/python@3.12/3.12.15/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Users/raza/paperbot/.venv/bin/propaper lab-run
+ 9431 Sat Oct 17 21:22:28 2026     /opt/homebrew/Cellar/python@3.12/3.12.15/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Users/raza/paperbot/.venv/bin/propaper api
+47046 Sat Oct 17 03:18:58 2026     /opt/homebrew/Cellar/python@3.12/3.12.15/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Users/raza/paperbot/.venv/bin/propaper run
+== extreme_lab
+trades|3
+positions|0
+== research_lab
+trades|0
+positions|0
+== paperbot_pro
+trades|0
+positions|0
+== paper
+Error: in prepare, no such table: positions
+trades|0
+breakout|47.83209691034|-2.16790308966|0
+launch_sniper|50.0|0.0|0
+squeeze|50.0|0.0|0
+trend|48.43498321678|-1.56501678321996|0
+crash_reversal|50.0|0.0|0
+regime_trend|50.0|0.0|0
+volatility_breakout|50.0|0.0|0
+trend_pullback|50.0|0.0|0
+range_reversion|50.0|0.0|0
+orderflow_imbalance|50.0|0.0|0
+lab_auto_entry|true
+lab_locked|true
+lab_manual_pause|false
+peak_equity|500.0

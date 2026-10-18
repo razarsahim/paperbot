@@ -14,6 +14,7 @@ import {
   Menu,
   Radar,
   Settings,
+  Rewind,
   ShieldAlert,
   Wallet,
 } from "lucide-react";
@@ -37,6 +38,7 @@ const NAV = [
   { href: "/hype", label: "Hype Radar", icon: Flame },
   { href: "/lab", label: "Extreme Lab", icon: FlaskConical },
   { href: "/strategies", label: "Strategy Analytics", icon: BarChart3 },
+  { href: "/replay", label: "Historical Replay", icon: Rewind },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/settings", label: "Settings", icon: Settings },
 ] as const;

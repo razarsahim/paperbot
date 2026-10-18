@@ -1,0 +1,108 @@
+[A_trend] 16 instruments, strategies=['trend'], orderbook=archived
+[A_squeeze] 16 instruments, strategies=['squeeze'], orderbook=archived
+[A_launch_sniper] 16 instruments, strategies=['launch_sniper'], orderbook=archived
+[A_regime_trend] 16 instruments, strategies=['regime_trend'], orderbook=archived
+[A_breakout] 16 instruments, strategies=['breakout'], orderbook=archived
+[A_crash_reversal] 16 instruments, strategies=['crash_reversal'], orderbook=archived
+  cycle 1440 t=1791763145000 trades=2 62s
+  cycle 1440 t=1791763145000 trades=0 63s
+  cycle 1440 t=1791763145000 trades=2 65s
+  cycle 1440 t=1791763145000 trades=0 66s
+  cycle 1440 t=1791763145000 trades=0 67s
+  cycle 1440 t=1791763145000 trades=0 67s
+  cycle 2880 t=1791849545000 trades=8 130s
+  cycle 2880 t=1791849545000 trades=2 134s
+  cycle 2880 t=1791849545000 trades=5 134s
+  cycle 2880 t=1791849545000 trades=0 140s
+  cycle 2880 t=1791849545000 trades=0 140s
+  cycle 2880 t=1791849545000 trades=0 141s
+  cycle 4320 t=1791935945000 trades=10 204s
+  cycle 4320 t=1791935945000 trades=8 211s
+  cycle 4320 t=1791935945000 trades=2 212s
+  cycle 4320 t=1791935945000 trades=1 213s
+  cycle 4320 t=1791935945000 trades=0 218s
+  cycle 4320 t=1791935945000 trades=0 218s
+  cycle 5760 t=1792022345000 trades=10 273s
+  cycle 5760 t=1792022345000 trades=3 288s
+  cycle 5760 t=1792022345000 trades=8 289s
+  cycle 5760 t=1792022345000 trades=2 289s
+  cycle 5760 t=1792022345000 trades=0 296s
+  cycle 5760 t=1792022345000 trades=0 296s
+  cycle 7200 t=1792108745000 trades=13 346s
+  cycle 7200 t=1792108745000 trades=11 363s
+  cycle 7200 t=1792108745000 trades=3 364s
+  cycle 7200 t=1792108745000 trades=4 368s
+  cycle 7200 t=1792108745000 trades=0 375s
+  cycle 7200 t=1792108745000 trades=0 376s
+  cycle 8640 t=1792195145000 trades=13 432s
+  cycle 8640 t=1792195145000 trades=5 449s
+  cycle 8640 t=1792195145000 trades=11 450s
+  cycle 8640 t=1792195145000 trades=5 455s
+  cycle 8640 t=1792195145000 trades=0 464s
+  cycle 8640 t=1792195145000 trades=0 465s
+  cycle 10080 t=1792281545000 trades=14 516s
+[A_trend] done in 516.3s: 14 trades, final equity 41.91
+[A_volatility_breakout] 16 instruments, strategies=['volatility_breakout'], orderbook=archived
+  cycle 10080 t=1792281545000 trades=13 534s
+[A_breakout] done in 534.0s: 13 trades, final equity 27.67
+[A_trend_pullback] 16 instruments, strategies=['trend_pullback'], orderbook=archived
+  cycle 10080 t=1792281545000 trades=5 537s
+[A_crash_reversal] done in 536.7s: 5 trades, final equity 62.49
+[A_range_reversion] 16 instruments, strategies=['range_reversion'], orderbook=archived
+  cycle 10080 t=1792281545000 trades=6 541s
+[A_regime_trend] done in 540.7s: 6 trades, final equity 45.51
+[A_orderflow_imbalance] 16 instruments, strategies=['orderflow_imbalance'], orderbook=archived
+  cycle 10080 t=1792281545000 trades=0 551s
+[A_squeeze] done in 551.3s: 0 trades, final equity 50.00
+  cycle 10080 t=1792281545000 trades=0 553s
+[A_launch_sniper] done in 552.8s: 0 trades, final equity 50.00
+[B_combined] 16 instruments, strategies=ALL 10, orderbook=archived
+[B_deployed] 16 instruments, strategies=ALL 10, orderbook=off
+  cycle 1440 t=1791763145000 trades=2 65s
+  cycle 1440 t=1791763145000 trades=2 63s
+  cycle 1440 t=1791763145000 trades=1 65s
+  cycle 1440 t=1791763145000 trades=1 62s
+  cycle 1440 t=1791763145000 trades=4 55s
+  cycle 1440 t=1791763145000 trades=3 56s
+  cycle 2880 t=1791849545000 trades=4 130s
+  cycle 2880 t=1791849545000 trades=7 127s
+  cycle 2880 t=1791849545000 trades=9 110s
+  cycle 2880 t=1791849545000 trades=7 123s
+  cycle 2880 t=1791849545000 trades=1 130s
+  cycle 2880 t=1791849545000 trades=11 115s
+  cycle 4320 t=1791935945000 trades=7 199s
+  cycle 4320 t=1791935945000 trades=14 169s
+  cycle 4320 t=1791935945000 trades=8 188s
+  cycle 4320 t=1791935945000 trades=17 177s
+  cycle 4320 t=1791935945000 trades=7 197s
+  cycle 4320 t=1791935945000 trades=3 198s
+  cycle 5760 t=1792022345000 trades=16 233s
+  cycle 5760 t=1792022345000 trades=9 271s
+  cycle 5760 t=1792022345000 trades=18 245s
+  cycle 5760 t=1792022345000 trades=9 258s
+  cycle 5760 t=1792022345000 trades=9 270s
+  cycle 5760 t=1792022345000 trades=4 272s
+  cycle 7200 t=1792108745000 trades=19 300s
+  cycle 7200 t=1792108745000 trades=10 347s
+  cycle 7200 t=1792108745000 trades=21 317s
+  cycle 7200 t=1792108745000 trades=11 331s
+  cycle 7200 t=1792108745000 trades=11 349s
+  cycle 7200 t=1792108745000 trades=4 353s
+  cycle 8640 t=1792195145000 trades=22 372s
+  cycle 8640 t=1792195145000 trades=12 427s
+  cycle 8640 t=1792195145000 trades=25 393s
+  cycle 8640 t=1792195145000 trades=13 407s
+  cycle 8640 t=1792195145000 trades=11 431s
+  cycle 8640 t=1792195145000 trades=5 433s
+  cycle 10080 t=1792281545000 trades=26 449s
+[B_deployed] done in 448.9s: 26 trades, final equity 490.90
+  cycle 10080 t=1792281545000 trades=29 474s
+[B_combined] done in 474.1s: 29 trades, final equity 478.72
+  cycle 10080 t=1792281545000 trades=13 489s
+[A_orderflow_imbalance] done in 488.6s: 13 trades, final equity 50.75
+  cycle 10080 t=1792281545000 trades=13 513s
+[A_volatility_breakout] done in 513.1s: 13 trades, final equity 38.44
+  cycle 10080 t=1792281545000 trades=6 510s
+[A_range_reversion] done in 510.3s: 6 trades, final equity 61.33
+  cycle 10080 t=1792281545000 trades=12 515s
+[A_trend_pullback] done in 515.2s: 12 trades, final equity 37.17
