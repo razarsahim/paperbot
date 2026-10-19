@@ -130,16 +130,16 @@ class Cache:
             cov = _coverage(path)
             gaps = missing_ranges(cov, start, end)
             if gaps and not self.offline:
-                fetched = []
                 for a, b in gaps:
-                    for r in fetch(a, b):
-                        fetched.append(r + [0.0] * (len(cols) - len(r)))
+                    # one range per request; persisted immediately so an
+                    # interrupted job resumes from the last completed range
+                    fetched = [r + [0.0] * (len(cols) - len(r)) for r in fetch(a, b)]
+                    if fetched:
+                        rows = _merge_rows(rows, np.array(fetched, dtype=np.float64)[:, :len(cols)])
+                        _write_parquet(path, rows, cols)
                     cov.append([a, b])
+                    _save_coverage(path, cov)
                     self.events.append(f"{kind} {sym}: fetched [{a},{b})")
-                if fetched:
-                    rows = _merge_rows(rows, np.array(fetched, dtype=np.float64)[:, :len(cols)])
-                    _write_parquet(path, rows, cols)
-                _save_coverage(path, cov)
             sel = (rows[:, 0] >= start) & (rows[:, 0] < end) if len(rows) else np.zeros(0, bool)
             return rows[sel]
 

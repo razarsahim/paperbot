@@ -1,0 +1,26 @@
+{
+ "window": "2026-10-15T00:00Z..2026-10-19T00:00Z (96h)",
+ "instruments": 16,
+ "original_minute_loop": {
+  "data_load_s": 11.4,
+  "replay_s": 195.5,
+  "cycles": 5760,
+  "trades": 2,
+  "final_cash": 67.3325
+ },
+ "fast_engine_cached": {
+  "pipeline_s": 0.62,
+  "stage_times_s": {
+   "universe": 0.01,
+   "candles": 0.41,
+   "prescan": 0.05,
+   "books": 0.02,
+   "replay": 0.13,
+   "report": 0.01
+  },
+  "cycles": 2007,
+  "trades": 2,
+  "final_equity": 67.3325
+ },
+ "fast_engine_cached_2nd": 0.23
+}

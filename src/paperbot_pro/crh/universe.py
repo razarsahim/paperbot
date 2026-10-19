@@ -30,11 +30,11 @@ from .data import Cache, DAY_MS
 CG = "https://api.coingecko.com/api/v3"
 EXCLUDED_CATEGORIES = ("stablecoins", "wrapped-tokens", "liquid-staking-tokens")
 _last_cg_call = [0.0]
-SURVIVORSHIP_NOTE = ("Candidates = today's top-250 non-excluded coins; coins that were top-N "
-                     "on a past day but have since left the top 250 are missed.")
+SURVIVORSHIP_NOTE = ("Candidates = the 3N coins ranked highest TODAY (non-excluded); a coin that "
+                     "was top-N on a past day but has since fallen below rank 3N is missed.")
 
 
-def _cg_get(url: str, min_gap_s: float = 2.6):
+def _cg_get(url: str, min_gap_s: float = 2.2):
     import requests
     for attempt in range(8):
         wait = min_gap_s - (time.time() - _last_cg_call[0])
@@ -73,9 +73,11 @@ class UniverseBuilder:
         self.root = cache.root / "coingecko"
 
     # ------------------------------------------------------- candidates
-    def candidates(self) -> list[dict]:
-        """Today's top-250 non-excluded coins (cached per UTC day) merged with
-        every coin seen in earlier candidate snapshots."""
+    def candidates(self, size: int | None = None) -> list[dict]:
+        """Today's top-500 non-excluded coins (cached per UTC day) merged with
+        every coin seen in earlier candidate snapshots. With `size`, only the
+        first 3*size by current rank are returned (bounded CoinGecko calls;
+        labelled survivorship limitation)."""
         today = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
         p = self.root / f"candidates_{today}.json"
         if not p.exists():
@@ -106,7 +108,8 @@ class UniverseBuilder:
                 p.parent.mkdir(parents=True, exist_ok=True)
                 p.write_text(json.dumps({"fetched_utc": today, "excluded_ids": sorted(excluded),
                                          "candidates": list(cands.values())}))
-        return json.loads(p.read_text())["candidates"]
+        cands = json.loads(p.read_text())["candidates"]
+        return cands[: 3 * size] if size else cands
 
     # ---------------------------------------------------------- market caps
     def _caps(self, cid: str, t0: int, t1: int) -> list[tuple[int, float]]:
@@ -122,6 +125,11 @@ class UniverseBuilder:
         from .data import missing_ranges
         gaps = missing_ranges(cov, t0 - t0 % DAY_MS, t1)
         if gaps and not self.cache.offline:
+            # one call per coin covers the last 120 days (daily points), so any
+            # later window inside that span is served from the cache
+            now_day = int(time.time() * 1000) // DAY_MS * DAY_MS
+            lo = min(min(a for a, _ in gaps), now_day - 120 * DAY_MS)
+            gaps = missing_ranges(cov, lo, max(t1, now_day + DAY_MS))
             for a, b in gaps:
                 # pull raw points for [a-1d, b] then sample the last point <= each midnight
                 d = _cg_get(f"{CG}/coins/{cid}/market_chart/range?vs_currency=usd"
@@ -145,7 +153,7 @@ class UniverseBuilder:
     # ------------------------------------------------------------ build
     def daily_top(self, size: int, t0: int, t1: int, progress=None, cancelled=None) -> dict:
         """{date: [ {id, symbol, cap, rank}, ... ]} for every UTC day in [t0, t1)."""
-        cands = self.candidates()
+        cands = self.candidates(size)
         days = days_between(t0, t1)
         caps: dict[str, dict[int, float]] = {}
         for i, c in enumerate(cands):

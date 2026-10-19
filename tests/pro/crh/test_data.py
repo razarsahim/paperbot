@@ -76,3 +76,20 @@ def test_seed_from_research_imports_json_and_books(tmp_path):
     assert len(c.klines("ZUSDT", "1h", 0, 3 * H)) == 2
     assert c.coverage_summary("ZUSDT", "1h") == [[0, 3 * H]]
     assert c.book_day_path("ZUSDT", "1970-01-01").exists()
+
+
+def test_interrupted_fetch_resumes_from_last_completed_range(tmp_path, monkeypatch):
+    calls = []
+
+    def flaky(sym, interval, a, b, kind="kline"):
+        calls.append((a, b))
+        if len(calls) == 2:
+            raise ConnectionError("network dropped")
+        return [[t, 1, 2, 0.5, 1.5, 1, 1] for t in range(a, b, H)]
+    monkeypatch.setattr(D.rest, "klines", flaky)
+    Cache(tmp_path).klines("XUSDT", "1h", 0, 5 * H)              # call 1: [0,5h) verified
+    with pytest.raises(ConnectionError):
+        Cache(tmp_path).klines("XUSDT", "1h", 0, 15 * H)         # call 2: [5h,15h) fails mid-job
+    assert Cache(tmp_path).coverage_summary("XUSDT", "1h") == [[0, 5 * H]]
+    rows = Cache(tmp_path).klines("XUSDT", "1h", 0, 15 * H)      # call 3 resumes the gap only
+    assert len(rows) == 15 and calls[-1] == (5 * H, 15 * H)

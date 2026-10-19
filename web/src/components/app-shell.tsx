@@ -39,6 +39,7 @@ const NAV = [
   { href: "/lab", label: "Extreme Lab", icon: FlaskConical },
   { href: "/strategies", label: "Strategy Analytics", icon: BarChart3 },
   { href: "/replay", label: "Historical Replay", icon: Rewind },
+  { href: "/crh", label: "CRH Lab", icon: FlaskConical },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/settings", label: "Settings", icon: Settings },
 ] as const;
