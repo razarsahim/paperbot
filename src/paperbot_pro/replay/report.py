@@ -21,9 +21,8 @@ FIDELITY = {
     "breakout": ("HIGH", "Pure 1h-candle logic; real Bybit 1h/1m OHLCV and archived bid/ask."),
     "launch_sniper": ("NOT TESTABLE", "Code treats a market as 'young' only when <200 1h bars "
                       "exist AND >=60 closed bars are needed to evaluate; no top-20 universe "
-                      "member qualified, and the only crypto perps listed in range (DRVUSDT, "
-                      "DNAUSDT, both 2026-10-16) never reached 60 closed bars before the window "
-                      "ended. Zero eligible decision points."),
+                      "member was that young during the window (all listed 2018-2024), and "
+                      "the engine only scans the top-20 universe. Zero eligible decision points."),
     "squeeze": ("LIMITED (proxy)", "Code uses wick size + funding rate as a squeeze PROXY; it "
                 "never reads liquidation data. Replay feeds the last SETTLED funding rate (the "
                 "live engine reads the predicted next rate, which is not archived). No "
@@ -45,6 +44,11 @@ FIDELITY = {
                             "orderbook() hook, so live it never trades; this replay wires the "
                             "archive in to test the logic itself."),
 }
+
+
+def _iso(ms: int) -> str:
+    from datetime import datetime, timezone
+    return datetime.fromtimestamp(ms / 1000, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _load(path: Path) -> dict:
@@ -160,7 +164,8 @@ def data_quality(data_dir: Path, book_dir: Path, symbols: list[str], t0: int, t1
 
 
 def build(runs_dir: Path, data_dir: Path, book_dir: Path, out_json: Path,
-          validation_report: Path | None, t0: int, t1: int) -> dict:
+          validation_report: Path | None, t0: int, t1: int,
+          universe_file: Path | None = None) -> dict:
     a_runs = {k.key: _load(runs_dir / f"A_{k.key}.json") for k in STRATEGIES
               if (runs_dir / f"A_{k.key}.json").exists()}
     b = _load(runs_dir / "B_combined.json")
@@ -223,14 +228,15 @@ def build(runs_dir: Path, data_dir: Path, book_dir: Path, out_json: Path,
                                  "win_rate_pct": m["win_rate_pct"]} for m in v["markets"]]}
     payload = {
         "label": "HISTORICAL BACKTEST — not live paper; simulated, not predictive",
-        "window_utc": {"start": "2026-10-11T00:00:00Z", "end_exclusive": "2026-10-18T00:00:00Z",
-                       "start_ms": t0, "end_ms": t1},
+        "window_utc": {"start": _iso(t0), "end_exclusive": _iso(t1),
+                       "start_ms": t0, "end_ms": t1, "days": (t1 - t0) // 86_400_000},
         "small_sample_threshold": SMALL_SAMPLE,
         "independent": rows,
         "rankings": ranks,
         "combined": b, "combined_deployed": b_dep,
         "data_quality": dq,
         "mark_liquidation_check": mark_checks,
+        "universe_daily": json.loads(universe_file.read_text()) if universe_file else None,
         "candles_1h": candles,
         "prior_evidence": evidence,
         "exit_rules": {
@@ -257,9 +263,11 @@ def main(argv=None):
     ap.add_argument("--validation", default="state/validation_report.json")
     ap.add_argument("--t0", type=int, default=1791676800000)
     ap.add_argument("--t1", type=int, default=1792281600000)
+    ap.add_argument("--universe-file", default=None)
     a = ap.parse_args(argv)
     p = build(Path(a.runs), Path(a.data), Path(a.books), Path(a.out),
-              Path(a.validation), a.t0, a.t1)
+              Path(a.validation), a.t0, a.t1,
+              Path(a.universe_file) if a.universe_file else None)
     print(f"wrote {a.out}: {len(p['independent'])} independent sleeves")
 
 

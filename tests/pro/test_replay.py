@@ -182,3 +182,16 @@ def test_orderbook_sampler_is_point_in_time(tmp_path):
     t2, _, bids2, asks2 = out["samples"][1]
     assert bids2[0] == [10.15, 9.0] and asks2[0] == [10.3, 1.0]   # removal applied
     assert out["meta"]["crossed_samples"] == 0
+
+
+def test_daily_universe_follows_simulated_day_and_skips_unknown_metadata():
+    from paperbot_pro.replay.runner import daily_universe_provider
+    day = 86_400_000
+    mkt = HistoricalMarket({})
+    meta = {"A/USDT:USDT": {"symbol": "A/USDT:USDT"}, "B/USDT:USDT": {"symbol": "B/USDT:USDT"}}
+    uni = {"1970-01-01": ["A/USDT:USDT", "NOPE/USDT:USDT"], "1970-01-02": ["B/USDT:USDT"]}
+    prov = daily_universe_provider(mkt, uni, meta)
+    mkt.set_now(day - 1)
+    assert [i["symbol"] for i in prov()] == ["A/USDT:USDT"]
+    mkt.set_now(day)
+    assert [i["symbol"] for i in prov()] == ["B/USDT:USDT"]

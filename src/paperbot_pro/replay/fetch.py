@@ -25,7 +25,7 @@ def _get(path: str, params: dict, retries: int = 5) -> dict:
             body = r.json()
             if body.get("retCode") == 0:
                 return body["result"]
-            if body.get("retCode") == 10006:  # rate limit
+            if body.get("retCode") in (10006, 10016):  # rate limit / transient svc error
                 time.sleep(2 + attempt * 2)
                 continue
             raise RuntimeError(f"{path} {params}: {body.get('retCode')} {body.get('retMsg')}")
@@ -142,9 +142,9 @@ def main(argv: list[str] | None = None) -> None:
         manifest["datasets"] = [d for d in manifest["datasets"] if d["symbol"] != sym]
         manifest["datasets"] += fetch_symbol(sym, out, a.t0, a.t1, a.warmup_days)
         tiers[sym] = risk_tier1(sym)
+        manifest["risk_tier1"] = tiers
+        manifest_path.write_text(json.dumps(manifest, indent=1, sort_keys=True))
         print(f"fetched {sym}", flush=True)
-    manifest["risk_tier1"] = tiers
-    manifest_path.write_text(json.dumps(manifest, indent=1, sort_keys=True))
 
 
 if __name__ == "__main__":

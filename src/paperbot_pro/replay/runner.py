@@ -80,10 +80,12 @@ def emulate_ticks(engine: LabEngine, market: HistoricalMarket, minute_start: int
     return closed
 
 
-def make_engine(db_path: Path, market: HistoricalMarket, instruments: list[dict],
+def make_engine(db_path: Path, market: HistoricalMarket, instruments,
                 strategies: list[str] | None, capital_per_strategy: float = 50.0):
     """Fresh isolated LabStore/LabEngine. strategies=None -> all 10 sleeves
-    (combined portfolio); a subset -> independent sleeve(s) only."""
+    (combined portfolio); a subset -> independent sleeve(s) only.
+    instruments: a fixed list, or a zero-arg callable returning the universe
+    in force at the market's current simulated time (daily membership)."""
     for suffix in ("", "-wal", "-shm"):
         p = Path(str(db_path) + suffix)
         if p.exists():
@@ -103,8 +105,8 @@ def make_engine(db_path: Path, market: HistoricalMarket, instruments: list[dict]
     store.set("peak_equity", capital)
     store.set("lab_auto_entry", True)
     store.set("replay_note", "HISTORICAL BACKTEST - not live paper")
-    engine = LabEngine(store, cfg, market=market,
-                       instruments_provider=lambda: instruments)
+    provider = instruments if callable(instruments) else (lambda: instruments)
+    engine = LabEngine(store, cfg, market=market, instruments_provider=provider)
     return engine
 
 
@@ -152,6 +154,19 @@ def instruments_from_main_db(main_db: str, symbols: list[str] | None = None) -> 
     if symbols:
         rows = [r for r in rows if r["symbol"] in symbols]
     return rows
+
+
+def daily_universe_provider(market: HistoricalMarket, universe: dict[str, list[str]],
+                            meta: dict[str, dict]):
+    """Universe membership as it stood on the simulated UTC day (the live
+    universe refreshes every 24h from CoinGecko ranks). Symbols without real
+    contract metadata are never included (NOT ELIGIBLE)."""
+    from datetime import datetime, timezone
+
+    def provider():
+        day = datetime.fromtimestamp(market.now_ms / 1000, timezone.utc).strftime("%Y-%m-%d")
+        return [meta[s] for s in universe[day] if s in meta]
+    return provider
 
 
 def dump_json(path: Path, obj) -> None:

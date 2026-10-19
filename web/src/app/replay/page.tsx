@@ -124,7 +124,7 @@ interface CombinedRun {
 
 interface Payload {
   label: string;
-  window_utc: { start: string; end_exclusive: string; start_ms: number; end_ms: number };
+  window_utc: { start: string; end_exclusive: string; start_ms: number; end_ms: number; days?: number };
   small_sample_threshold: number;
   independent: SleeveRow[];
   rankings: { by_net_return: string[]; by_return_over_drawdown: string[]; by_lowest_drawdown: string[]; risk_metric: string };
@@ -135,7 +135,10 @@ interface Payload {
   exit_rules: { implemented: string; hybrid_50pct_at_2R: string };
 }
 
-const DATA_URL = "/replay/replay-2026-10-11.json";
+const WINDOWS = [
+  { id: "30d", label: "30 days · 2026-09-18 → 10-18", url: "/replay/replay-2026-09-18_30d.json" },
+  { id: "7d", label: "7 days · 2026-10-11 → 10-18", url: "/replay/replay-2026-10-11.json" },
+];
 const HOUR = 3_600_000;
 
 function utc(ms: number): string {
@@ -199,32 +202,46 @@ function lockThreshold(curve: [number, number][], initial: number): [number, num
 export default function ReplayPage() {
   const [data, setData] = useState<Payload | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [hour, setHour] = useState(168);
+  const [windowId, setWindowId] = useState(WINDOWS[0].id);
+  const dataUrl = WINDOWS.find((w) => w.id === windowId)!.url;
+  const [hour, setHour] = useState(24 * 30);
   const [playing, setPlaying] = useState(false);
   const [rankBy, setRankBy] = useState<"net" | "risk" | "dd">("net");
   const [view, setView] = useState<"B" | "Bdep" | string>("B");
   const [symbol, setSymbol] = useState<string>("BTCUSDT");
 
   useEffect(() => {
-    fetch(DATA_URL)
+    let live = true;
+    fetch(dataUrl)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((p: Payload) => setData(p))
-      .catch((e) => setError(String(e)));
-  }, []);
+      .then((p: Payload) => {
+        if (!live) return;
+        setError(null);
+        setData(p);
+        setPlaying(false);
+        setHour(Math.round((p.window_utc.end_ms - p.window_utc.start_ms) / HOUR));
+      })
+      .catch((e) => live && setError(String(e)));
+    return () => {
+      live = false;
+    };
+  }, [dataUrl]);
+
+  const totalHours = data ? Math.round((data.window_utc.end_ms - data.window_utc.start_ms) / HOUR) : 168;
 
   useEffect(() => {
     if (!playing) return;
     const id = setInterval(() => {
       setHour((h) => {
-        if (h >= 168) {
+        if (h >= totalHours) {
           setPlaying(false);
-          return 168;
+          return totalHours;
         }
-        return h + 1;
+        return h + Math.max(1, Math.round(totalHours / 168));
       });
     }, 350);
     return () => clearInterval(id);
-  }, [playing]);
+  }, [playing, totalHours]);
 
   const cursorMs = data ? data.window_utc.start_ms + hour * HOUR : 0;
 
@@ -261,13 +278,25 @@ export default function ReplayPage() {
     return out;
   }, [run, symbol]);
 
+  const windowSelect = (
+    <Select value={windowId} onValueChange={(v) => { setData(null); setWindowId(v); }}>
+      <SelectTrigger className="h-8 w-[240px] text-xs" aria-label="Replay window"><SelectValue /></SelectTrigger>
+      <SelectContent>
+        {WINDOWS.map((w) => <SelectItem key={w.id} value={w.id}>{w.label}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  );
+
   if (error) {
     return (
-      <EmptyState
+      <div className="space-y-4">
+        {windowSelect}
+        <EmptyState
         icon={History}
         title="Replay results not found"
-        description={`Run the replay and report builder first (${DATA_URL}: ${error}). No demo data is shown on this page.`}
-      />
+        description={`Run the replay and report builder first (${dataUrl}: ${error}). No demo data is shown on this page.`}
+        />
+      </div>
     );
   }
   if (!data) return <div className="p-6 text-sm text-muted-foreground">Loading historical replay…</div>;
@@ -285,20 +314,25 @@ export default function ReplayPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <Rewind className="size-5" /> Seven-Day Historical Replay
+            <Rewind className="size-5" /> {data.window_utc.days ?? Math.round(totalHours / 24)}-Day Historical Replay
           </h1>
           <p className="text-xs text-muted-foreground">
             {data.window_utc.start} → {data.window_utc.end_exclusive} (end exclusive) · unchanged Lab engine · archived Bybit public data
           </p>
         </div>
-        <HistBadge className="h-6 px-3 text-xs" />
+        <div className="flex items-center gap-2">
+          {windowSelect}
+          <HistBadge className="h-6 px-3 text-xs" />
+        </div>
       </div>
 
       <div className="flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-300">
         <TriangleAlert className="mt-0.5 size-4 shrink-0" />
         <div>
-          <b>HISTORICAL BACKTEST — not LIVE PAPER.</b> Virtual money replayed over one past week. Every sleeve has fewer than{" "}
-          {data.small_sample_threshold} completed trades, so no ranking here is statistically validated or predictive. Independent $50 sleeve
+          <b>HISTORICAL BACKTEST — not LIVE PAPER.</b> Virtual money replayed over a past window.{" "}
+          {data.independent.filter((r) => r.small_sample).length} of {data.independent.length} sleeves have fewer than{" "}
+          {data.small_sample_threshold} completed trades (flagged &quot;small sample&quot;). One past window is not statistical validation: no
+          ranking here is predictive. Independent $50 sleeve
           results (A) and the combined shared $500 portfolio (B) are separate experiments and must not be added together.
           Hybrid 50%-at-2R exits are <b>not implemented</b> and did not occur.
         </div>
@@ -307,13 +341,13 @@ export default function ReplayPage() {
       {/* time slider */}
       <Card className="gap-2 py-3">
         <CardContent className="flex flex-wrap items-center gap-3">
-          <Button size="sm" variant="outline" onClick={() => { if (hour >= 168) setHour(0); setPlaying((p) => !p); }} aria-label={playing ? "Pause" : "Play"}>
+          <Button size="sm" variant="outline" onClick={() => { if (hour >= totalHours) setHour(0); setPlaying((p) => !p); }} aria-label={playing ? "Pause" : "Play"}>
             {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
           </Button>
           <input
             type="range"
             min={0}
-            max={168}
+            max={totalHours}
             step={1}
             value={hour}
             onChange={(e) => { setPlaying(false); setHour(Number(e.target.value)); }}
@@ -321,7 +355,7 @@ export default function ReplayPage() {
             aria-label="Replay time"
           />
           <span className="w-44 text-right font-mono text-xs tabular-nums">{utc(cursorMs)}</span>
-          <span className="text-[11px] text-muted-foreground">hour {hour}/168</span>
+          <span className="text-[11px] text-muted-foreground">hour {hour}/{totalHours}</span>
         </CardContent>
       </Card>
 
@@ -549,7 +583,7 @@ export default function ReplayPage() {
                   <TableCell>{String(q.hourly_vs_1m_aggregate_mismatches)}</TableCell>
                   <TableCell>{String(q.funding_prints_in_window)}</TableCell>
                   <TableCell>{String(q.open_interest_rows)}</TableCell>
-                  <TableCell>{String(q.book_days)}/7</TableCell>
+                  <TableCell>{String(q.book_days)}/{data.window_utc.days ?? 7}</TableCell>
                   <TableCell>{fmtNum(q.book_messages as number, 0)}</TableCell>
                   <TableCell>{q.book_max_gap_ms === null ? "—" : `${((q.book_max_gap_ms as number) / 1000).toFixed(1)}s`}</TableCell>
                   <TableCell>{String(q.book_samples_stale_or_missing)}</TableCell>

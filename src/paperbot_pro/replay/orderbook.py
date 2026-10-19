@@ -139,5 +139,75 @@ def main(argv: list[str] | None = None) -> None:
     print(f"processed {len(metas)} files")
 
 
+ARCHIVE = "https://quote-saver.bycsi.com/orderbook/linear"
+
+
+def _stream_job(args):
+    """Download one day-file, sample it, then DELETE the zip (disk-bounded).
+    The source SHA-256 + URL stay in the sample's meta for re-verification."""
+    import subprocess
+    sym, day, day_start, out_path, tmp_dir = args
+    out = Path(out_path)
+    if out.exists():
+        return json.loads(gzip.decompress(out.read_bytes()))["meta"]
+    url = f"{ARCHIVE}/{sym}/{day}_{sym}_ob200.data.zip"
+    z = Path(tmp_dir) / f"{day}_{sym}_ob200.data.zip"
+    for _ in range(4):
+        code = subprocess.run(["curl", "-s", "-m", "1800", "-w", "%{http_code}", "-o", str(z), url],
+                              capture_output=True, text=True).stdout.strip()
+        if code == "200":
+            break
+        if code == "404":
+            z.unlink(missing_ok=True)
+            return {"source_file": z.name, "url": url, "missing": True}
+    else:
+        z.unlink(missing_ok=True)
+        return {"source_file": z.name, "url": url, "missing": True, "error": code}
+    try:
+        result = sample_day(z, day_start)
+    finally:
+        z.unlink(missing_ok=True)
+    result["meta"]["url"] = url
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(gzip.compress(json.dumps(result, separators=(",", ":")).encode()))
+    return result["meta"]
+
+
+def stream_main(argv: list[str] | None = None) -> None:
+    """python -c 'from paperbot_pro.replay.orderbook import stream_main; stream_main()'
+    --out DIR --tmp DIR --start YYYY-MM-DD --days N SYMBOL..."""
+    import argparse
+    import datetime as dt
+    from multiprocessing import Pool
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--tmp", required=True)
+    ap.add_argument("--start", required=True)
+    ap.add_argument("--days", type=int, required=True)
+    ap.add_argument("--procs", type=int, default=10)
+    ap.add_argument("symbols", nargs="+")
+    a = ap.parse_args(argv)
+    Path(a.tmp).mkdir(parents=True, exist_ok=True)
+    d0 = dt.datetime.strptime(a.start, "%Y-%m-%d").replace(tzinfo=dt.timezone.utc)
+    jobs = []
+    for i in range(a.days):
+        d = d0 + dt.timedelta(days=i)
+        day = d.strftime("%Y-%m-%d")
+        for sym in a.symbols:
+            jobs.append((sym, day, int(d.timestamp() * 1000),
+                         str(Path(a.out) / sym / f"{day}.json.gz"), a.tmp))
+    with Pool(a.procs) as pool:
+        metas = []
+        for m in pool.imap_unordered(_stream_job, jobs):
+            metas.append(m)
+            print(f"{len(metas)}/{len(jobs)} {m.get('source_file')} "
+                  f"{'MISSING' if m.get('missing') else 'ok'}", flush=True)
+    manifest = {"source": f"{ARCHIVE}/ (Bybit public historical orderbook.200 archive)",
+                "cycle_offset_ms": 5000, "cycle_ms": 60000, "top_levels": TOP_N,
+                "zips_deleted_after_sampling": True,
+                "files": sorted(metas, key=lambda m: m.get("source_file", ""))}
+    Path(a.out, "manifest_books.json").write_text(json.dumps(manifest, indent=1))
+
+
 if __name__ == "__main__":
     main()

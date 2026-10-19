@@ -14,7 +14,8 @@ from pathlib import Path
 
 from .extract import extract_run
 from .market import HistoricalMarket, bybit_id, load_symbol
-from .runner import dump_json, instruments_from_main_db, make_engine, run
+from .runner import (daily_universe_provider, dump_json, instruments_from_main_db,
+                     make_engine, run)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -27,6 +28,10 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--out", default="research/replay_2026-10-11/runs")
     ap.add_argument("--main-db", default="state/paperbot_pro.sqlite")
     ap.add_argument("--symbols", nargs="*", default=None)
+    ap.add_argument("--universe-file", default=None,
+                    help="JSON {YYYY-MM-DD: [ccxt symbols in rank order]} (daily membership)")
+    ap.add_argument("--extra-instruments", default=None,
+                    help="JSON list of instrument metadata for symbols absent from the main DB")
     ap.add_argument("--no-orderbook", action="store_true",
                     help="as-deployed wiring: MarketData has no orderbook() hook")
     ap.add_argument("--t0", type=int, default=1791676800000)   # 2026-10-11 00:00 UTC
@@ -34,6 +39,12 @@ def main(argv: list[str] | None = None) -> None:
     a = ap.parse_args(argv)
 
     instruments = instruments_from_main_db(a.main_db, a.symbols)
+    if a.extra_instruments:
+        instruments += json.loads(Path(a.extra_instruments).read_text())
+    universe = json.loads(Path(a.universe_file).read_text()) if a.universe_file else None
+    if universe:
+        wanted = {s for day in universe.values() for s in day}
+        instruments = [i for i in instruments if i["symbol"] in wanted]
     needs_depth = (not a.no_orderbook) and (a.strategies is None
                                             or "orderflow_imbalance" in a.strategies)
     data = {}
@@ -45,7 +56,9 @@ def main(argv: list[str] | None = None) -> None:
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     db_path = out / f"{a.run_id}.sqlite"
-    engine = make_engine(db_path, market, instruments, a.strategies)
+    provider = (daily_universe_provider(market, universe, {i["symbol"]: i for i in instruments})
+                if universe else instruments)
+    engine = make_engine(db_path, market, provider, a.strategies)
     print(f"[{a.run_id}] {len(instruments)} instruments, strategies="
           f"{a.strategies or 'ALL 10'}, orderbook={'off' if a.no_orderbook else 'archived'}",
           flush=True)

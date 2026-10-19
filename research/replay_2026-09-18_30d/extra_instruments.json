@@ -1,0 +1,41 @@
+[
+ {
+  "coingecko_id": "uniswap",
+  "exchange": "bybit",
+  "symbol": "UNI/USDT:USDT",
+  "eligible": 1,
+  "reason": null,
+  "taker_fee": 0.0006,
+  "maint_margin_rate": 0.0067,
+  "tick_size": 0.001,
+  "lot_size": 0.1,
+  "updated_ms": 0,
+  "source": "Bybit public instruments-info + risk-limit tier 1; fee = engine default 0.06%"
+ },
+ {
+  "coingecko_id": "canton-network",
+  "exchange": "bybit",
+  "symbol": "CC/USDT:USDT",
+  "eligible": 1,
+  "reason": null,
+  "taker_fee": 0.0006,
+  "maint_margin_rate": 0.02,
+  "tick_size": 1e-05,
+  "lot_size": 1.0,
+  "updated_ms": 0,
+  "source": "Bybit public instruments-info + risk-limit tier 1; fee = engine default 0.06%"
+ },
+ {
+  "coingecko_id": "bitway",
+  "exchange": "bybit",
+  "symbol": "BTW/USDT:USDT",
+  "eligible": 1,
+  "reason": null,
+  "taker_fee": 0.0006,
+  "maint_margin_rate": 0.05,
+  "tick_size": 1e-05,
+  "lot_size": 10.0,
+  "updated_ms": 0,
+  "source": "Bybit public instruments-info + risk-limit tier 1; fee = engine default 0.06%"
+ }
+]

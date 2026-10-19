@@ -195,4 +195,4 @@ All data is public and read-only, with no API keys. Every file records its URL/p
 - `raw/meta/`: instrument snapshot and the CoinGecko rank check.
 - `leakcheck/`: truncation run.
 - `live_baseline_before.txt`, `live_baseline_after.txt`: live-system snapshots.
-- The raw order-book zips (7.3 GB) and 1m/book-sample files are kept locally and git-ignored. They can be re-downloaded and SHA-verified from the manifests.
+- The raw order-book zips (7.3 GB) were **deleted after sampling** (2026-10-18) to free disk. They can be re-downloaded from `raw/orderbook/urls.txt` and verified against the SHA-256 values in `data/book_samples/manifest_books.json`. The 1m and book-sample files are kept locally and git-ignored.
