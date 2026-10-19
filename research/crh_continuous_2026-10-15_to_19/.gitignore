@@ -1,0 +1,12 @@
+# Bulky / reproducible-from-manifest replay data (see REPORT.md "Data sources")
+raw/orderbook/*.zip
+raw/orderbook/*.part
+data/kline_1m/
+data/mark_1m/
+data/book_samples/*/
+runs/*.sqlite*
+runs/*.live.json
+leakcheck/*.sqlite*
+leakcheck/*.live.json
+tmp/
+raw/orderbook/

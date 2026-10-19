@@ -138,6 +138,7 @@ interface Payload {
 const WINDOWS = [
   { id: "30d", label: "30 days · 2026-09-18 → 10-18", url: "/replay/replay-2026-09-18_30d.json" },
   { id: "7d", label: "7 days · 2026-10-11 → 10-18", url: "/replay/replay-2026-10-11.json" },
+  { id: "24h", label: "24 hours · 2026-10-15", url: "/replay/replay-2026-10-15_24h.json" },
 ];
 const HOUR = 3_600_000;
 
@@ -314,7 +315,7 @@ export default function ReplayPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold">
-            <Rewind className="size-5" /> {data.window_utc.days ?? Math.round(totalHours / 24)}-Day Historical Replay
+            <Rewind className="size-5" /> {totalHours <= 24 ? "24-Hour" : `${data.window_utc.days ?? Math.round(totalHours / 24)}-Day`} Historical Replay
           </h1>
           <p className="text-xs text-muted-foreground">
             {data.window_utc.start} → {data.window_utc.end_exclusive} (end exclusive) · unchanged Lab engine · archived Bybit public data

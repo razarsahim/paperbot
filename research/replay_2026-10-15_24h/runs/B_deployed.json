@@ -1,0 +1,7057 @@
+{
+ "label": "HISTORICAL BACKTEST \u2014 not live paper; not predictive",
+ "run_id": "B_deployed",
+ "kind": "B_combined",
+ "strategies": [
+  "breakout",
+  "launch_sniper",
+  "squeeze",
+  "trend",
+  "crash_reversal",
+  "regime_trend",
+  "volatility_breakout",
+  "trend_pullback",
+  "range_reversion",
+  "orderflow_imbalance"
+ ],
+ "with_orderbook": false,
+ "window_utc": {
+  "start_ms": 1792022400000,
+  "end_ms_exclusive": 1792108800000
+ },
+ "instruments": [
+  "BTC/USDT:USDT",
+  "ETH/USDT:USDT",
+  "BNB/USDT:USDT",
+  "XRP/USDT:USDT",
+  "SOL/USDT:USDT",
+  "TRX/USDT:USDT",
+  "ZEC/USDT:USDT",
+  "HYPE/USDT:USDT",
+  "DOGE/USDT:USDT",
+  "XMR/USDT:USDT",
+  "LINK/USDT:USDT",
+  "ADA/USDT:USDT",
+  "NEAR/USDT:USDT",
+  "XLM/USDT:USDT",
+  "BCH/USDT:USDT",
+  "LTC/USDT:USDT",
+  "UNI/USDT:USDT",
+  "CC/USDT:USDT",
+  "BTW/USDT:USDT"
+ ],
+ "cycles": 1440,
+ "elapsed_s": 50.7,
+ "leakage_check": {
+  "max_data_ts_served": 1792108800000,
+  "final_now": 1792108800000,
+  "ok": true
+ },
+ "accounting_identity_gap_usd": 0.0,
+ "final_equity_usd": 491.65441688653203,
+ "totals": {
+  "initial_capital_usd": 500.0,
+  "final_equity_usd": 491.65441688653203,
+  "net_realized_pnl_usd": -11.670951912436031,
+  "net_unrealized_pnl_usd": 3.3253687989680687,
+  "net_return_pct": -1.6691166226935894,
+  "completed_trades": 5,
+  "open_positions_at_end": 3,
+  "win_rate_pct": 0.0,
+  "avg_win_usd": null,
+  "avg_loss_usd": -2.3341903824872063,
+  "profit_factor": 0.0,
+  "expectancy_usd": -2.3341903824872063,
+  "max_drawdown_usd": 16.010470145468958,
+  "max_drawdown_pct": 3.17669201148384,
+  "return_over_maxdd": -0.5254260144388191,
+  "sharpe_week_descriptive": -0.354316852918919,
+  "fees_usd": 1.7456341550539678,
+  "funding_usd": 0.020107079721199995,
+  "slippage_usd_est": 1.4545505368638043,
+  "liquidations": 0,
+  "largest_win_usd": -0.851642034384661,
+  "largest_loss_usd": -3.593603248548597,
+  "by_side": {
+   "long": {
+    "trades": 2,
+    "net_pnl_usd": -5.539826072371813,
+    "wins": 0
+   },
+   "short": {
+    "trades": 3,
+    "net_pnl_usd": -6.131125840064218,
+    "wins": 0
+   }
+  },
+  "assets_traded": [
+   "BNB/USDT:USDT",
+   "ETH/USDT:USDT",
+   "NEAR/USDT:USDT",
+   "TRX/USDT:USDT",
+   "XMR/USDT:USDT",
+   "XRP/USDT:USDT"
+  ],
+  "exit_reasons": {
+   "STOP": 5
+  },
+  "small_sample": true
+ },
+ "per_strategy": {
+  "breakout": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 44.720516194320446,
+   "net_realized_pnl_usd": -5.279483805679557,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": -10.558967611359105,
+   "completed_trades": 2,
+   "open_positions_at_end": 0,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -2.6397419028397784,
+   "profit_factor": 0.0,
+   "expectancy_usd": -2.6397419028397784,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.5947144140444367,
+   "funding_usd": 0.016571317573999995,
+   "slippage_usd_est": 0.49559430188608755,
+   "liquidations": 0,
+   "largest_win_usd": -2.318766912807094,
+   "largest_loss_usd": -2.9607168928724628,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 2,
+     "net_pnl_usd": -5.279483805679557,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "BNB/USDT:USDT",
+    "ETH/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 2
+   },
+   "small_sample": true,
+   "signals_fired": 13,
+   "signals_approved": 2,
+   "rejections": {
+    "position too small after margin/lot constraints": 11
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "launch_sniper": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "squeeze": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "trend": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 47.56838331823146,
+   "net_realized_pnl_usd": -3.593603248548597,
+   "net_unrealized_pnl_usd": 1.1619865667800604,
+   "net_return_pct": -4.863233363537079,
+   "completed_trades": 1,
+   "open_positions_at_end": 1,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -3.593603248548597,
+   "profit_factor": 0.0,
+   "expectancy_usd": -3.593603248548597,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.8709704324103849,
+   "funding_usd": 0.0,
+   "slippage_usd_est": 0.7256928232869643,
+   "liquidations": 0,
+   "largest_win_usd": -3.593603248548597,
+   "largest_loss_usd": -3.593603248548597,
+   "by_side": {
+    "long": {
+     "trades": 1,
+     "net_pnl_usd": -3.593603248548597,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "TRX/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 1
+   },
+   "small_sample": true,
+   "signals_fired": 4,
+   "signals_approved": 2,
+   "rejections": {
+    "position limit reached (3)": 2
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "crash_reversal": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 5,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 5
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "regime_trend": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 48.05377717617679,
+   "net_realized_pnl_usd": -1.9462228238232158,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": -3.8924456476464253,
+   "completed_trades": 1,
+   "open_positions_at_end": 0,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -1.9462228238232158,
+   "profit_factor": 0.0,
+   "expectancy_usd": -1.9462228238232158,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.11120611547499107,
+   "funding_usd": 0.0,
+   "slippage_usd_est": 0.09267132730948063,
+   "liquidations": 0,
+   "largest_win_usd": -1.9462228238232158,
+   "largest_loss_usd": -1.9462228238232158,
+   "by_side": {
+    "long": {
+     "trades": 1,
+     "net_pnl_usd": -1.9462228238232158,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "XMR/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 1
+   },
+   "small_sample": true,
+   "signals_fired": 3,
+   "signals_approved": 1,
+   "rejections": {
+    "re-entry cooldown": 1,
+    "position limit reached (3)": 1
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "volatility_breakout": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 51.311740197803346,
+   "net_realized_pnl_usd": -0.851642034384661,
+   "net_unrealized_pnl_usd": 2.1633822321880083,
+   "net_return_pct": 2.623480395606692,
+   "completed_trades": 1,
+   "open_positions_at_end": 2,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -0.851642034384661,
+   "profit_factor": 0.0,
+   "expectancy_usd": -0.851642034384661,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.1687431931241552,
+   "funding_usd": 0.0035357621472000005,
+   "slippage_usd_est": 0.14059208438127202,
+   "liquidations": 0,
+   "largest_win_usd": -0.851642034384661,
+   "largest_loss_usd": -0.851642034384661,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 1,
+     "net_pnl_usd": -0.851642034384661,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "ETH/USDT:USDT",
+    "NEAR/USDT:USDT",
+    "XRP/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 1
+   },
+   "small_sample": true,
+   "signals_fired": 22,
+   "signals_approved": 3,
+   "rejections": {
+    "position limit reached (3)": 19
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "trend_pullback": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 1,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 1
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "range_reversion": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "orderflow_imbalance": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  }
+ },
+ "trades": [
+  {
+   "id": 1,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "side": "long",
+   "qty": 1494.0,
+   "entry_price": 0.33246614999999996,
+   "exit_price": 0.3304585478919958,
+   "stop_initial": 0.33062385982190673,
+   "stop_final": 0.33062385982190673,
+   "margin_usd": 49.67044280999999,
+   "notional_usd": 496.7044280999999,
+   "entry_fee_usd": 0.2980226568599999,
+   "exit_fee_usd": 0.296223042330385,
+   "funding_usd": 0.0,
+   "net_pnl_usd": -3.593603248548597,
+   "mfe_pct": 0.1605727380065784,
+   "mae_pct": -0.440992263422891,
+   "entry_ms": 1792022405000,
+   "exit_ms": 1792031040000,
+   "exit_reason": "STOP",
+   "rationale": "EMA20>EMA50, close reclaims EMA20 from below"
+  },
+  {
+   "id": 2,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "side": "long",
+   "qty": 0.17,
+   "entry_price": 550.525125,
+   "exit_price": 539.7309090685399,
+   "stop_initial": 540.0009095233015,
+   "stop_final": 540.0009095233015,
+   "margin_usd": 9.358927125000001,
+   "notional_usd": 93.58927125000001,
+   "entry_fee_usd": 0.056153562750000004,
+   "exit_fee_usd": 0.05505255272499107,
+   "funding_usd": 0.0,
+   "net_pnl_usd": -1.9462228238232158,
+   "mfe_pct": 0.756527687996084,
+   "mae_pct": -1.5776073798629937,
+   "entry_ms": 1792022405000,
+   "exit_ms": 1792031100000,
+   "exit_reason": "STOP",
+   "rationale": "4h up-regime, ADX 27, price>EMA50"
+  },
+  {
+   "id": 3,
+   "strategy": "breakout",
+   "symbol": "BNB/USDT:USDT",
+   "side": "short",
+   "qty": 0.42,
+   "entry_price": 721.4390999999999,
+   "exit_price": 727.5480418000305,
+   "stop_initial": 731.0877499897088,
+   "stop_final": 727.184449575243,
+   "margin_usd": 30.3004422,
+   "notional_usd": 303.004422,
+   "entry_fee_usd": 0.18180265319999997,
+   "exit_fee_usd": 0.1833421065336077,
+   "funding_usd": 0.029816577125999996,
+   "net_pnl_usd": -2.9607168928724628,
+   "mfe_pct": 1.2487679140207386,
+   "mae_pct": -0.7430842048899229,
+   "entry_ms": 1792033205000,
+   "exit_ms": 1792075680000,
+   "exit_reason": "STOP",
+   "rationale": "close broke 48-bar low on 10.8x volume"
+  },
+  {
+   "id": 4,
+   "strategy": "breakout",
+   "symbol": "ETH/USDT:USDT",
+   "side": "short",
+   "qty": 0.08,
+   "entry_price": 2378.2103,
+   "exit_price": 2404.4908314756035,
+   "stop_initial": 2430.399621040286,
+   "stop_final": 2403.2891868821625,
+   "margin_usd": 19.0256824,
+   "notional_usd": 190.25682400000002,
+   "entry_fee_usd": 0.1141540944,
+   "exit_fee_usd": 0.11541555991082897,
+   "funding_usd": -0.013245259552,
+   "net_pnl_usd": -2.318766912807094,
+   "mfe_pct": 2.2790373080126667,
+   "mae_pct": -0.9818181344181276,
+   "entry_ms": 1792033205000,
+   "exit_ms": 1792076640000,
+   "exit_reason": "STOP",
+   "rationale": "close broke 48-bar low on 6.7x volume"
+  },
+  {
+   "id": 5,
+   "strategy": "volatility_breakout",
+   "symbol": "XRP/USDT:USDT",
+   "side": "short",
+   "qty": 65.4,
+   "entry_price": 1.3159417,
+   "exit_price": 1.327357976711396,
+   "stop_initial": 1.3442204036122498,
+   "stop_final": 1.326694629396698,
+   "margin_usd": 8.606258718000001,
+   "notional_usd": 86.06258718000001,
+   "entry_fee_usd": 0.051637552308000004,
+   "exit_fee_usd": 0.05208552700615519,
+   "funding_usd": 0.0012944581452,
+   "net_pnl_usd": -0.851642034384661,
+   "mfe_pct": 2.366495415412404,
+   "mae_pct": -0.7491441300173174,
+   "entry_ms": 1792033205000,
+   "exit_ms": 1792076640000,
+   "exit_reason": "STOP",
+   "rationale": "break of 20-bar low on 8.7x vol after compression"
+  }
+ ],
+ "open_at_end": [
+  {
+   "id": 6,
+   "strategy": "volatility_breakout",
+   "symbol": "NEAR/USDT:USDT",
+   "side": "long",
+   "qty": 7.1000000000000005,
+   "entry_price": 4.9514745,
+   "stop": 5.066071068605632,
+   "initial_stop": 4.678161802848991,
+   "liq_price_est": 4.48950192915,
+   "margin_usd": 3.515546895,
+   "notional_usd": 35.15546895,
+   "entry_fee_usd": 0.021093281369999998,
+   "funding_paid_usd": 0.0022413040020000004,
+   "planned_risk_usd": 1.9981399103377715,
+   "opened_ms": 1792076405000,
+   "rationale": "break of 20-bar high on 4.4x vol after compression",
+   "mark": 5.264,
+   "unrealized_pnl_usd": 2.2189310500000032
+  },
+  {
+   "id": 7,
+   "strategy": "volatility_breakout",
+   "symbol": "ETH/USDT:USDT",
+   "side": "long",
+   "qty": 0.03,
+   "entry_price": 2440.37958,
+   "stop": 2396.292666472112,
+   "initial_stop": 2380.146588968873,
+   "liq_price_est": 2204.394874614,
+   "margin_usd": 7.321138739999999,
+   "notional_usd": 73.21138739999999,
+   "entry_fee_usd": 0.043926832439999994,
+   "funding_paid_usd": 0.0,
+   "planned_risk_usd": 1.9294399794904689,
+   "opened_ms": 1792080005000,
+   "rationale": "break of 20-bar high on 4.0x vol after compression",
+   "mark": 2440.77,
+   "unrealized_pnl_usd": 0.011712600000005294
+  },
+  {
+   "id": 8,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "side": "long",
+   "qty": 1391.0,
+   "entry_price": 0.33156569999999996,
+   "stop": 0.3299004164774149,
+   "initial_stop": 0.3292422181376876,
+   "liq_price_est": 0.30089587274999996,
+   "margin_usd": 46.12078887,
+   "notional_usd": 461.20788869999996,
+   "entry_fee_usd": 0.27672473321999996,
+   "funding_paid_usd": 0.0,
+   "planned_risk_usd": 4.01232412889132,
+   "opened_ms": 1792080005000,
+   "rationale": "EMA20>EMA50, close reclaims EMA20 from below",
+   "mark": 0.3326,
+   "unrealized_pnl_usd": 1.4387113000000604
+  }
+ ],
+ "signals": [
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $3.59, margin $49.67"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.95, margin $9.36"
+  },
+  {
+   "ts_ms": 1792031105000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "4h up-regime, ADX 26, price>EMA50"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ETH/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $4.50, margin $19.03"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $4.57, margin $30.30"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $2.00, margin $8.61"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.4x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.85, margin $7.23"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "TRX/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $25.51"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.0x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.58, margin $3.34"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 7.2x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.40"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.88, margin $8.15"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.0x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.21"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $6.15"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "XLM/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XLM/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.21"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.93, margin $6.59"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.1x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.19"
+  },
+  {
+   "ts_ms": 1792040405000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $8.76"
+  },
+  {
+   "ts_ms": 1792047605000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.82, margin $9.84"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $3.68, margin $46.13"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "trend_pullback",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $25.08"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.62, margin $10.03"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "trend",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.99, margin $18.48"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.59, margin $9.83"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "crash_reversal",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.98, margin $9.56"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "volatility_breakout",
+   "symbol": "TRX/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $23.16"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.62, margin $9.81"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "breakout",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 2.3x volume"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "volatility_breakout",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $7.23"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 3.0x volume"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $6.89"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "volatility_breakout",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $2.00, margin $3.52"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.91, margin $5.77"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "ETH/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.93, margin $7.32"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $4.01, margin $46.12"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.79, margin $3.54"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.98, margin $6.15"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.23"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.97, margin $6.06"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.96, margin $7.26"
+  }
+ ],
+ "risk_events": [],
+ "equity_curve_hourly": [
+  [
+   1792022405000,
+   499.3219244303901
+  ],
+  [
+   1792026005000,
+   498.8267244303901
+  ],
+  [
+   1792029605000,
+   498.13372443039003
+  ],
+  [
+   1792033205000,
+   493.9029728077202
+  ],
+  [
+   1792036805000,
+   499.1764728077202
+  ],
+  [
+   1792040405000,
+   492.89645280772015
+  ],
+  [
+   1792044005000,
+   501.5626928077202
+  ],
+  [
+   1792047605000,
+   498.4375728077202
+  ],
+  [
+   1792051205000,
+   494.57518703200105
+  ],
+  [
+   1792054805000,
+   493.927967032001
+  ],
+  [
+   1792058405000,
+   493.72904703200095
+  ],
+  [
+   1792062005000,
+   495.90846703200106
+  ],
+  [
+   1792065605000,
+   496.451167032001
+  ],
+  [
+   1792069205000,
+   499.397627032001
+  ],
+  [
+   1792072805000,
+   501.876007032001
+  ],
+  [
+   1792076405000,
+   489.37538513808454
+  ],
+  [
+   1792080005000,
+   488.873816886532
+  ],
+  [
+   1792083605000,
+   489.178616886532
+  ],
+  [
+   1792087205000,
+   490.010716886532
+  ],
+  [
+   1792090805000,
+   492.000416886532
+  ],
+  [
+   1792094405000,
+   493.0115168865321
+  ],
+  [
+   1792098005000,
+   491.70971688653196
+  ],
+  [
+   1792101605000,
+   492.33971688653196
+  ],
+  [
+   1792105205000,
+   492.033216886532
+  ],
+  [
+   1792108800000,
+   491.65441688653203
+  ]
+ ],
+ "equity_curve_min": [
+  [
+   1792022405000,
+   499.3219244303901
+  ],
+  [
+   1792022465000,
+   499.26242443039007
+  ],
+  [
+   1792022525000,
+   499.44072443039
+  ],
+  [
+   1792022585000,
+   499.63962443039003
+  ],
+  [
+   1792022645000,
+   499.9539244303901
+  ],
+  [
+   1792022705000,
+   500.35132443039004
+  ],
+  [
+   1792022765000,
+   500.34622443039007
+  ],
+  [
+   1792022825000,
+   500.1662244303901
+  ],
+  [
+   1792022885000,
+   500.45822443039003
+  ],
+  [
+   1792022945000,
+   500.47522443039
+  ],
+  [
+   1792023005000,
+   500.34622443039007
+  ],
+  [
+   1792023065000,
+   500.57362443039
+  ],
+  [
+   1792023125000,
+   500.31052443039005
+  ],
+  [
+   1792023185000,
+   500.39382443039005
+  ],
+  [
+   1792023245000,
+   500.36492443039003
+  ],
+  [
+   1792023305000,
+   500.48032443039
+  ],
+  [
+   1792023365000,
+   500.51432443039005
+  ],
+  [
+   1792023425000,
+   500.7485244303901
+  ],
+  [
+   1792023485000,
+   500.7910244303901
+  ],
+  [
+   1792023545000,
+   500.7332244303901
+  ],
+  [
+   1792023605000,
+   500.42932443039
+  ],
+  [
+   1792023665000,
+   500.44802443039
+  ],
+  [
+   1792023725000,
+   500.1171244303901
+  ],
+  [
+   1792023785000,
+   500.2410244303901
+  ],
+  [
+   1792023845000,
+   500.0066244303901
+  ],
+  [
+   1792023905000,
+   500.0661244303901
+  ],
+  [
+   1792023965000,
+   499.3818244303901
+  ],
+  [
+   1792024025000,
+   499.3614244303901
+  ],
+  [
+   1792024085000,
+   499.53122443039007
+  ],
+  [
+   1792024145000,
+   499.4073244303901
+  ],
+  [
+   1792024205000,
+   499.45152443039007
+  ],
+  [
+   1792024265000,
+   499.3140244303901
+  ],
+  [
+   1792024325000,
+   499.30212443039005
+  ],
+  [
+   1792024385000,
+   499.09322443039
+  ],
+  [
+   1792024445000,
+   499.3140244303901
+  ],
+  [
+   1792024505000,
+   499.58242443039006
+  ],
+  [
+   1792024565000,
+   499.5569244303901
+  ],
+  [
+   1792024625000,
+   499.60962443039006
+  ],
+  [
+   1792024685000,
+   499.15462443039
+  ],
+  [
+   1792024745000,
+   498.9253244303901
+  ],
+  [
+   1792024805000,
+   498.99822443039005
+  ],
+  [
+   1792024865000,
+   498.8658244303901
+  ],
+  [
+   1792024925000,
+   498.6127244303901
+  ],
+  [
+   1792024985000,
+   498.77402443039006
+  ],
+  [
+   1792025045000,
+   498.8131244303901
+  ],
+  [
+   1792025105000,
+   498.62122443039004
+  ],
+  [
+   1792025165000,
+   498.88812443039006
+  ],
+  [
+   1792025225000,
+   498.8235244303901
+  ],
+  [
+   1792025285000,
+   498.62312443039013
+  ],
+  [
+   1792025345000,
+   498.5432244303901
+  ],
+  [
+   1792025405000,
+   498.4803244303901
+  ],
+  [
+   1792025465000,
+   499.37202443039
+  ],
+  [
+   1792025525000,
+   499.30742443039
+  ],
+  [
+   1792025585000,
+   499.4704244303901
+  ],
+  [
+   1792025645000,
+   499.39242443039
+  ],
+  [
+   1792025705000,
+   499.47552443039007
+  ],
+  [
+   1792025765000,
+   499.15632443039004
+  ],
+  [
+   1792025825000,
+   499.03242443039005
+  ],
+  [
+   1792025885000,
+   499.14102443039
+  ],
+  [
+   1792025945000,
+   498.96422443039006
+  ],
+  [
+   1792026005000,
+   498.8267244303901
+  ],
+  [
+   1792026065000,
+   499.32802443039003
+  ],
+  [
+   1792026125000,
+   499.32972443039006
+  ],
+  [
+   1792026185000,
+   499.34842443039
+  ],
+  [
+   1792026245000,
+   499.31612443039006
+  ],
+  [
+   1792026305000,
+   499.34332443039006
+  ],
+  [
+   1792026365000,
+   499.21602443039006
+  ],
+  [
+   1792026425000,
+   499.28892443039
+  ],
+  [
+   1792026485000,
+   499.0613244303901
+  ],
+  [
+   1792026545000,
+   499.33482443039003
+  ],
+  [
+   1792026605000,
+   499.35012443039005
+  ],
+  [
+   1792026665000,
+   499.26172443039
+  ],
+  [
+   1792026725000,
+   499.0392244303901
+  ],
+  [
+   1792026785000,
+   498.88642443039004
+  ],
+  [
+   1792026845000,
+   499.0273244303901
+  ],
+  [
+   1792026905000,
+   499.1140244303901
+  ],
+  [
+   1792026965000,
+   499.1038244303901
+  ],
+  [
+   1792027025000,
+   498.96292443039005
+  ],
+  [
+   1792027085000,
+   499.1106244303901
+  ],
+  [
+   1792027145000,
+   499.1174244303901
+  ],
+  [
+   1792027205000,
+   499.13612443039005
+  ],
+  [
+   1792027265000,
+   499.1293244303901
+  ],
+  [
+   1792027325000,
+   498.5806244303901
+  ],
+  [
+   1792027385000,
+   498.58382443039005
+  ],
+  [
+   1792027445000,
+   498.49712443039004
+  ],
+  [
+   1792027505000,
+   498.46992443039005
+  ],
+  [
+   1792027565000,
+   498.42912443039006
+  ],
+  [
+   1792027625000,
+   498.66692443039005
+  ],
+  [
+   1792027685000,
+   498.6958244303901
+  ],
+  [
+   1792027745000,
+   498.6006244303901
+  ],
+  [
+   1792027805000,
+   498.43592443039006
+  ],
+  [
+   1792027865000,
+   498.3154244303901
+  ],
+  [
+   1792027925000,
+   498.7519244303901
+  ],
+  [
+   1792027985000,
+   498.8590244303901
+  ],
+  [
+   1792028045000,
+   499.01182443039005
+  ],
+  [
+   1792028105000,
+   498.8216244303901
+  ],
+  [
+   1792028165000,
+   498.7791244303901
+  ],
+  [
+   1792028225000,
+   498.6688244303901
+  ],
+  [
+   1792028285000,
+   498.69772443039005
+  ],
+  [
+   1792028345000,
+   498.67392443039006
+  ],
+  [
+   1792028405000,
+   498.62972443039007
+  ],
+  [
+   1792028465000,
+   498.5041244303901
+  ],
+  [
+   1792028525000,
+   498.5075244303901
+  ],
+  [
+   1792028585000,
+   498.66032443039006
+  ],
+  [
+   1792028645000,
+   498.6059244303901
+  ],
+  [
+   1792028705000,
+   498.6994244303901
+  ],
+  [
+   1792028765000,
+   498.67052443039006
+  ],
+  [
+   1792028825000,
+   498.70112443039005
+  ],
+  [
+   1792028885000,
+   498.52622443039013
+  ],
+  [
+   1792028945000,
+   498.46502443039014
+  ],
+  [
+   1792029005000,
+   498.4939244303901
+  ],
+  [
+   1792029065000,
+   498.5874244303901
+  ],
+  [
+   1792029125000,
+   498.5636244303901
+  ],
+  [
+   1792029185000,
+   498.5806244303901
+  ],
+  [
+   1792029245000,
+   498.5330244303901
+  ],
+  [
+   1792029305000,
+   498.4820244303901
+  ],
+  [
+   1792029365000,
+   498.48882443039014
+  ],
+  [
+   1792029425000,
+   498.4803244303901
+  ],
+  [
+   1792029485000,
+   498.3052244303901
+  ],
+  [
+   1792029545000,
+   498.26102443039014
+  ],
+  [
+   1792029605000,
+   498.13372443039003
+  ],
+  [
+   1792029665000,
+   498.15052443039013
+  ],
+  [
+   1792029725000,
+   498.1692244303901
+  ],
+  [
+   1792029785000,
+   498.34922443039005
+  ],
+  [
+   1792029845000,
+   498.36282443039005
+  ],
+  [
+   1792029905000,
+   498.2999244303901
+  ],
+  [
+   1792029965000,
+   498.54642443039006
+  ],
+  [
+   1792030025000,
+   498.4293244303901
+  ],
+  [
+   1792030085000,
+   498.5449244303901
+  ],
+  [
+   1792030145000,
+   498.4786244303901
+  ],
+  [
+   1792030205000,
+   498.3256244303901
+  ],
+  [
+   1792030265000,
+   498.3545244303901
+  ],
+  [
+   1792030325000,
+   498.50902443039007
+  ],
+  [
+   1792030385000,
+   498.3749244303901
+  ],
+  [
+   1792030445000,
+   498.54642443039006
+  ],
+  [
+   1792030505000,
+   498.2831244303901
+  ],
+  [
+   1792030565000,
+   498.14052443039003
+  ],
+  [
+   1792030625000,
+   498.14732443039003
+  ],
+  [
+   1792030685000,
+   498.09292443039004
+  ],
+  [
+   1792030745000,
+   498.0842244303901
+  ],
+  [
+   1792030805000,
+   498.17452443039
+  ],
+  [
+   1792030865000,
+   498.03172443039006
+  ],
+  [
+   1792030925000,
+   497.85662443039
+  ],
+  [
+   1792030985000,
+   496.9479244303901
+  ],
+  [
+   1792031045000,
+   495.0420719387014
+  ],
+  [
+   1792031105000,
+   494.4601739276282
+  ],
+  [
+   1792031165000,
+   494.4601739276282
+  ],
+  [
+   1792031225000,
+   494.4601739276282
+  ],
+  [
+   1792031285000,
+   494.4601739276282
+  ],
+  [
+   1792031345000,
+   494.4601739276282
+  ],
+  [
+   1792031405000,
+   494.4601739276282
+  ],
+  [
+   1792031465000,
+   494.4601739276282
+  ],
+  [
+   1792031525000,
+   494.4601739276282
+  ],
+  [
+   1792031585000,
+   494.4601739276282
+  ],
+  [
+   1792031645000,
+   494.4601739276282
+  ],
+  [
+   1792031705000,
+   494.4601739276282
+  ],
+  [
+   1792031765000,
+   494.4601739276282
+  ],
+  [
+   1792031825000,
+   494.4601739276282
+  ],
+  [
+   1792031885000,
+   494.4601739276282
+  ],
+  [
+   1792031945000,
+   494.4601739276282
+  ],
+  [
+   1792032005000,
+   494.4601739276282
+  ],
+  [
+   1792032065000,
+   494.4601739276282
+  ],
+  [
+   1792032125000,
+   494.4601739276282
+  ],
+  [
+   1792032185000,
+   494.4601739276282
+  ],
+  [
+   1792032245000,
+   494.4601739276282
+  ],
+  [
+   1792032305000,
+   494.4601739276282
+  ],
+  [
+   1792032365000,
+   494.4601739276282
+  ],
+  [
+   1792032425000,
+   494.4601739276282
+  ],
+  [
+   1792032485000,
+   494.4601739276282
+  ],
+  [
+   1792032545000,
+   494.4601739276282
+  ],
+  [
+   1792032605000,
+   494.4601739276282
+  ],
+  [
+   1792032665000,
+   494.4601739276282
+  ],
+  [
+   1792032725000,
+   494.4601739276282
+  ],
+  [
+   1792032785000,
+   494.4601739276282
+  ],
+  [
+   1792032845000,
+   494.4601739276282
+  ],
+  [
+   1792032905000,
+   494.4601739276282
+  ],
+  [
+   1792032965000,
+   494.4601739276282
+  ],
+  [
+   1792033025000,
+   494.4601739276282
+  ],
+  [
+   1792033085000,
+   494.4601739276282
+  ],
+  [
+   1792033145000,
+   494.4601739276282
+  ],
+  [
+   1792033205000,
+   493.9029728077202
+  ],
+  [
+   1792033265000,
+   494.77833280772023
+  ],
+  [
+   1792033325000,
+   496.6597528077202
+  ],
+  [
+   1792033385000,
+   496.8739728077202
+  ],
+  [
+   1792033445000,
+   497.4176128077202
+  ],
+  [
+   1792033505000,
+   496.91873280772023
+  ],
+  [
+   1792033565000,
+   496.58791280772016
+  ],
+  [
+   1792033625000,
+   496.90437280772016
+  ],
+  [
+   1792033685000,
+   495.7026328077202
+  ],
+  [
+   1792033745000,
+   496.00937280772024
+  ],
+  [
+   1792033805000,
+   495.50831280772024
+  ],
+  [
+   1792033865000,
+   496.3171328077202
+  ],
+  [
+   1792033925000,
+   496.72029280772017
+  ],
+  [
+   1792033985000,
+   497.22395280772025
+  ],
+  [
+   1792034045000,
+   496.95411280772015
+  ],
+  [
+   1792034105000,
+   496.4713328077202
+  ],
+  [
+   1792034165000,
+   496.2244728077202
+  ],
+  [
+   1792034225000,
+   495.4547528077202
+  ],
+  [
+   1792034285000,
+   495.5497128077202
+  ],
+  [
+   1792034345000,
+   495.5856728077202
+  ],
+  [
+   1792034405000,
+   496.1262728077202
+  ],
+  [
+   1792034465000,
+   497.1140328077202
+  ],
+  [
+   1792034525000,
+   496.62221280772025
+  ],
+  [
+   1792034585000,
+   497.85323280772025
+  ],
+  [
+   1792034645000,
+   497.74359280772023
+  ],
+  [
+   1792034705000,
+   497.4677528077202
+  ],
+  [
+   1792034765000,
+   497.5124728077202
+  ],
+  [
+   1792034825000,
+   497.4451328077202
+  ],
+  [
+   1792034885000,
+   498.24967280772023
+  ],
+  [
+   1792034945000,
+   498.22315280772017
+  ],
+  [
+   1792035005000,
+   498.09389280772024
+  ],
+  [
+   1792035065000,
+   498.3702328077202
+  ],
+  [
+   1792035125000,
+   498.06581280772025
+  ],
+  [
+   1792035185000,
+   498.2332928077202
+  ],
+  [
+   1792035245000,
+   498.3369928077202
+  ],
+  [
+   1792035305000,
+   498.24527280772014
+  ],
+  [
+   1792035365000,
+   498.5250528077202
+  ],
+  [
+   1792035425000,
+   498.5108728077202
+  ],
+  [
+   1792035485000,
+   498.35021280772025
+  ],
+  [
+   1792035545000,
+   498.4301928077202
+  ],
+  [
+   1792035605000,
+   498.95451280772016
+  ],
+  [
+   1792035665000,
+   498.5831528077202
+  ],
+  [
+   1792035725000,
+   498.2188528077202
+  ],
+  [
+   1792035785000,
+   498.0617728077202
+  ],
+  [
+   1792035845000,
+   499.3498728077202
+  ],
+  [
+   1792035905000,
+   499.20387280772024
+  ],
+  [
+   1792035965000,
+   498.7637128077202
+  ],
+  [
+   1792036025000,
+   499.1879928077202
+  ],
+  [
+   1792036085000,
+   499.34289280772015
+  ],
+  [
+   1792036145000,
+   499.47083280772017
+  ],
+  [
+   1792036205000,
+   499.58855280772025
+  ],
+  [
+   1792036265000,
+   499.5396728077202
+  ],
+  [
+   1792036325000,
+   499.5050328077203
+  ],
+  [
+   1792036385000,
+   499.1856128077202
+  ],
+  [
+   1792036445000,
+   499.6361328077201
+  ],
+  [
+   1792036505000,
+   499.6047728077202
+  ],
+  [
+   1792036565000,
+   499.8677928077202
+  ],
+  [
+   1792036625000,
+   499.2248328077202
+  ],
+  [
+   1792036685000,
+   499.1991528077202
+  ],
+  [
+   1792036745000,
+   499.2384328077202
+  ],
+  [
+   1792036805000,
+   499.1764728077202
+  ],
+  [
+   1792036865000,
+   498.67903280772026
+  ],
+  [
+   1792036925000,
+   498.5691928077202
+  ],
+  [
+   1792036985000,
+   497.4687328077202
+  ],
+  [
+   1792037045000,
+   497.8051328077202
+  ],
+  [
+   1792037105000,
+   498.0263928077202
+  ],
+  [
+   1792037165000,
+   498.1605928077202
+  ],
+  [
+   1792037225000,
+   497.80139280772016
+  ],
+  [
+   1792037285000,
+   498.24387280772015
+  ],
+  [
+   1792037345000,
+   498.42955280772014
+  ],
+  [
+   1792037405000,
+   497.91911280772024
+  ],
+  [
+   1792037465000,
+   497.7652328077203
+  ],
+  [
+   1792037525000,
+   498.0248328077202
+  ],
+  [
+   1792037585000,
+   498.2331928077203
+  ],
+  [
+   1792037645000,
+   498.09719280772026
+  ],
+  [
+   1792037705000,
+   498.34381280772016
+  ],
+  [
+   1792037765000,
+   497.81737280772023
+  ],
+  [
+   1792037825000,
+   498.14527280772023
+  ],
+  [
+   1792037885000,
+   497.32047280772014
+  ],
+  [
+   1792037945000,
+   497.0446728077202
+  ],
+  [
+   1792038005000,
+   496.62213280772016
+  ],
+  [
+   1792038065000,
+   496.39007280772023
+  ],
+  [
+   1792038125000,
+   496.4567728077202
+  ],
+  [
+   1792038185000,
+   496.1384328077202
+  ],
+  [
+   1792038245000,
+   495.56811280772024
+  ],
+  [
+   1792038305000,
+   495.1931928077202
+  ],
+  [
+   1792038365000,
+   495.51473280772024
+  ],
+  [
+   1792038425000,
+   495.4360928077202
+  ],
+  [
+   1792038485000,
+   494.9870528077202
+  ],
+  [
+   1792038545000,
+   494.90899280772015
+  ],
+  [
+   1792038605000,
+   494.36915280772024
+  ],
+  [
+   1792038665000,
+   493.7596728077202
+  ],
+  [
+   1792038725000,
+   493.5250528077202
+  ],
+  [
+   1792038785000,
+   493.05497280772016
+  ],
+  [
+   1792038845000,
+   493.39387280772024
+  ],
+  [
+   1792038905000,
+   493.92739280772014
+  ],
+  [
+   1792038965000,
+   493.0737128077202
+  ],
+  [
+   1792039025000,
+   492.2845128077202
+  ],
+  [
+   1792039085000,
+   492.6582928077202
+  ],
+  [
+   1792039145000,
+   493.3770528077202
+  ],
+  [
+   1792039205000,
+   493.1807128077202
+  ],
+  [
+   1792039265000,
+   492.60871280772017
+  ],
+  [
+   1792039325000,
+   492.4765128077202
+  ],
+  [
+   1792039385000,
+   492.4413328077202
+  ],
+  [
+   1792039445000,
+   492.6687728077202
+  ],
+  [
+   1792039505000,
+   492.3528728077202
+  ],
+  [
+   1792039565000,
+   492.65307280772015
+  ],
+  [
+   1792039625000,
+   492.67299280772016
+  ],
+  [
+   1792039685000,
+   492.48331280772015
+  ],
+  [
+   1792039745000,
+   492.4001328077202
+  ],
+  [
+   1792039805000,
+   492.8165128077202
+  ],
+  [
+   1792039865000,
+   492.86047280772027
+  ],
+  [
+   1792039925000,
+   492.81203280772024
+  ],
+  [
+   1792039985000,
+   492.7529928077202
+  ],
+  [
+   1792040045000,
+   492.41687280772015
+  ],
+  [
+   1792040105000,
+   492.7028728077202
+  ],
+  [
+   1792040165000,
+   492.82847280772023
+  ],
+  [
+   1792040225000,
+   492.7328528077202
+  ],
+  [
+   1792040285000,
+   492.6050128077202
+  ],
+  [
+   1792040345000,
+   492.39743280772024
+  ],
+  [
+   1792040405000,
+   492.89645280772015
+  ],
+  [
+   1792040465000,
+   492.73445280772023
+  ],
+  [
+   1792040525000,
+   493.2038328077202
+  ],
+  [
+   1792040585000,
+   493.70613280772017
+  ],
+  [
+   1792040645000,
+   493.7729928077202
+  ],
+  [
+   1792040705000,
+   493.2352328077202
+  ],
+  [
+   1792040765000,
+   493.86087280772017
+  ],
+  [
+   1792040825000,
+   494.6689728077202
+  ],
+  [
+   1792040885000,
+   494.8762728077202
+  ],
+  [
+   1792040945000,
+   495.26923280772024
+  ],
+  [
+   1792041005000,
+   495.47837280772023
+  ],
+  [
+   1792041065000,
+   495.8890528077202
+  ],
+  [
+   1792041125000,
+   496.0052728077202
+  ],
+  [
+   1792041185000,
+   496.3185728077202
+  ],
+  [
+   1792041245000,
+   495.93739280772013
+  ],
+  [
+   1792041305000,
+   496.5280328077202
+  ],
+  [
+   1792041365000,
+   496.72465280772025
+  ],
+  [
+   1792041425000,
+   496.8879728077202
+  ],
+  [
+   1792041485000,
+   496.6902328077202
+  ],
+  [
+   1792041545000,
+   497.0491728077202
+  ],
+  [
+   1792041605000,
+   496.7652728077202
+  ],
+  [
+   1792041665000,
+   496.8244328077202
+  ],
+  [
+   1792041725000,
+   497.21527280772017
+  ],
+  [
+   1792041785000,
+   497.08655280772024
+  ],
+  [
+   1792041845000,
+   497.2706528077201
+  ],
+  [
+   1792041905000,
+   496.9936328077202
+  ],
+  [
+   1792041965000,
+   496.9257728077202
+  ],
+  [
+   1792042025000,
+   497.3688328077202
+  ],
+  [
+   1792042085000,
+   497.3433128077202
+  ],
+  [
+   1792042145000,
+   497.51437280772024
+  ],
+  [
+   1792042205000,
+   497.5128728077202
+  ],
+  [
+   1792042265000,
+   497.9781328077202
+  ],
+  [
+   1792042325000,
+   498.49375280772017
+  ],
+  [
+   1792042385000,
+   498.6270328077202
+  ],
+  [
+   1792042445000,
+   498.5252528077202
+  ],
+  [
+   1792042505000,
+   498.70415280772016
+  ],
+  [
+   1792042565000,
+   498.2712528077202
+  ],
+  [
+   1792042625000,
+   497.98365280772015
+  ],
+  [
+   1792042685000,
+   498.0668728077202
+  ],
+  [
+   1792042745000,
+   497.94221280772024
+  ],
+  [
+   1792042805000,
+   497.6447328077202
+  ],
+  [
+   1792042865000,
+   496.89235280772016
+  ],
+  [
+   1792042925000,
+   497.46933280772026
+  ],
+  [
+   1792042985000,
+   497.7972728077202
+  ],
+  [
+   1792043045000,
+   498.1100128077202
+  ],
+  [
+   1792043105000,
+   498.2912328077202
+  ],
+  [
+   1792043165000,
+   498.5826528077202
+  ],
+  [
+   1792043225000,
+   499.0182328077202
+  ],
+  [
+   1792043285000,
+   499.72877280772013
+  ],
+  [
+   1792043345000,
+   500.0563128077202
+  ],
+  [
+   1792043405000,
+   500.1720328077202
+  ],
+  [
+   1792043465000,
+   499.37463280772016
+  ],
+  [
+   1792043525000,
+   500.9990928077202
+  ],
+  [
+   1792043585000,
+   501.1580728077202
+  ],
+  [
+   1792043645000,
+   501.1152328077202
+  ],
+  [
+   1792043705000,
+   501.5207928077202
+  ],
+  [
+   1792043765000,
+   501.1632728077202
+  ],
+  [
+   1792043825000,
+   501.6991928077202
+  ],
+  [
+   1792043885000,
+   501.9669528077202
+  ],
+  [
+   1792043945000,
+   501.34941280772017
+  ],
+  [
+   1792044005000,
+   501.5626928077202
+  ],
+  [
+   1792044065000,
+   501.38637280772025
+  ],
+  [
+   1792044125000,
+   501.2516728077203
+  ],
+  [
+   1792044185000,
+   501.3070528077202
+  ],
+  [
+   1792044245000,
+   501.01529280772024
+  ],
+  [
+   1792044305000,
+   501.2226128077202
+  ],
+  [
+   1792044365000,
+   501.7819128077202
+  ],
+  [
+   1792044425000,
+   500.5059728077201
+  ],
+  [
+   1792044485000,
+   500.35269280772025
+  ],
+  [
+   1792044545000,
+   500.58599280772023
+  ],
+  [
+   1792044605000,
+   500.0017528077202
+  ],
+  [
+   1792044665000,
+   499.7771528077202
+  ],
+  [
+   1792044725000,
+   500.08891280772025
+  ],
+  [
+   1792044785000,
+   500.7715728077202
+  ],
+  [
+   1792044845000,
+   500.8503928077202
+  ],
+  [
+   1792044905000,
+   500.3552928077202
+  ],
+  [
+   1792044965000,
+   499.36223280772026
+  ],
+  [
+   1792045025000,
+   499.48015280772023
+  ],
+  [
+   1792045085000,
+   498.9740728077202
+  ],
+  [
+   1792045145000,
+   498.76187280772024
+  ],
+  [
+   1792045205000,
+   498.3058128077202
+  ],
+  [
+   1792045265000,
+   499.0056528077202
+  ],
+  [
+   1792045325000,
+   499.0455328077202
+  ],
+  [
+   1792045385000,
+   499.2279328077202
+  ],
+  [
+   1792045445000,
+   499.6143928077202
+  ],
+  [
+   1792045505000,
+   499.5338128077202
+  ],
+  [
+   1792045565000,
+   498.98405280772016
+  ],
+  [
+   1792045625000,
+   498.6337328077202
+  ],
+  [
+   1792045685000,
+   498.2634128077202
+  ],
+  [
+   1792045745000,
+   498.0431128077202
+  ],
+  [
+   1792045805000,
+   497.8027928077202
+  ],
+  [
+   1792045865000,
+   497.9416928077202
+  ],
+  [
+   1792045925000,
+   498.2454128077202
+  ],
+  [
+   1792045985000,
+   497.8507328077202
+  ],
+  [
+   1792046045000,
+   497.70577280772017
+  ],
+  [
+   1792046105000,
+   497.37067280772015
+  ],
+  [
+   1792046165000,
+   497.8260128077202
+  ],
+  [
+   1792046225000,
+   497.2697928077202
+  ],
+  [
+   1792046285000,
+   497.30779280772015
+  ],
+  [
+   1792046345000,
+   497.1272328077202
+  ],
+  [
+   1792046405000,
+   497.6964928077202
+  ],
+  [
+   1792046465000,
+   497.6161128077202
+  ],
+  [
+   1792046525000,
+   497.5323328077202
+  ],
+  [
+   1792046585000,
+   497.3242528077202
+  ],
+  [
+   1792046645000,
+   497.7142928077202
+  ],
+  [
+   1792046705000,
+   497.9004128077203
+  ],
+  [
+   1792046765000,
+   497.8628728077202
+  ],
+  [
+   1792046825000,
+   499.2361928077202
+  ],
+  [
+   1792046885000,
+   499.2798928077202
+  ],
+  [
+   1792046945000,
+   499.2051528077202
+  ],
+  [
+   1792047005000,
+   499.3101328077202
+  ],
+  [
+   1792047065000,
+   499.0242728077202
+  ],
+  [
+   1792047125000,
+   499.0181328077202
+  ],
+  [
+   1792047185000,
+   498.5431328077202
+  ],
+  [
+   1792047245000,
+   498.83991280772017
+  ],
+  [
+   1792047305000,
+   498.96809280772015
+  ],
+  [
+   1792047365000,
+   499.0197728077202
+  ],
+  [
+   1792047425000,
+   499.1176328077202
+  ],
+  [
+   1792047485000,
+   498.3698928077202
+  ],
+  [
+   1792047545000,
+   498.4382328077202
+  ],
+  [
+   1792047605000,
+   498.4375728077202
+  ],
+  [
+   1792047665000,
+   497.6488128077202
+  ],
+  [
+   1792047725000,
+   498.18661280772017
+  ],
+  [
+   1792047785000,
+   498.01713280772026
+  ],
+  [
+   1792047845000,
+   498.3471728077202
+  ],
+  [
+   1792047905000,
+   498.15925280772024
+  ],
+  [
+   1792047965000,
+   498.32357280772015
+  ],
+  [
+   1792048025000,
+   498.22903280772016
+  ],
+  [
+   1792048085000,
+   498.70181280772016
+  ],
+  [
+   1792048145000,
+   498.17837280772017
+  ],
+  [
+   1792048205000,
+   498.56051280772016
+  ],
+  [
+   1792048265000,
+   498.05939280772014
+  ],
+  [
+   1792048325000,
+   498.4739928077202
+  ],
+  [
+   1792048385000,
+   497.99635280772026
+  ],
+  [
+   1792048445000,
+   497.8613928077203
+  ],
+  [
+   1792048505000,
+   497.84153280772017
+  ],
+  [
+   1792048565000,
+   497.1906928077202
+  ],
+  [
+   1792048625000,
+   497.34331280772017
+  ],
+  [
+   1792048685000,
+   497.2085328077202
+  ],
+  [
+   1792048745000,
+   496.70557280772016
+  ],
+  [
+   1792048805000,
+   497.2865528077202
+  ],
+  [
+   1792048865000,
+   497.6244128077202
+  ],
+  [
+   1792048925000,
+   497.2885728077202
+  ],
+  [
+   1792048985000,
+   496.7257928077202
+  ],
+  [
+   1792049045000,
+   496.6710328077202
+  ],
+  [
+   1792049105000,
+   496.20011280772013
+  ],
+  [
+   1792049165000,
+   496.07427280772026
+  ],
+  [
+   1792049225000,
+   495.85739280772015
+  ],
+  [
+   1792049285000,
+   495.83005280772016
+  ],
+  [
+   1792049345000,
+   495.9363128077202
+  ],
+  [
+   1792049405000,
+   496.21477280772024
+  ],
+  [
+   1792049465000,
+   496.32421280772024
+  ],
+  [
+   1792049525000,
+   496.6699728077202
+  ],
+  [
+   1792049585000,
+   495.9126928077202
+  ],
+  [
+   1792049645000,
+   496.2170728077202
+  ],
+  [
+   1792049705000,
+   496.1429328077202
+  ],
+  [
+   1792049765000,
+   496.2113328077202
+  ],
+  [
+   1792049825000,
+   496.3229728077202
+  ],
+  [
+   1792049885000,
+   496.12381280772024
+  ],
+  [
+   1792049945000,
+   495.8097328077202
+  ],
+  [
+   1792050005000,
+   495.6648728077202
+  ],
+  [
+   1792050065000,
+   495.5837728077202
+  ],
+  [
+   1792050125000,
+   495.4910328077202
+  ],
+  [
+   1792050185000,
+   495.2397328077202
+  ],
+  [
+   1792050245000,
+   495.05491280772026
+  ],
+  [
+   1792050305000,
+   495.3215928077202
+  ],
+  [
+   1792050365000,
+   495.69785280772015
+  ],
+  [
+   1792050425000,
+   496.1419728077202
+  ],
+  [
+   1792050485000,
+   496.10535280772024
+  ],
+  [
+   1792050545000,
+   496.3006128077202
+  ],
+  [
+   1792050605000,
+   496.2141928077202
+  ],
+  [
+   1792050665000,
+   496.44223280772025
+  ],
+  [
+   1792050725000,
+   496.3816728077202
+  ],
+  [
+   1792050785000,
+   495.9347528077202
+  ],
+  [
+   1792050845000,
+   495.8717328077202
+  ],
+  [
+   1792050905000,
+   495.1292328077202
+  ],
+  [
+   1792050965000,
+   494.86035280772023
+  ],
+  [
+   1792051025000,
+   494.64451280772016
+  ],
+  [
+   1792051085000,
+   494.8198328077202
+  ],
+  [
+   1792051145000,
+   495.0417128077202
+  ],
+  [
+   1792051205000,
+   494.57518703200105
+  ],
+  [
+   1792051265000,
+   494.476447032001
+  ],
+  [
+   1792051325000,
+   494.718147032001
+  ],
+  [
+   1792051385000,
+   494.946687032001
+  ],
+  [
+   1792051445000,
+   495.128027032001
+  ],
+  [
+   1792051505000,
+   495.004007032001
+  ],
+  [
+   1792051565000,
+   494.976367032001
+  ],
+  [
+   1792051625000,
+   494.976127032001
+  ],
+  [
+   1792051685000,
+   495.605147032001
+  ],
+  [
+   1792051745000,
+   495.69344703200096
+  ],
+  [
+   1792051805000,
+   496.214587032001
+  ],
+  [
+   1792051865000,
+   496.605167032001
+  ],
+  [
+   1792051925000,
+   496.242047032001
+  ],
+  [
+   1792051985000,
+   495.809427032001
+  ],
+  [
+   1792052045000,
+   495.981387032001
+  ],
+  [
+   1792052105000,
+   495.68542703200103
+  ],
+  [
+   1792052165000,
+   495.81696703200095
+  ],
+  [
+   1792052225000,
+   495.75470703200097
+  ],
+  [
+   1792052285000,
+   496.00324703200096
+  ],
+  [
+   1792052345000,
+   496.309447032001
+  ],
+  [
+   1792052405000,
+   495.826667032001
+  ],
+  [
+   1792052465000,
+   495.646587032001
+  ],
+  [
+   1792052525000,
+   495.992567032001
+  ],
+  [
+   1792052585000,
+   495.299347032001
+  ],
+  [
+   1792052645000,
+   495.785227032001
+  ],
+  [
+   1792052705000,
+   495.38754703200095
+  ],
+  [
+   1792052765000,
+   494.61926703200106
+  ],
+  [
+   1792052825000,
+   494.70428703200105
+  ],
+  [
+   1792052885000,
+   495.007447032001
+  ],
+  [
+   1792052945000,
+   495.03300703200097
+  ],
+  [
+   1792053005000,
+   494.842507032001
+  ],
+  [
+   1792053065000,
+   494.572927032001
+  ],
+  [
+   1792053125000,
+   494.459067032001
+  ],
+  [
+   1792053185000,
+   494.174927032001
+  ],
+  [
+   1792053245000,
+   494.365047032001
+  ],
+  [
+   1792053305000,
+   494.45278703200097
+  ],
+  [
+   1792053365000,
+   494.25388703200105
+  ],
+  [
+   1792053425000,
+   494.41618703200106
+  ],
+  [
+   1792053485000,
+   494.137947032001
+  ],
+  [
+   1792053545000,
+   494.2054470320011
+  ],
+  [
+   1792053605000,
+   494.297127032001
+  ],
+  [
+   1792053665000,
+   494.430887032001
+  ],
+  [
+   1792053725000,
+   494.607927032001
+  ],
+  [
+   1792053785000,
+   494.63024703200097
+  ],
+  [
+   1792053845000,
+   494.72774703200105
+  ],
+  [
+   1792053905000,
+   494.394287032001
+  ],
+  [
+   1792053965000,
+   494.22304703200103
+  ],
+  [
+   1792054025000,
+   493.971847032001
+  ],
+  [
+   1792054085000,
+   493.71640703200103
+  ],
+  [
+   1792054145000,
+   493.59952703200094
+  ],
+  [
+   1792054205000,
+   493.81790703200096
+  ],
+  [
+   1792054265000,
+   494.126407032001
+  ],
+  [
+   1792054325000,
+   494.02630703200094
+  ],
+  [
+   1792054385000,
+   493.941427032001
+  ],
+  [
+   1792054445000,
+   493.718307032001
+  ],
+  [
+   1792054505000,
+   493.922367032001
+  ],
+  [
+   1792054565000,
+   493.755527032001
+  ],
+  [
+   1792054625000,
+   494.101267032001
+  ],
+  [
+   1792054685000,
+   494.109507032001
+  ],
+  [
+   1792054745000,
+   494.080887032001
+  ],
+  [
+   1792054805000,
+   493.927967032001
+  ],
+  [
+   1792054865000,
+   493.99654703200093
+  ],
+  [
+   1792054925000,
+   494.23408703200096
+  ],
+  [
+   1792054985000,
+   493.64858703200105
+  ],
+  [
+   1792055045000,
+   493.962847032001
+  ],
+  [
+   1792055105000,
+   493.76112703200096
+  ],
+  [
+   1792055165000,
+   493.914087032001
+  ],
+  [
+   1792055225000,
+   493.64776703200096
+  ],
+  [
+   1792055285000,
+   493.752247032001
+  ],
+  [
+   1792055345000,
+   493.488967032001
+  ],
+  [
+   1792055405000,
+   493.39370703200103
+  ],
+  [
+   1792055465000,
+   493.22404703200095
+  ],
+  [
+   1792055525000,
+   493.368187032001
+  ],
+  [
+   1792055585000,
+   493.6191470320009
+  ],
+  [
+   1792055645000,
+   493.555187032001
+  ],
+  [
+   1792055705000,
+   493.462747032001
+  ],
+  [
+   1792055765000,
+   494.154907032001
+  ],
+  [
+   1792055825000,
+   494.62630703200097
+  ],
+  [
+   1792055885000,
+   494.363867032001
+  ],
+  [
+   1792055945000,
+   494.436347032001
+  ],
+  [
+   1792056005000,
+   494.33744703200097
+  ],
+  [
+   1792056065000,
+   494.22702703200093
+  ],
+  [
+   1792056125000,
+   494.146007032001
+  ],
+  [
+   1792056185000,
+   494.39856703200104
+  ],
+  [
+   1792056245000,
+   494.597467032001
+  ],
+  [
+   1792056305000,
+   494.41016703200097
+  ],
+  [
+   1792056365000,
+   494.056207032001
+  ],
+  [
+   1792056425000,
+   493.63344703200096
+  ],
+  [
+   1792056485000,
+   493.835067032001
+  ],
+  [
+   1792056545000,
+   494.06248703200094
+  ],
+  [
+   1792056605000,
+   494.113647032001
+  ],
+  [
+   1792056665000,
+   494.306507032001
+  ],
+  [
+   1792056725000,
+   494.448847032001
+  ],
+  [
+   1792056785000,
+   494.219347032001
+  ],
+  [
+   1792056845000,
+   494.114327032001
+  ],
+  [
+   1792056905000,
+   494.25946703200094
+  ],
+  [
+   1792056965000,
+   493.91098703200106
+  ],
+  [
+   1792057025000,
+   493.932367032001
+  ],
+  [
+   1792057085000,
+   493.833607032001
+  ],
+  [
+   1792057145000,
+   493.85618703200106
+  ],
+  [
+   1792057205000,
+   493.835127032001
+  ],
+  [
+   1792057265000,
+   493.582927032001
+  ],
+  [
+   1792057325000,
+   493.42520703200097
+  ],
+  [
+   1792057385000,
+   493.87266703200106
+  ],
+  [
+   1792057445000,
+   493.92194703200096
+  ],
+  [
+   1792057505000,
+   494.4656470320011
+  ],
+  [
+   1792057565000,
+   494.529467032001
+  ],
+  [
+   1792057625000,
+   494.615427032001
+  ],
+  [
+   1792057685000,
+   494.3800470320011
+  ],
+  [
+   1792057745000,
+   494.316447032001
+  ],
+  [
+   1792057805000,
+   494.09094703200094
+  ],
+  [
+   1792057865000,
+   494.022967032001
+  ],
+  [
+   1792057925000,
+   493.21710703200097
+  ],
+  [
+   1792057985000,
+   493.420567032001
+  ],
+  [
+   1792058045000,
+   493.557887032001
+  ],
+  [
+   1792058105000,
+   493.65550703200097
+  ],
+  [
+   1792058165000,
+   493.71766703200103
+  ],
+  [
+   1792058225000,
+   493.606307032001
+  ],
+  [
+   1792058285000,
+   493.54164703200104
+  ],
+  [
+   1792058345000,
+   493.73198703200103
+  ],
+  [
+   1792058405000,
+   493.72904703200095
+  ],
+  [
+   1792058465000,
+   493.758027032001
+  ],
+  [
+   1792058525000,
+   493.72400703200094
+  ],
+  [
+   1792058585000,
+   493.855227032001
+  ],
+  [
+   1792058645000,
+   493.71672703200096
+  ],
+  [
+   1792058705000,
+   494.42662703200097
+  ],
+  [
+   1792058765000,
+   494.204707032001
+  ],
+  [
+   1792058825000,
+   494.51510703200097
+  ],
+  [
+   1792058885000,
+   494.78164703200093
+  ],
+  [
+   1792058945000,
+   495.27720703200094
+  ],
+  [
+   1792059005000,
+   495.092687032001
+  ],
+  [
+   1792059065000,
+   495.37194703200106
+  ],
+  [
+   1792059125000,
+   495.28378703200093
+  ],
+  [
+   1792059185000,
+   495.36206703200094
+  ],
+  [
+   1792059245000,
+   495.511487032001
+  ],
+  [
+   1792059305000,
+   495.816127032001
+  ],
+  [
+   1792059365000,
+   495.99404703200105
+  ],
+  [
+   1792059425000,
+   495.737107032001
+  ],
+  [
+   1792059485000,
+   494.69690703200104
+  ],
+  [
+   1792059545000,
+   494.806187032001
+  ],
+  [
+   1792059605000,
+   495.37434703200097
+  ],
+  [
+   1792059665000,
+   495.62980703200105
+  ],
+  [
+   1792059725000,
+   496.38496703200093
+  ],
+  [
+   1792059785000,
+   496.663047032001
+  ],
+  [
+   1792059845000,
+   497.115267032001
+  ],
+  [
+   1792059905000,
+   497.20100703200103
+  ],
+  [
+   1792059965000,
+   497.195907032001
+  ],
+  [
+   1792060025000,
+   497.149547032001
+  ],
+  [
+   1792060085000,
+   496.99328703200104
+  ],
+  [
+   1792060145000,
+   497.122867032001
+  ],
+  [
+   1792060205000,
+   496.921167032001
+  ],
+  [
+   1792060265000,
+   496.57400703200096
+  ],
+  [
+   1792060325000,
+   496.216847032001
+  ],
+  [
+   1792060385000,
+   495.742427032001
+  ],
+  [
+   1792060445000,
+   495.457547032001
+  ],
+  [
+   1792060505000,
+   495.659127032001
+  ],
+  [
+   1792060565000,
+   495.6605270320009
+  ],
+  [
+   1792060625000,
+   495.6965670320009
+  ],
+  [
+   1792060685000,
+   495.286427032001
+  ],
+  [
+   1792060745000,
+   495.55048703200094
+  ],
+  [
+   1792060805000,
+   495.417827032001
+  ],
+  [
+   1792060865000,
+   495.700947032001
+  ],
+  [
+   1792060925000,
+   496.392987032001
+  ],
+  [
+   1792060985000,
+   496.411627032001
+  ],
+  [
+   1792061045000,
+   496.369107032001
+  ],
+  [
+   1792061105000,
+   496.84102703200097
+  ],
+  [
+   1792061165000,
+   497.13460703200093
+  ],
+  [
+   1792061225000,
+   497.12058703200097
+  ],
+  [
+   1792061285000,
+   496.806087032001
+  ],
+  [
+   1792061345000,
+   497.17648703200103
+  ],
+  [
+   1792061405000,
+   496.74616703200104
+  ],
+  [
+   1792061465000,
+   496.91444703200096
+  ],
+  [
+   1792061525000,
+   496.701387032001
+  ],
+  [
+   1792061585000,
+   496.636207032001
+  ],
+  [
+   1792061645000,
+   496.37896703200096
+  ],
+  [
+   1792061705000,
+   496.061047032001
+  ],
+  [
+   1792061765000,
+   495.748587032001
+  ],
+  [
+   1792061825000,
+   496.03616703200095
+  ],
+  [
+   1792061885000,
+   496.04114703200105
+  ],
+  [
+   1792061945000,
+   495.821107032001
+  ],
+  [
+   1792062005000,
+   495.90846703200106
+  ],
+  [
+   1792062065000,
+   495.88840703200094
+  ],
+  [
+   1792062125000,
+   496.755127032001
+  ],
+  [
+   1792062185000,
+   497.28544703200095
+  ],
+  [
+   1792062245000,
+   497.618327032001
+  ],
+  [
+   1792062305000,
+   497.531447032001
+  ],
+  [
+   1792062365000,
+   496.86112703200104
+  ],
+  [
+   1792062425000,
+   496.76526703200096
+  ],
+  [
+   1792062485000,
+   496.639087032001
+  ],
+  [
+   1792062545000,
+   496.55640703200106
+  ],
+  [
+   1792062605000,
+   496.4818270320009
+  ],
+  [
+   1792062665000,
+   496.488647032001
+  ],
+  [
+   1792062725000,
+   495.952747032001
+  ],
+  [
+   1792062785000,
+   496.576867032001
+  ],
+  [
+   1792062845000,
+   496.265527032001
+  ],
+  [
+   1792062905000,
+   496.137487032001
+  ],
+  [
+   1792062965000,
+   496.1542270320009
+  ],
+  [
+   1792063025000,
+   496.006107032001
+  ],
+  [
+   1792063085000,
+   495.838827032001
+  ],
+  [
+   1792063145000,
+   495.70118703200103
+  ],
+  [
+   1792063205000,
+   496.1363470320011
+  ],
+  [
+   1792063265000,
+   496.31292703200097
+  ],
+  [
+   1792063325000,
+   496.07984703200094
+  ],
+  [
+   1792063385000,
+   496.40884703200106
+  ],
+  [
+   1792063445000,
+   496.75350703200104
+  ],
+  [
+   1792063505000,
+   496.532187032001
+  ],
+  [
+   1792063565000,
+   496.414467032001
+  ],
+  [
+   1792063625000,
+   496.106727032001
+  ],
+  [
+   1792063685000,
+   496.226927032001
+  ],
+  [
+   1792063745000,
+   495.72786703200103
+  ],
+  [
+   1792063805000,
+   496.229987032001
+  ],
+  [
+   1792063865000,
+   496.352767032001
+  ],
+  [
+   1792063925000,
+   495.498727032001
+  ],
+  [
+   1792063985000,
+   495.433907032001
+  ],
+  [
+   1792064045000,
+   495.73950703200103
+  ],
+  [
+   1792064105000,
+   495.776287032001
+  ],
+  [
+   1792064165000,
+   495.386187032001
+  ],
+  [
+   1792064225000,
+   495.228367032001
+  ],
+  [
+   1792064285000,
+   494.70650703200096
+  ],
+  [
+   1792064345000,
+   495.05646703200097
+  ],
+  [
+   1792064405000,
+   494.850607032001
+  ],
+  [
+   1792064465000,
+   494.753327032001
+  ],
+  [
+   1792064525000,
+   494.99180703200096
+  ],
+  [
+   1792064585000,
+   495.116567032001
+  ],
+  [
+   1792064645000,
+   495.26140703200105
+  ],
+  [
+   1792064705000,
+   495.18544703200104
+  ],
+  [
+   1792064765000,
+   495.369967032001
+  ],
+  [
+   1792064825000,
+   495.135107032001
+  ],
+  [
+   1792064885000,
+   495.064407032001
+  ],
+  [
+   1792064945000,
+   495.08232703200105
+  ],
+  [
+   1792065005000,
+   495.642067032001
+  ],
+  [
+   1792065065000,
+   496.043167032001
+  ],
+  [
+   1792065125000,
+   495.68192703200094
+  ],
+  [
+   1792065185000,
+   495.973727032001
+  ],
+  [
+   1792065245000,
+   495.654647032001
+  ],
+  [
+   1792065305000,
+   495.651207032001
+  ],
+  [
+   1792065365000,
+   495.82334703200104
+  ],
+  [
+   1792065425000,
+   495.727527032001
+  ],
+  [
+   1792065485000,
+   496.049647032001
+  ],
+  [
+   1792065545000,
+   496.309947032001
+  ],
+  [
+   1792065605000,
+   496.451167032001
+  ],
+  [
+   1792065665000,
+   497.023627032001
+  ],
+  [
+   1792065725000,
+   497.011147032001
+  ],
+  [
+   1792065785000,
+   497.07442703200104
+  ],
+  [
+   1792065845000,
+   497.037047032001
+  ],
+  [
+   1792065905000,
+   496.876027032001
+  ],
+  [
+   1792065965000,
+   496.96820703200103
+  ],
+  [
+   1792066025000,
+   496.34244703200096
+  ],
+  [
+   1792066085000,
+   496.67988703200103
+  ],
+  [
+   1792066145000,
+   496.873547032001
+  ],
+  [
+   1792066205000,
+   496.84152703200095
+  ],
+  [
+   1792066265000,
+   496.898667032001
+  ],
+  [
+   1792066325000,
+   497.067507032001
+  ],
+  [
+   1792066385000,
+   496.4157470320009
+  ],
+  [
+   1792066445000,
+   496.027807032001
+  ],
+  [
+   1792066505000,
+   496.004567032001
+  ],
+  [
+   1792066565000,
+   495.5343070320009
+  ],
+  [
+   1792066625000,
+   495.753447032001
+  ],
+  [
+   1792066685000,
+   495.680347032001
+  ],
+  [
+   1792066745000,
+   495.424747032001
+  ],
+  [
+   1792066805000,
+   495.951667032001
+  ],
+  [
+   1792066865000,
+   495.97160703200103
+  ],
+  [
+   1792066925000,
+   495.886787032001
+  ],
+  [
+   1792066985000,
+   495.95734703200105
+  ],
+  [
+   1792067045000,
+   496.23402703200094
+  ],
+  [
+   1792067105000,
+   494.81958703200104
+  ],
+  [
+   1792067165000,
+   495.467167032001
+  ],
+  [
+   1792067225000,
+   495.6814470320011
+  ],
+  [
+   1792067285000,
+   495.923907032001
+  ],
+  [
+   1792067345000,
+   495.35374703200097
+  ],
+  [
+   1792067405000,
+   495.354347032001
+  ],
+  [
+   1792067465000,
+   497.364487032001
+  ],
+  [
+   1792067525000,
+   499.5826070320011
+  ],
+  [
+   1792067585000,
+   498.663527032001
+  ],
+  [
+   1792067645000,
+   497.247267032001
+  ],
+  [
+   1792067705000,
+   498.49350703200093
+  ],
+  [
+   1792067765000,
+   498.283947032001
+  ],
+  [
+   1792067825000,
+   497.703307032001
+  ],
+  [
+   1792067885000,
+   497.69916703200096
+  ],
+  [
+   1792067945000,
+   498.21202703200095
+  ],
+  [
+   1792068005000,
+   495.976027032001
+  ],
+  [
+   1792068065000,
+   496.223447032001
+  ],
+  [
+   1792068125000,
+   496.49868703200104
+  ],
+  [
+   1792068185000,
+   497.486307032001
+  ],
+  [
+   1792068245000,
+   497.019787032001
+  ],
+  [
+   1792068305000,
+   497.65258703200107
+  ],
+  [
+   1792068365000,
+   497.424267032001
+  ],
+  [
+   1792068425000,
+   497.96990703200106
+  ],
+  [
+   1792068485000,
+   497.48512703200095
+  ],
+  [
+   1792068545000,
+   497.693407032001
+  ],
+  [
+   1792068605000,
+   498.20944703200104
+  ],
+  [
+   1792068665000,
+   498.40530703200096
+  ],
+  [
+   1792068725000,
+   497.325407032001
+  ],
+  [
+   1792068785000,
+   497.442487032001
+  ],
+  [
+   1792068845000,
+   497.690287032001
+  ],
+  [
+   1792068905000,
+   498.538327032001
+  ],
+  [
+   1792068965000,
+   498.425307032001
+  ],
+  [
+   1792069025000,
+   498.58030703200103
+  ],
+  [
+   1792069085000,
+   499.353707032001
+  ],
+  [
+   1792069145000,
+   499.160587032001
+  ],
+  [
+   1792069205000,
+   499.397627032001
+  ],
+  [
+   1792069265000,
+   498.779807032001
+  ],
+  [
+   1792069325000,
+   498.56060703200103
+  ],
+  [
+   1792069385000,
+   498.74032703200106
+  ],
+  [
+   1792069445000,
+   499.06596703200097
+  ],
+  [
+   1792069505000,
+   498.83392703200104
+  ],
+  [
+   1792069565000,
+   498.718767032001
+  ],
+  [
+   1792069625000,
+   498.427087032001
+  ],
+  [
+   1792069685000,
+   498.62900703200097
+  ],
+  [
+   1792069745000,
+   499.596287032001
+  ],
+  [
+   1792069805000,
+   499.151587032001
+  ],
+  [
+   1792069865000,
+   498.99682703200097
+  ],
+  [
+   1792069925000,
+   499.420707032001
+  ],
+  [
+   1792069985000,
+   498.95418703200096
+  ],
+  [
+   1792070045000,
+   498.236427032001
+  ],
+  [
+   1792070105000,
+   498.224047032001
+  ],
+  [
+   1792070165000,
+   498.259327032001
+  ],
+  [
+   1792070225000,
+   498.78860703200104
+  ],
+  [
+   1792070285000,
+   498.47022703200093
+  ],
+  [
+   1792070345000,
+   498.88502703200106
+  ],
+  [
+   1792070405000,
+   499.15778703200095
+  ],
+  [
+   1792070465000,
+   499.790827032001
+  ],
+  [
+   1792070525000,
+   499.477327032001
+  ],
+  [
+   1792070585000,
+   499.451787032001
+  ],
+  [
+   1792070645000,
+   499.151087032001
+  ],
+  [
+   1792070705000,
+   499.27238703200095
+  ],
+  [
+   1792070765000,
+   499.71998703200103
+  ],
+  [
+   1792070825000,
+   500.06054703200095
+  ],
+  [
+   1792070885000,
+   500.432567032001
+  ],
+  [
+   1792070945000,
+   500.366587032001
+  ],
+  [
+   1792071005000,
+   500.49646703200096
+  ],
+  [
+   1792071065000,
+   500.97528703200095
+  ],
+  [
+   1792071125000,
+   500.125307032001
+  ],
+  [
+   1792071185000,
+   498.502607032001
+  ],
+  [
+   1792071245000,
+   500.225307032001
+  ],
+  [
+   1792071305000,
+   500.22320703200097
+  ],
+  [
+   1792071365000,
+   501.383607032001
+  ],
+  [
+   1792071425000,
+   501.18700703200096
+  ],
+  [
+   1792071485000,
+   500.16380703200105
+  ],
+  [
+   1792071545000,
+   499.979887032001
+  ],
+  [
+   1792071605000,
+   498.16170703200106
+  ],
+  [
+   1792071665000,
+   499.091287032001
+  ],
+  [
+   1792071725000,
+   498.61844703200103
+  ],
+  [
+   1792071785000,
+   498.531127032001
+  ],
+  [
+   1792071845000,
+   498.206287032001
+  ],
+  [
+   1792071905000,
+   498.4341870320009
+  ],
+  [
+   1792071965000,
+   499.21544703200095
+  ],
+  [
+   1792072025000,
+   500.30646703200097
+  ],
+  [
+   1792072085000,
+   499.701647032001
+  ],
+  [
+   1792072145000,
+   499.419847032001
+  ],
+  [
+   1792072205000,
+   500.313207032001
+  ],
+  [
+   1792072265000,
+   501.259447032001
+  ],
+  [
+   1792072325000,
+   501.653587032001
+  ],
+  [
+   1792072385000,
+   501.805187032001
+  ],
+  [
+   1792072445000,
+   503.203507032001
+  ],
+  [
+   1792072505000,
+   503.998187032001
+  ],
+  [
+   1792072565000,
+   501.393087032001
+  ],
+  [
+   1792072625000,
+   501.26764703200104
+  ],
+  [
+   1792072685000,
+   502.19826703200096
+  ],
+  [
+   1792072745000,
+   501.628907032001
+  ],
+  [
+   1792072805000,
+   501.876007032001
+  ],
+  [
+   1792072865000,
+   502.482587032001
+  ],
+  [
+   1792072925000,
+   501.160547032001
+  ],
+  [
+   1792072985000,
+   500.611967032001
+  ],
+  [
+   1792073045000,
+   500.005087032001
+  ],
+  [
+   1792073105000,
+   499.523947032001
+  ],
+  [
+   1792073165000,
+   498.949847032001
+  ],
+  [
+   1792073225000,
+   498.344707032001
+  ],
+  [
+   1792073285000,
+   497.91292703200105
+  ],
+  [
+   1792073345000,
+   497.337007032001
+  ],
+  [
+   1792073405000,
+   496.19444703200094
+  ],
+  [
+   1792073465000,
+   494.724947032001
+  ],
+  [
+   1792073525000,
+   494.02118703200097
+  ],
+  [
+   1792073585000,
+   494.201527032001
+  ],
+  [
+   1792073645000,
+   494.743267032001
+  ],
+  [
+   1792073705000,
+   495.30144703200097
+  ],
+  [
+   1792073765000,
+   496.241347032001
+  ],
+  [
+   1792073825000,
+   495.66948703200103
+  ],
+  [
+   1792073885000,
+   494.865647032001
+  ],
+  [
+   1792073945000,
+   494.54780703200095
+  ],
+  [
+   1792074005000,
+   493.94418703200097
+  ],
+  [
+   1792074065000,
+   494.553047032001
+  ],
+  [
+   1792074125000,
+   495.301647032001
+  ],
+  [
+   1792074185000,
+   494.87198703200096
+  ],
+  [
+   1792074245000,
+   494.20978703200103
+  ],
+  [
+   1792074305000,
+   494.728067032001
+  ],
+  [
+   1792074365000,
+   493.88102703200104
+  ],
+  [
+   1792074425000,
+   494.417347032001
+  ],
+  [
+   1792074485000,
+   494.7202070320009
+  ],
+  [
+   1792074545000,
+   494.69554703200095
+  ],
+  [
+   1792074605000,
+   494.861267032001
+  ],
+  [
+   1792074665000,
+   495.709607032001
+  ],
+  [
+   1792074725000,
+   495.912287032001
+  ],
+  [
+   1792074785000,
+   495.213467032001
+  ],
+  [
+   1792074845000,
+   494.32908703200104
+  ],
+  [
+   1792074905000,
+   493.8120070320011
+  ],
+  [
+   1792074965000,
+   493.670087032001
+  ],
+  [
+   1792075025000,
+   494.145627032001
+  ],
+  [
+   1792075085000,
+   493.74572703200107
+  ],
+  [
+   1792075145000,
+   493.252147032001
+  ],
+  [
+   1792075205000,
+   492.116507032001
+  ],
+  [
+   1792075265000,
+   492.133447032001
+  ],
+  [
+   1792075325000,
+   491.62090703200096
+  ],
+  [
+   1792075385000,
+   491.043347032001
+  ],
+  [
+   1792075445000,
+   490.997927032001
+  ],
+  [
+   1792075505000,
+   491.56422703200093
+  ],
+  [
+   1792075565000,
+   491.308547032001
+  ],
+  [
+   1792075625000,
+   491.514007032001
+  ],
+  [
+   1792075685000,
+   490.5530073694545
+  ],
+  [
+   1792075745000,
+   489.8449073694545
+  ],
+  [
+   1792075805000,
+   490.2858273694545
+  ],
+  [
+   1792075865000,
+   490.89838736945455
+  ],
+  [
+   1792075925000,
+   490.37704736945454
+  ],
+  [
+   1792075985000,
+   490.46824736945456
+  ],
+  [
+   1792076045000,
+   490.21188736945453
+  ],
+  [
+   1792076105000,
+   489.7929073694545
+  ],
+  [
+   1792076165000,
+   490.0720873694545
+  ],
+  [
+   1792076225000,
+   489.4179273694545
+  ],
+  [
+   1792076285000,
+   489.3295473694546
+  ],
+  [
+   1792076345000,
+   489.1361073694545
+  ],
+  [
+   1792076405000,
+   489.37538513808454
+  ],
+  [
+   1792076465000,
+   489.1971251380846
+  ],
+  [
+   1792076525000,
+   489.57260513808455
+  ],
+  [
+   1792076585000,
+   489.26134513808455
+  ],
+  [
+   1792076645000,
+   488.482085856194
+  ],
+  [
+   1792076705000,
+   488.61698585619393
+  ],
+  [
+   1792076765000,
+   488.54598585619397
+  ],
+  [
+   1792076825000,
+   488.58858585619396
+  ],
+  [
+   1792076885000,
+   488.53888585619393
+  ],
+  [
+   1792076945000,
+   488.6808858561939
+  ],
+  [
+   1792077005000,
+   488.822885856194
+  ],
+  [
+   1792077065000,
+   488.83708585619394
+  ],
+  [
+   1792077125000,
+   488.78738585619396
+  ],
+  [
+   1792077185000,
+   488.723485856194
+  ],
+  [
+   1792077245000,
+   488.81578585619394
+  ],
+  [
+   1792077305000,
+   488.822885856194
+  ],
+  [
+   1792077365000,
+   488.9222858561939
+  ],
+  [
+   1792077425000,
+   488.80868585619396
+  ],
+  [
+   1792077485000,
+   488.87258585619395
+  ],
+  [
+   1792077545000,
+   488.77318585619395
+  ],
+  [
+   1792077605000,
+   488.6595858561939
+  ],
+  [
+   1792077665000,
+   488.624085856194
+  ],
+  [
+   1792077725000,
+   488.624085856194
+  ],
+  [
+   1792077785000,
+   488.63118585619395
+  ],
+  [
+   1792077845000,
+   488.76608585619397
+  ],
+  [
+   1792077905000,
+   488.85838585619393
+  ],
+  [
+   1792077965000,
+   488.95068585619396
+  ],
+  [
+   1792078025000,
+   488.78738585619396
+  ],
+  [
+   1792078085000,
+   488.89388585619395
+  ],
+  [
+   1792078145000,
+   488.79448585619394
+  ],
+  [
+   1792078205000,
+   488.8015858561939
+  ],
+  [
+   1792078265000,
+   488.7802858561939
+  ],
+  [
+   1792078325000,
+   488.63828585619393
+  ],
+  [
+   1792078385000,
+   488.63828585619393
+  ],
+  [
+   1792078445000,
+   488.85128585619395
+  ],
+  [
+   1792078505000,
+   489.0429858561939
+  ],
+  [
+   1792078565000,
+   489.0216858561939
+  ],
+  [
+   1792078625000,
+   488.87258585619395
+  ],
+  [
+   1792078685000,
+   488.90808585619396
+  ],
+  [
+   1792078745000,
+   489.13528585619395
+  ],
+  [
+   1792078805000,
+   489.2630858561939
+  ],
+  [
+   1792078865000,
+   489.11398585619395
+  ],
+  [
+   1792078925000,
+   489.10688585619397
+  ],
+  [
+   1792078985000,
+   489.13528585619395
+  ],
+  [
+   1792079045000,
+   489.0216858561939
+  ],
+  [
+   1792079105000,
+   489.0216858561939
+  ],
+  [
+   1792079165000,
+   488.95068585619396
+  ],
+  [
+   1792079225000,
+   488.91518585619394
+  ],
+  [
+   1792079285000,
+   488.943585856194
+  ],
+  [
+   1792079345000,
+   489.0216858561939
+  ],
+  [
+   1792079405000,
+   489.11398585619395
+  ],
+  [
+   1792079465000,
+   489.19208585619396
+  ],
+  [
+   1792079525000,
+   489.25598585619394
+  ],
+  [
+   1792079585000,
+   489.34828585619397
+  ],
+  [
+   1792079645000,
+   489.3624858561939
+  ],
+  [
+   1792079705000,
+   489.31278585619395
+  ],
+  [
+   1792079765000,
+   489.32698585619397
+  ],
+  [
+   1792079825000,
+   489.41928585619394
+  ],
+  [
+   1792079885000,
+   489.45478585619395
+  ],
+  [
+   1792079945000,
+   489.4831858561939
+  ],
+  [
+   1792080005000,
+   488.873816886532
+  ],
+  [
+   1792080065000,
+   488.842316886532
+  ],
+  [
+   1792080125000,
+   488.907116886532
+  ],
+  [
+   1792080185000,
+   488.41771688653205
+  ],
+  [
+   1792080245000,
+   488.86361688653204
+  ],
+  [
+   1792080305000,
+   488.974716886532
+  ],
+  [
+   1792080365000,
+   489.16221688653206
+  ],
+  [
+   1792080425000,
+   489.29661688653204
+  ],
+  [
+   1792080485000,
+   489.213616886532
+  ],
+  [
+   1792080545000,
+   488.972616886532
+  ],
+  [
+   1792080605000,
+   489.5584168865321
+  ],
+  [
+   1792080665000,
+   489.224516886532
+  ],
+  [
+   1792080725000,
+   489.10701688653205
+  ],
+  [
+   1792080785000,
+   488.980116886532
+  ],
+  [
+   1792080845000,
+   489.07001688653196
+  ],
+  [
+   1792080905000,
+   489.17001688653204
+  ],
+  [
+   1792080965000,
+   488.857616886532
+  ],
+  [
+   1792081025000,
+   488.85331688653196
+  ],
+  [
+   1792081085000,
+   488.525416886532
+  ],
+  [
+   1792081145000,
+   488.15551688653204
+  ],
+  [
+   1792081205000,
+   487.98771688653204
+  ],
+  [
+   1792081265000,
+   488.13571688653207
+  ],
+  [
+   1792081325000,
+   488.17421688653207
+  ],
+  [
+   1792081385000,
+   487.9972168865321
+  ],
+  [
+   1792081445000,
+   488.03091688653205
+  ],
+  [
+   1792081505000,
+   488.195016886532
+  ],
+  [
+   1792081565000,
+   488.367316886532
+  ],
+  [
+   1792081625000,
+   488.45621688653205
+  ],
+  [
+   1792081685000,
+   487.988916886532
+  ],
+  [
+   1792081745000,
+   488.10681688653204
+  ],
+  [
+   1792081805000,
+   488.242816886532
+  ],
+  [
+   1792081865000,
+   488.550116886532
+  ],
+  [
+   1792081925000,
+   488.219116886532
+  ],
+  [
+   1792081985000,
+   488.05161688653203
+  ],
+  [
+   1792082045000,
+   488.017916886532
+  ],
+  [
+   1792082105000,
+   488.36791688653204
+  ],
+  [
+   1792082165000,
+   488.565716886532
+  ],
+  [
+   1792082225000,
+   488.95371688653205
+  ],
+  [
+   1792082285000,
+   488.94651688653204
+  ],
+  [
+   1792082345000,
+   488.92241688653206
+  ],
+  [
+   1792082405000,
+   488.876816886532
+  ],
+  [
+   1792082465000,
+   489.024316886532
+  ],
+  [
+   1792082525000,
+   489.134916886532
+  ],
+  [
+   1792082585000,
+   489.118516886532
+  ],
+  [
+   1792082645000,
+   489.167116886532
+  ],
+  [
+   1792082705000,
+   489.36251688653203
+  ],
+  [
+   1792082765000,
+   489.504116886532
+  ],
+  [
+   1792082825000,
+   489.301616886532
+  ],
+  [
+   1792082885000,
+   489.27581688653197
+  ],
+  [
+   1792082945000,
+   489.390416886532
+  ],
+  [
+   1792083005000,
+   489.466116886532
+  ],
+  [
+   1792083065000,
+   489.49031688653196
+  ],
+  [
+   1792083125000,
+   488.851716886532
+  ],
+  [
+   1792083185000,
+   489.040816886532
+  ],
+  [
+   1792083245000,
+   488.8048168865321
+  ],
+  [
+   1792083305000,
+   489.07311688653203
+  ],
+  [
+   1792083365000,
+   488.946216886532
+  ],
+  [
+   1792083425000,
+   489.246516886532
+  ],
+  [
+   1792083485000,
+   489.070116886532
+  ],
+  [
+   1792083545000,
+   489.34531688653203
+  ],
+  [
+   1792083605000,
+   489.178616886532
+  ],
+  [
+   1792083665000,
+   489.15731688653204
+  ],
+  [
+   1792083725000,
+   489.039916886532
+  ],
+  [
+   1792083785000,
+   489.014716886532
+  ],
+  [
+   1792083845000,
+   488.92181688653204
+  ],
+  [
+   1792083905000,
+   489.00651688653204
+  ],
+  [
+   1792083965000,
+   489.152716886532
+  ],
+  [
+   1792084025000,
+   489.04271688653205
+  ],
+  [
+   1792084085000,
+   488.901316886532
+  ],
+  [
+   1792084145000,
+   489.23151688653206
+  ],
+  [
+   1792084205000,
+   489.006416886532
+  ],
+  [
+   1792084265000,
+   489.089816886532
+  ],
+  [
+   1792084325000,
+   489.013616886532
+  ],
+  [
+   1792084385000,
+   488.791616886532
+  ],
+  [
+   1792084445000,
+   489.03421688653196
+  ],
+  [
+   1792084505000,
+   489.08121688653205
+  ],
+  [
+   1792084565000,
+   488.95921688653203
+  ],
+  [
+   1792084625000,
+   489.471316886532
+  ],
+  [
+   1792084685000,
+   489.375716886532
+  ],
+  [
+   1792084745000,
+   489.75571688653207
+  ],
+  [
+   1792084805000,
+   489.7210168865321
+  ],
+  [
+   1792084865000,
+   489.57711688653205
+  ],
+  [
+   1792084925000,
+   490.19441688653205
+  ],
+  [
+   1792084985000,
+   489.98741688653206
+  ],
+  [
+   1792085045000,
+   489.443416886532
+  ],
+  [
+   1792085105000,
+   489.511116886532
+  ],
+  [
+   1792085165000,
+   489.31901688653204
+  ],
+  [
+   1792085225000,
+   489.416516886532
+  ],
+  [
+   1792085285000,
+   489.46291688653207
+  ],
+  [
+   1792085345000,
+   489.3825168865321
+  ],
+  [
+   1792085405000,
+   489.074416886532
+  ],
+  [
+   1792085465000,
+   488.96551688653204
+  ],
+  [
+   1792085525000,
+   489.147116886532
+  ],
+  [
+   1792085585000,
+   489.01911688653206
+  ],
+  [
+   1792085645000,
+   489.13671688653204
+  ],
+  [
+   1792085705000,
+   489.290916886532
+  ],
+  [
+   1792085765000,
+   489.377116886532
+  ],
+  [
+   1792085825000,
+   489.43591688653197
+  ],
+  [
+   1792085885000,
+   489.350816886532
+  ],
+  [
+   1792085945000,
+   489.558016886532
+  ],
+  [
+   1792086005000,
+   489.593416886532
+  ],
+  [
+   1792086065000,
+   489.58351688653204
+  ],
+  [
+   1792086125000,
+   489.867116886532
+  ],
+  [
+   1792086185000,
+   490.255316886532
+  ],
+  [
+   1792086245000,
+   490.14321688653206
+  ],
+  [
+   1792086305000,
+   490.08981688653205
+  ],
+  [
+   1792086365000,
+   490.08711688653204
+  ],
+  [
+   1792086425000,
+   490.329516886532
+  ],
+  [
+   1792086485000,
+   490.321116886532
+  ],
+  [
+   1792086545000,
+   490.29571688653203
+  ],
+  [
+   1792086605000,
+   490.213016886532
+  ],
+  [
+   1792086665000,
+   490.220716886532
+  ],
+  [
+   1792086725000,
+   490.13831688653204
+  ],
+  [
+   1792086785000,
+   490.050616886532
+  ],
+  [
+   1792086845000,
+   490.04571688653203
+  ],
+  [
+   1792086905000,
+   490.005916886532
+  ],
+  [
+   1792086965000,
+   490.01171688653204
+  ],
+  [
+   1792087025000,
+   489.88891688653206
+  ],
+  [
+   1792087085000,
+   489.833816886532
+  ],
+  [
+   1792087145000,
+   490.02221688653196
+  ],
+  [
+   1792087205000,
+   490.010716886532
+  ],
+  [
+   1792087265000,
+   489.90001688653206
+  ],
+  [
+   1792087325000,
+   489.48771688653204
+  ],
+  [
+   1792087385000,
+   489.46931688653206
+  ],
+  [
+   1792087445000,
+   489.45831688653203
+  ],
+  [
+   1792087505000,
+   489.729316886532
+  ],
+  [
+   1792087565000,
+   489.858516886532
+  ],
+  [
+   1792087625000,
+   489.78531688653203
+  ],
+  [
+   1792087685000,
+   489.90571688653205
+  ],
+  [
+   1792087745000,
+   489.747116886532
+  ],
+  [
+   1792087805000,
+   489.77961688653204
+  ],
+  [
+   1792087865000,
+   489.757516886532
+  ],
+  [
+   1792087925000,
+   489.75781688653205
+  ],
+  [
+   1792087985000,
+   489.85541688653205
+  ],
+  [
+   1792088045000,
+   489.872416886532
+  ],
+  [
+   1792088105000,
+   490.00631688653203
+  ],
+  [
+   1792088165000,
+   490.181416886532
+  ],
+  [
+   1792088225000,
+   490.136216886532
+  ],
+  [
+   1792088285000,
+   490.380516886532
+  ],
+  [
+   1792088345000,
+   490.3032168865321
+  ],
+  [
+   1792088405000,
+   490.3693168865321
+  ],
+  [
+   1792088465000,
+   490.511816886532
+  ],
+  [
+   1792088525000,
+   490.27911688653205
+  ],
+  [
+   1792088585000,
+   490.471516886532
+  ],
+  [
+   1792088645000,
+   490.44421688653205
+  ],
+  [
+   1792088705000,
+   490.66381688653206
+  ],
+  [
+   1792088765000,
+   490.586316886532
+  ],
+  [
+   1792088825000,
+   490.690116886532
+  ],
+  [
+   1792088885000,
+   490.79211688653197
+  ],
+  [
+   1792088945000,
+   490.916416886532
+  ],
+  [
+   1792089005000,
+   491.149816886532
+  ],
+  [
+   1792089065000,
+   491.301316886532
+  ],
+  [
+   1792089125000,
+   491.190716886532
+  ],
+  [
+   1792089185000,
+   491.16581688653196
+  ],
+  [
+   1792089245000,
+   491.252916886532
+  ],
+  [
+   1792089305000,
+   491.298416886532
+  ],
+  [
+   1792089365000,
+   491.356116886532
+  ],
+  [
+   1792089425000,
+   491.274516886532
+  ],
+  [
+   1792089485000,
+   491.40181688653206
+  ],
+  [
+   1792089545000,
+   491.320316886532
+  ],
+  [
+   1792089605000,
+   491.291016886532
+  ],
+  [
+   1792089665000,
+   491.36341688653204
+  ],
+  [
+   1792089725000,
+   491.43861688653203
+  ],
+  [
+   1792089785000,
+   491.610416886532
+  ],
+  [
+   1792089845000,
+   492.027916886532
+  ],
+  [
+   1792089905000,
+   492.056516886532
+  ],
+  [
+   1792089965000,
+   491.936816886532
+  ],
+  [
+   1792090025000,
+   492.033316886532
+  ],
+  [
+   1792090085000,
+   491.954316886532
+  ],
+  [
+   1792090145000,
+   491.990816886532
+  ],
+  [
+   1792090205000,
+   491.89871688653204
+  ],
+  [
+   1792090265000,
+   492.043816886532
+  ],
+  [
+   1792090325000,
+   492.01571688653195
+  ],
+  [
+   1792090385000,
+   491.971916886532
+  ],
+  [
+   1792090445000,
+   491.899716886532
+  ],
+  [
+   1792090505000,
+   491.872816886532
+  ],
+  [
+   1792090565000,
+   491.872816886532
+  ],
+  [
+   1792090625000,
+   491.945016886532
+  ],
+  [
+   1792090685000,
+   491.897316886532
+  ],
+  [
+   1792090745000,
+   491.889416886532
+  ],
+  [
+   1792090805000,
+   492.000416886532
+  ],
+  [
+   1792090865000,
+   491.99641688653196
+  ],
+  [
+   1792090925000,
+   492.116716886532
+  ],
+  [
+   1792090985000,
+   492.180216886532
+  ],
+  [
+   1792091045000,
+   492.44451688653197
+  ],
+  [
+   1792091105000,
+   492.41241688653196
+  ],
+  [
+   1792091165000,
+   492.642016886532
+  ],
+  [
+   1792091225000,
+   492.544016886532
+  ],
+  [
+   1792091285000,
+   492.529116886532
+  ],
+  [
+   1792091345000,
+   492.452616886532
+  ],
+  [
+   1792091405000,
+   492.185616886532
+  ],
+  [
+   1792091465000,
+   491.839516886532
+  ],
+  [
+   1792091525000,
+   491.98681688653204
+  ],
+  [
+   1792091585000,
+   491.99911688653197
+  ],
+  [
+   1792091645000,
+   492.002216886532
+  ],
+  [
+   1792091705000,
+   492.124316886532
+  ],
+  [
+   1792091765000,
+   492.250116886532
+  ],
+  [
+   1792091825000,
+   492.24501688653197
+  ],
+  [
+   1792091885000,
+   492.37351688653195
+  ],
+  [
+   1792091945000,
+   492.76841688653207
+  ],
+  [
+   1792092005000,
+   492.83481688653205
+  ],
+  [
+   1792092065000,
+   492.7692168865321
+  ],
+  [
+   1792092125000,
+   492.95051688653206
+  ],
+  [
+   1792092185000,
+   492.90681688653206
+  ],
+  [
+   1792092245000,
+   493.00981688653206
+  ],
+  [
+   1792092305000,
+   493.03571688653204
+  ],
+  [
+   1792092365000,
+   492.94711688653206
+  ],
+  [
+   1792092425000,
+   492.976916886532
+  ],
+  [
+   1792092485000,
+   493.01261688653204
+  ],
+  [
+   1792092545000,
+   493.0269168865321
+  ],
+  [
+   1792092605000,
+   492.971016886532
+  ],
+  [
+   1792092665000,
+   492.57011688653193
+  ],
+  [
+   1792092725000,
+   492.83451688653207
+  ],
+  [
+   1792092785000,
+   492.43221688653193
+  ],
+  [
+   1792092845000,
+   492.31071688653196
+  ],
+  [
+   1792092905000,
+   492.44841688653196
+  ],
+  [
+   1792092965000,
+   492.44001688653196
+  ],
+  [
+   1792093025000,
+   492.8485168865321
+  ],
+  [
+   1792093085000,
+   492.367016886532
+  ],
+  [
+   1792093145000,
+   492.58291688653196
+  ],
+  [
+   1792093205000,
+   492.66511688653196
+  ],
+  [
+   1792093265000,
+   492.646016886532
+  ],
+  [
+   1792093325000,
+   492.930916886532
+  ],
+  [
+   1792093385000,
+   492.965316886532
+  ],
+  [
+   1792093445000,
+   492.784816886532
+  ],
+  [
+   1792093505000,
+   492.86261688653195
+  ],
+  [
+   1792093565000,
+   492.84411688653194
+  ],
+  [
+   1792093625000,
+   492.961716886532
+  ],
+  [
+   1792093685000,
+   492.961916886532
+  ],
+  [
+   1792093745000,
+   493.010316886532
+  ],
+  [
+   1792093805000,
+   493.02571688653194
+  ],
+  [
+   1792093865000,
+   492.87891688653195
+  ],
+  [
+   1792093925000,
+   492.875416886532
+  ],
+  [
+   1792093985000,
+   492.919816886532
+  ],
+  [
+   1792094045000,
+   492.98831688653195
+  ],
+  [
+   1792094105000,
+   492.89301688653194
+  ],
+  [
+   1792094165000,
+   492.78141688653193
+  ],
+  [
+   1792094225000,
+   492.90841688653205
+  ],
+  [
+   1792094285000,
+   492.92681688653204
+  ],
+  [
+   1792094345000,
+   493.06691688653206
+  ],
+  [
+   1792094405000,
+   493.0115168865321
+  ],
+  [
+   1792094465000,
+   492.68091688653203
+  ],
+  [
+   1792094525000,
+   492.66231688653204
+  ],
+  [
+   1792094585000,
+   492.7647168865321
+  ],
+  [
+   1792094645000,
+   492.8144168865321
+  ],
+  [
+   1792094705000,
+   492.95121688653205
+  ],
+  [
+   1792094765000,
+   492.71001688653206
+  ],
+  [
+   1792094825000,
+   492.6841168865321
+  ],
+  [
+   1792094885000,
+   492.66951688653205
+  ],
+  [
+   1792094945000,
+   492.75781688653205
+  ],
+  [
+   1792095005000,
+   492.76441688653205
+  ],
+  [
+   1792095065000,
+   492.65931688653205
+  ],
+  [
+   1792095125000,
+   492.65251688653206
+  ],
+  [
+   1792095185000,
+   492.51011688653205
+  ],
+  [
+   1792095245000,
+   492.50871688653206
+  ],
+  [
+   1792095305000,
+   492.650816886532
+  ],
+  [
+   1792095365000,
+   492.8562168865321
+  ],
+  [
+   1792095425000,
+   492.93581688653205
+  ],
+  [
+   1792095485000,
+   493.03341688653205
+  ],
+  [
+   1792095545000,
+   492.99111688653204
+  ],
+  [
+   1792095605000,
+   493.1037168865321
+  ],
+  [
+   1792095665000,
+   493.11581688653206
+  ],
+  [
+   1792095725000,
+   493.047416886532
+  ],
+  [
+   1792095785000,
+   493.0797168865321
+  ],
+  [
+   1792095845000,
+   493.05601688653206
+  ],
+  [
+   1792095905000,
+   493.05561688653205
+  ],
+  [
+   1792095965000,
+   492.9989168865321
+  ],
+  [
+   1792096025000,
+   493.07911688653206
+  ],
+  [
+   1792096085000,
+   493.1415168865321
+  ],
+  [
+   1792096145000,
+   492.86011688653207
+  ],
+  [
+   1792096205000,
+   492.990716886532
+  ],
+  [
+   1792096265000,
+   492.82061688653204
+  ],
+  [
+   1792096325000,
+   492.825416886532
+  ],
+  [
+   1792096385000,
+   492.595116886532
+  ],
+  [
+   1792096445000,
+   492.851916886532
+  ],
+  [
+   1792096505000,
+   492.893916886532
+  ],
+  [
+   1792096565000,
+   492.88551688653206
+  ],
+  [
+   1792096625000,
+   492.99161688653203
+  ],
+  [
+   1792096685000,
+   493.001816886532
+  ],
+  [
+   1792096745000,
+   493.20821688653206
+  ],
+  [
+   1792096805000,
+   493.164516886532
+  ],
+  [
+   1792096865000,
+   492.967616886532
+  ],
+  [
+   1792096925000,
+   492.95711688653205
+  ],
+  [
+   1792096985000,
+   493.0129168865321
+  ],
+  [
+   1792097045000,
+   493.045516886532
+  ],
+  [
+   1792097105000,
+   493.18491688653205
+  ],
+  [
+   1792097165000,
+   493.10861688653205
+  ],
+  [
+   1792097225000,
+   493.07811688653203
+  ],
+  [
+   1792097285000,
+   492.91781688653197
+  ],
+  [
+   1792097345000,
+   492.716216886532
+  ],
+  [
+   1792097405000,
+   492.598616886532
+  ],
+  [
+   1792097465000,
+   492.22631688653195
+  ],
+  [
+   1792097525000,
+   492.097416886532
+  ],
+  [
+   1792097585000,
+   492.12201688653204
+  ],
+  [
+   1792097645000,
+   491.680116886532
+  ],
+  [
+   1792097705000,
+   491.693216886532
+  ],
+  [
+   1792097765000,
+   491.416516886532
+  ],
+  [
+   1792097825000,
+   491.52101688653204
+  ],
+  [
+   1792097885000,
+   491.781216886532
+  ],
+  [
+   1792097945000,
+   491.607616886532
+  ],
+  [
+   1792098005000,
+   491.70971688653196
+  ],
+  [
+   1792098065000,
+   491.73081688653195
+  ],
+  [
+   1792098125000,
+   491.85691688653196
+  ],
+  [
+   1792098185000,
+   491.913616886532
+  ],
+  [
+   1792098245000,
+   492.025516886532
+  ],
+  [
+   1792098305000,
+   492.076516886532
+  ],
+  [
+   1792098365000,
+   491.93531688653195
+  ],
+  [
+   1792098425000,
+   492.03221688653196
+  ],
+  [
+   1792098485000,
+   492.01441688653205
+  ],
+  [
+   1792098545000,
+   492.2067168865321
+  ],
+  [
+   1792098605000,
+   492.1180168865321
+  ],
+  [
+   1792098665000,
+   492.52321688653205
+  ],
+  [
+   1792098725000,
+   492.67181688653204
+  ],
+  [
+   1792098785000,
+   492.48831688653206
+  ],
+  [
+   1792098845000,
+   492.4565168865321
+  ],
+  [
+   1792098905000,
+   492.3932168865321
+  ],
+  [
+   1792098965000,
+   492.4184168865321
+  ],
+  [
+   1792099025000,
+   492.48161688653204
+  ],
+  [
+   1792099085000,
+   492.5636168865321
+  ],
+  [
+   1792099145000,
+   492.5373168865321
+  ],
+  [
+   1792099205000,
+   492.74531688653207
+  ],
+  [
+   1792099265000,
+   492.6483168865321
+  ],
+  [
+   1792099325000,
+   492.6186168865321
+  ],
+  [
+   1792099385000,
+   492.304116886532
+  ],
+  [
+   1792099445000,
+   492.174316886532
+  ],
+  [
+   1792099505000,
+   492.128316886532
+  ],
+  [
+   1792099565000,
+   492.120216886532
+  ],
+  [
+   1792099625000,
+   492.27291688653196
+  ],
+  [
+   1792099685000,
+   492.15971688653195
+  ],
+  [
+   1792099745000,
+   492.20381688653197
+  ],
+  [
+   1792099805000,
+   492.552416886532
+  ],
+  [
+   1792099865000,
+   492.559216886532
+  ],
+  [
+   1792099925000,
+   492.538416886532
+  ],
+  [
+   1792099985000,
+   492.46741688653196
+  ],
+  [
+   1792100045000,
+   492.31231688653196
+  ],
+  [
+   1792100105000,
+   492.42731688653197
+  ],
+  [
+   1792100165000,
+   492.38911688653195
+  ],
+  [
+   1792100225000,
+   492.343916886532
+  ],
+  [
+   1792100285000,
+   492.40491688653196
+  ],
+  [
+   1792100345000,
+   492.370016886532
+  ],
+  [
+   1792100405000,
+   492.23281688653196
+  ],
+  [
+   1792100465000,
+   492.352516886532
+  ],
+  [
+   1792100525000,
+   492.35031688653197
+  ],
+  [
+   1792100585000,
+   492.36071688653203
+  ],
+  [
+   1792100645000,
+   492.271816886532
+  ],
+  [
+   1792100705000,
+   492.174516886532
+  ],
+  [
+   1792100765000,
+   492.18841688653197
+  ],
+  [
+   1792100825000,
+   491.99401688653194
+  ],
+  [
+   1792100885000,
+   491.987116886532
+  ],
+  [
+   1792100945000,
+   492.106716886532
+  ],
+  [
+   1792101005000,
+   492.122516886532
+  ],
+  [
+   1792101065000,
+   492.17641688653197
+  ],
+  [
+   1792101125000,
+   492.23871688653196
+  ],
+  [
+   1792101185000,
+   492.24621688653195
+  ],
+  [
+   1792101245000,
+   492.270316886532
+  ],
+  [
+   1792101305000,
+   492.183516886532
+  ],
+  [
+   1792101365000,
+   492.225716886532
+  ],
+  [
+   1792101425000,
+   492.33761688653203
+  ],
+  [
+   1792101485000,
+   492.198716886532
+  ],
+  [
+   1792101545000,
+   492.271716886532
+  ],
+  [
+   1792101605000,
+   492.33971688653196
+  ],
+  [
+   1792101665000,
+   492.7253168865321
+  ],
+  [
+   1792101725000,
+   492.84041688653195
+  ],
+  [
+   1792101785000,
+   492.56591688653197
+  ],
+  [
+   1792101845000,
+   492.66531688653197
+  ],
+  [
+   1792101905000,
+   492.584616886532
+  ],
+  [
+   1792101965000,
+   492.491916886532
+  ],
+  [
+   1792102025000,
+   492.43321688653197
+  ],
+  [
+   1792102085000,
+   492.324416886532
+  ],
+  [
+   1792102145000,
+   492.42211688653197
+  ],
+  [
+   1792102205000,
+   492.37941688653194
+  ],
+  [
+   1792102265000,
+   492.43261688653195
+  ],
+  [
+   1792102325000,
+   492.42711688653196
+  ],
+  [
+   1792102385000,
+   492.5271168865321
+  ],
+  [
+   1792102445000,
+   492.58121688653205
+  ],
+  [
+   1792102505000,
+   492.550316886532
+  ],
+  [
+   1792102565000,
+   492.57761688653204
+  ],
+  [
+   1792102625000,
+   492.163116886532
+  ],
+  [
+   1792102685000,
+   491.804416886532
+  ],
+  [
+   1792102745000,
+   491.844016886532
+  ],
+  [
+   1792102805000,
+   491.915316886532
+  ],
+  [
+   1792102865000,
+   492.24391688653196
+  ],
+  [
+   1792102925000,
+   492.22741688653196
+  ],
+  [
+   1792102985000,
+   492.28341688653194
+  ],
+  [
+   1792103045000,
+   492.411616886532
+  ],
+  [
+   1792103105000,
+   492.51981688653206
+  ],
+  [
+   1792103165000,
+   491.978616886532
+  ],
+  [
+   1792103225000,
+   492.31031688653195
+  ],
+  [
+   1792103285000,
+   491.953016886532
+  ],
+  [
+   1792103345000,
+   491.99791688653204
+  ],
+  [
+   1792103405000,
+   492.010616886532
+  ],
+  [
+   1792103465000,
+   491.96241688653197
+  ],
+  [
+   1792103525000,
+   492.105516886532
+  ],
+  [
+   1792103585000,
+   492.11571688653197
+  ],
+  [
+   1792103645000,
+   491.999516886532
+  ],
+  [
+   1792103705000,
+   492.08981688653205
+  ],
+  [
+   1792103765000,
+   492.083916886532
+  ],
+  [
+   1792103825000,
+   492.15511688653197
+  ],
+  [
+   1792103885000,
+   492.362516886532
+  ],
+  [
+   1792103945000,
+   492.16311688653195
+  ],
+  [
+   1792104005000,
+   492.240816886532
+  ],
+  [
+   1792104065000,
+   492.28811688653195
+  ],
+  [
+   1792104125000,
+   492.355716886532
+  ],
+  [
+   1792104185000,
+   492.342816886532
+  ],
+  [
+   1792104245000,
+   492.222616886532
+  ],
+  [
+   1792104305000,
+   492.20381688653197
+  ],
+  [
+   1792104365000,
+   492.34561688653196
+  ],
+  [
+   1792104425000,
+   492.193316886532
+  ],
+  [
+   1792104485000,
+   492.204916886532
+  ],
+  [
+   1792104545000,
+   492.127516886532
+  ],
+  [
+   1792104605000,
+   492.14381688653197
+  ],
+  [
+   1792104665000,
+   492.127416886532
+  ],
+  [
+   1792104725000,
+   492.01871688653205
+  ],
+  [
+   1792104785000,
+   491.973816886532
+  ],
+  [
+   1792104845000,
+   491.996916886532
+  ],
+  [
+   1792104905000,
+   491.93801688653195
+  ],
+  [
+   1792104965000,
+   491.982216886532
+  ],
+  [
+   1792105025000,
+   491.93501688653197
+  ],
+  [
+   1792105085000,
+   492.08071688653195
+  ],
+  [
+   1792105145000,
+   492.057016886532
+  ],
+  [
+   1792105205000,
+   492.033216886532
+  ],
+  [
+   1792105265000,
+   491.80681688653203
+  ],
+  [
+   1792105325000,
+   491.605316886532
+  ],
+  [
+   1792105385000,
+   491.438116886532
+  ],
+  [
+   1792105445000,
+   491.0768168865321
+  ],
+  [
+   1792105505000,
+   491.042116886532
+  ],
+  [
+   1792105565000,
+   491.509916886532
+  ],
+  [
+   1792105625000,
+   491.11091688653204
+  ],
+  [
+   1792105685000,
+   491.16431688653205
+  ],
+  [
+   1792105745000,
+   491.153116886532
+  ],
+  [
+   1792105805000,
+   491.065016886532
+  ],
+  [
+   1792105865000,
+   491.054016886532
+  ],
+  [
+   1792105925000,
+   491.06001688653197
+  ],
+  [
+   1792105985000,
+   490.961516886532
+  ],
+  [
+   1792106045000,
+   490.877616886532
+  ],
+  [
+   1792106105000,
+   491.018516886532
+  ],
+  [
+   1792106165000,
+   491.251116886532
+  ],
+  [
+   1792106225000,
+   491.17781688653196
+  ],
+  [
+   1792106285000,
+   491.158016886532
+  ],
+  [
+   1792106345000,
+   491.23561688653194
+  ],
+  [
+   1792106405000,
+   490.983316886532
+  ],
+  [
+   1792106465000,
+   491.10631688653194
+  ],
+  [
+   1792106525000,
+   490.96081688653203
+  ],
+  [
+   1792106585000,
+   490.861416886532
+  ],
+  [
+   1792106645000,
+   490.86571688653197
+  ],
+  [
+   1792106705000,
+   490.83531688653204
+  ],
+  [
+   1792106765000,
+   491.086016886532
+  ],
+  [
+   1792106825000,
+   490.977416886532
+  ],
+  [
+   1792106885000,
+   491.174916886532
+  ],
+  [
+   1792106945000,
+   491.303416886532
+  ],
+  [
+   1792107005000,
+   491.203716886532
+  ],
+  [
+   1792107065000,
+   491.42461688653196
+  ],
+  [
+   1792107125000,
+   491.449716886532
+  ],
+  [
+   1792107185000,
+   491.163716886532
+  ],
+  [
+   1792107245000,
+   491.203616886532
+  ],
+  [
+   1792107305000,
+   491.073716886532
+  ],
+  [
+   1792107365000,
+   490.847816886532
+  ],
+  [
+   1792107425000,
+   491.04661688653204
+  ],
+  [
+   1792107485000,
+   490.93341688653203
+  ],
+  [
+   1792107545000,
+   490.81741688653204
+  ],
+  [
+   1792107605000,
+   490.901016886532
+  ],
+  [
+   1792107665000,
+   491.003716886532
+  ],
+  [
+   1792107725000,
+   491.128016886532
+  ],
+  [
+   1792107785000,
+   491.13091688653196
+  ],
+  [
+   1792107845000,
+   491.137216886532
+  ],
+  [
+   1792107905000,
+   491.087516886532
+  ],
+  [
+   1792107965000,
+   491.018016886532
+  ],
+  [
+   1792108025000,
+   491.179916886532
+  ],
+  [
+   1792108085000,
+   491.231116886532
+  ],
+  [
+   1792108145000,
+   491.162216886532
+  ],
+  [
+   1792108205000,
+   491.192216886532
+  ],
+  [
+   1792108265000,
+   491.09921688653196
+  ],
+  [
+   1792108325000,
+   491.08901688653197
+  ],
+  [
+   1792108385000,
+   491.182516886532
+  ],
+  [
+   1792108445000,
+   491.301816886532
+  ],
+  [
+   1792108505000,
+   491.426816886532
+  ],
+  [
+   1792108565000,
+   491.246016886532
+  ],
+  [
+   1792108625000,
+   491.418616886532
+  ],
+  [
+   1792108685000,
+   491.415016886532
+  ],
+  [
+   1792108745000,
+   491.402516886532
+  ],
+  [
+   1792108800000,
+   491.65441688653203
+  ]
+ ],
+ "timeframe": "1h"
+}

@@ -1,0 +1,35 @@
+{
+ "source": "https://quote-saver.bycsi.com/orderbook/linear/ (Bybit public historical orderbook.200 archive)",
+ "cycle_offset_ms": 5000,
+ "cycle_ms": 60000,
+ "top_levels": 10,
+ "zips_deleted_after_sampling": true,
+ "files": [
+  {
+   "source_file": "2026-10-17_ENAUSDT_ob200.data.zip",
+   "source_sha256": "38697201ac69e78197b237c887867b9f9c031d41ba12e4bb5291b817a4e6a581",
+   "messages": 699228,
+   "snapshots": 2,
+   "first_ts": 1792195200238,
+   "last_ts": 1792281600238,
+   "max_gap_ms": 1901,
+   "gaps_over_15s": 0,
+   "crossed_samples": 0,
+   "samples": 1440,
+   "url": "https://quote-saver.bycsi.com/orderbook/linear/ENAUSDT/2026-10-17_ENAUSDT_ob200.data.zip"
+  },
+  {
+   "source_file": "2026-10-18_ENAUSDT_ob200.data.zip",
+   "source_sha256": "c1b79dcea28340f3a6dd5b5c0faf93ef586d3eaeec25bc074ce094ac753eeecd",
+   "messages": 755480,
+   "snapshots": 2,
+   "first_ts": 1792281600238,
+   "last_ts": 1792368000238,
+   "max_gap_ms": 1799,
+   "gaps_over_15s": 0,
+   "crossed_samples": 0,
+   "samples": 1440,
+   "url": "https://quote-saver.bycsi.com/orderbook/linear/ENAUSDT/2026-10-18_ENAUSDT_ob200.data.zip"
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+[A_launch_sniper] 19 instruments, strategies=['launch_sniper'], orderbook=archived
+[A_crash_reversal] 19 instruments, strategies=['crash_reversal'], orderbook=archived
+[A_regime_trend] 19 instruments, strategies=['regime_trend'], orderbook=archived
+[A_squeeze] 19 instruments, strategies=['squeeze'], orderbook=archived
+[A_trend_pullback] 19 instruments, strategies=['trend_pullback'], orderbook=archived
+[A_breakout] 19 instruments, strategies=['breakout'], orderbook=archived
+[A_volatility_breakout] 19 instruments, strategies=['volatility_breakout'], orderbook=archived
+[A_trend] 19 instruments, strategies=['trend'], orderbook=archived
+  cycle 1440 t=1792108745000 trades=2 63s
+[A_volatility_breakout] done in 63.4s: 2 trades, final equity 50.62
+  cycle 1440 t=1792108745000 trades=0 67s
+[A_crash_reversal] done in 67.5s: 0 trades, final equity 75.30
+  cycle 1440 t=1792108745000 trades=2 67s
+[A_breakout] done in 67.1s: 2 trades, final equity 44.72
+  cycle 1440 t=1792108745000 trades=0 72s
+[A_launch_sniper] done in 71.7s: 0 trades, final equity 50.00
+  cycle 1440 t=1792108745000 trades=2 69s
+[A_trend_pullback] done in 68.9s: 2 trades, final equity 46.58
+  cycle 1440 t=1792108745000 trades=2 69s
+[A_trend] done in 68.6s: 2 trades, final equity 43.80
+  cycle 1440 t=1792108745000 trades=2 71s
+[A_regime_trend] done in 71.3s: 2 trades, final equity 46.06
+  cycle 1440 t=1792108745000 trades=0 71s
+[A_squeeze] done in 71.1s: 0 trades, final equity 50.00
+[A_range_reversion] 19 instruments, strategies=['range_reversion'], orderbook=archived
+[B_deployed] 19 instruments, strategies=ALL 10, orderbook=off
+[A_orderflow_imbalance] 19 instruments, strategies=['orderflow_imbalance'], orderbook=archived
+[B_combined] 19 instruments, strategies=ALL 10, orderbook=archived
+  cycle 1440 t=1792108745000 trades=5 51s
+[B_deployed] done in 50.7s: 5 trades, final equity 491.65
+  cycle 1440 t=1792108745000 trades=6 53s
+[B_combined] done in 52.6s: 6 trades, final equity 489.80
+  cycle 1440 t=1792108745000 trades=5 56s
+[A_orderflow_imbalance] done in 55.9s: 5 trades, final equity 43.84
+  cycle 1440 t=1792108745000 trades=0 63s
+[A_range_reversion] done in 62.9s: 0 trades, final equity 50.00

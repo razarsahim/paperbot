@@ -1,0 +1,9535 @@
+{
+ "label": "HISTORICAL BACKTEST \u2014 not live paper; not predictive",
+ "run_id": "B_combined",
+ "kind": "B_combined",
+ "strategies": [
+  "breakout",
+  "launch_sniper",
+  "squeeze",
+  "trend",
+  "crash_reversal",
+  "regime_trend",
+  "volatility_breakout",
+  "trend_pullback",
+  "range_reversion",
+  "orderflow_imbalance"
+ ],
+ "with_orderbook": true,
+ "window_utc": {
+  "start_ms": 1792022400000,
+  "end_ms_exclusive": 1792108800000
+ },
+ "instruments": [
+  "BTC/USDT:USDT",
+  "ETH/USDT:USDT",
+  "BNB/USDT:USDT",
+  "XRP/USDT:USDT",
+  "SOL/USDT:USDT",
+  "TRX/USDT:USDT",
+  "ZEC/USDT:USDT",
+  "HYPE/USDT:USDT",
+  "DOGE/USDT:USDT",
+  "XMR/USDT:USDT",
+  "LINK/USDT:USDT",
+  "ADA/USDT:USDT",
+  "NEAR/USDT:USDT",
+  "XLM/USDT:USDT",
+  "BCH/USDT:USDT",
+  "LTC/USDT:USDT",
+  "UNI/USDT:USDT",
+  "CC/USDT:USDT",
+  "BTW/USDT:USDT"
+ ],
+ "cycles": 1440,
+ "elapsed_s": 52.6,
+ "leakage_check": {
+  "max_data_ts_served": 1792108800000,
+  "final_now": 1792108800000,
+  "ok": true
+ },
+ "accounting_identity_gap_usd": -5.684341886080802e-14,
+ "final_equity_usd": 489.79705024951596,
+ "totals": {
+  "initial_capital_usd": 500.0,
+  "final_equity_usd": 489.79705024951596,
+  "net_realized_pnl_usd": -11.509656279736086,
+  "net_unrealized_pnl_usd": 1.3067065292520121,
+  "net_return_pct": -2.040589950096805,
+  "completed_trades": 6,
+  "open_positions_at_end": 3,
+  "win_rate_pct": 0.0,
+  "avg_win_usd": null,
+  "avg_loss_usd": -1.9182760466226811,
+  "profit_factor": 0.0,
+  "expectancy_usd": -1.9182760466226811,
+  "max_drawdown_usd": 11.312507483052912,
+  "max_drawdown_pct": 2.2582552643128664,
+  "return_over_maxdd": -0.9036135030189815,
+  "sharpe_week_descriptive": -0.6575325174276625,
+  "fees_usd": 1.4769320117520888,
+  "funding_usd": -0.0003406892420000033,
+  "slippage_usd_est": 1.230714804058568,
+  "liquidations": 0,
+  "largest_win_usd": -1.02821608041213,
+  "largest_loss_usd": -2.9607168928724628,
+  "by_side": {
+   "long": {
+    "trades": 4,
+    "net_pnl_usd": -6.230172474056529,
+    "wins": 0
+   },
+   "short": {
+    "trades": 2,
+    "net_pnl_usd": -5.279483805679557,
+    "wins": 0
+   }
+  },
+  "assets_traded": [
+   "BNB/USDT:USDT",
+   "BTC/USDT:USDT",
+   "ETH/USDT:USDT",
+   "TRX/USDT:USDT",
+   "XLM/USDT:USDT"
+  ],
+  "exit_reasons": {
+   "STOP": 6
+  },
+  "small_sample": true
+ },
+ "per_strategy": {
+  "breakout": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 44.720516194320446,
+   "net_realized_pnl_usd": -5.279483805679557,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": -10.558967611359105,
+   "completed_trades": 2,
+   "open_positions_at_end": 0,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -2.6397419028397784,
+   "profit_factor": 0.0,
+   "expectancy_usd": -2.6397419028397784,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.5947144140444367,
+   "funding_usd": 0.016571317573999995,
+   "slippage_usd_est": 0.49559430188608755,
+   "liquidations": 0,
+   "largest_win_usd": -2.318766912807094,
+   "largest_loss_usd": -2.9607168928724628,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 2,
+     "net_pnl_usd": -5.279483805679557,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "BNB/USDT:USDT",
+    "ETH/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 2
+   },
+   "small_sample": true,
+   "signals_fired": 13,
+   "signals_approved": 2,
+   "rejections": {
+    "position too small after margin/lot constraints": 11
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "launch_sniper": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "squeeze": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "trend": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 4,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 4
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "crash_reversal": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 5,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 5
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "regime_trend": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 4,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 4
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "volatility_breakout": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 49.96778576756,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": -0.0322142324399947,
+   "net_return_pct": -0.06442846487999532,
+   "completed_trades": 0,
+   "open_positions_at_end": 1,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.043926832439999994,
+   "funding_usd": 0.0,
+   "slippage_usd_est": 0.0365874,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "ETH/USDT:USDT"
+   ],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 20,
+   "signals_approved": 1,
+   "rejections": {
+    "position limit reached (3)": 19
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "trend_pullback": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 3,
+   "signals_approved": 0,
+   "rejections": {
+    "position limit reached (3)": 3
+   },
+   "locked": false,
+   "lock_reason": null
+  },
+  "range_reversion": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 50.0,
+   "net_realized_pnl_usd": 0,
+   "net_unrealized_pnl_usd": 0,
+   "net_return_pct": 0.0,
+   "completed_trades": 0,
+   "open_positions_at_end": 0,
+   "win_rate_pct": null,
+   "avg_win_usd": null,
+   "avg_loss_usd": null,
+   "profit_factor": null,
+   "expectancy_usd": null,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0,
+   "funding_usd": 0,
+   "slippage_usd_est": 0,
+   "liquidations": 0,
+   "largest_win_usd": null,
+   "largest_loss_usd": null,
+   "by_side": {
+    "long": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [],
+   "exit_reasons": {},
+   "small_sample": true,
+   "signals_fired": 0,
+   "signals_approved": 0,
+   "rejections": {},
+   "locked": false,
+   "lock_reason": null
+  },
+  "orderflow_imbalance": {
+   "initial_capital_usd": 50.0,
+   "final_equity_usd": 45.10874828763548,
+   "net_realized_pnl_usd": -6.230172474056529,
+   "net_unrealized_pnl_usd": 1.338920761692007,
+   "net_return_pct": -9.78250342472904,
+   "completed_trades": 4,
+   "open_positions_at_end": 2,
+   "win_rate_pct": 0.0,
+   "avg_win_usd": null,
+   "avg_loss_usd": -1.5575431185141322,
+   "profit_factor": 0.0,
+   "expectancy_usd": -1.5575431185141322,
+   "max_drawdown_usd": 0.0,
+   "max_drawdown_pct": 0.0,
+   "return_over_maxdd": null,
+   "sharpe_week_descriptive": null,
+   "fees_usd": 0.8382907652676522,
+   "funding_usd": -0.016912006815999997,
+   "slippage_usd_est": 0.6985331021724807,
+   "liquidations": 0,
+   "largest_win_usd": -1.02821608041213,
+   "largest_loss_usd": -1.9839584133698207,
+   "by_side": {
+    "long": {
+     "trades": 4,
+     "net_pnl_usd": -6.230172474056529,
+     "wins": 0
+    },
+    "short": {
+     "trades": 0,
+     "net_pnl_usd": 0,
+     "wins": 0
+    }
+   },
+   "assets_traded": [
+    "BNB/USDT:USDT",
+    "BTC/USDT:USDT",
+    "ETH/USDT:USDT",
+    "TRX/USDT:USDT",
+    "XLM/USDT:USDT"
+   ],
+   "exit_reasons": {
+    "STOP": 4
+   },
+   "small_sample": true,
+   "signals_fired": 272,
+   "signals_approved": 6,
+   "rejections": {
+    "orderflow_imbalance is locked (equity floor / $20 cumulative loss)": 239,
+    "position limit reached (3)": 22,
+    "re-entry cooldown": 5
+   },
+   "locked": false,
+   "lock_reason": null
+  }
+ },
+ "trades": [
+  {
+   "id": 1,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ETH/USDT:USDT",
+   "side": "long",
+   "qty": 0.04,
+   "entry_price": 2423.211,
+   "exit_price": 2381.047141499168,
+   "stop_initial": 2382.2382606294827,
+   "stop_final": 2382.2382606294827,
+   "margin_usd": 9.692844,
+   "notional_usd": 96.92844,
+   "entry_fee_usd": 0.058157063999999994,
+   "exit_fee_usd": 0.05714513139598003,
+   "funding_usd": 0.0,
+   "net_pnl_usd": -1.801856535429252,
+   "mfe_pct": 0.2104232772135881,
+   "mae_pct": -0.7069545326428388,
+   "entry_ms": 1792022405000,
+   "exit_ms": 1792030980000,
+   "exit_reason": "STOP",
+   "rationale": "bid-weighted depth imbalance +0.90"
+  },
+  {
+   "id": 2,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "side": "long",
+   "qty": 0.23,
+   "entry_price": 730.655145,
+   "exit_price": 722.9013727655731,
+   "stop_initial": 723.263004267707,
+   "stop_final": 723.263004267707,
+   "margin_usd": 16.805068334999998,
+   "notional_usd": 168.05068334999999,
+   "entry_fee_usd": 0.10083041000999998,
+   "exit_fee_usd": 0.09976038944164908,
+   "funding_usd": 0.0,
+   "net_pnl_usd": -1.9839584133698207,
+   "mfe_pct": 0.08688845953449296,
+   "mae_pct": -0.754821893439204,
+   "entry_ms": 1792022405000,
+   "exit_ms": 1792030980000,
+   "exit_reason": "STOP",
+   "rationale": "bid-weighted depth imbalance +0.79"
+  },
+  {
+   "id": 3,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "side": "long",
+   "qty": 0.001,
+   "entry_price": 81707.53335,
+   "exit_price": 80776.80787432246,
+   "stop_initial": 80817.21648256374,
+   "stop_final": 80817.21648256374,
+   "margin_usd": 8.170753335,
+   "notional_usd": 81.70753335,
+   "entry_fee_usd": 0.049024520009999996,
+   "exit_fee_usd": 0.04846608472459347,
+   "funding_usd": 0.0,
+   "net_pnl_usd": -1.02821608041213,
+   "mfe_pct": 0.1864780929652141,
+   "mae_pct": -0.9177040589244527,
+   "entry_ms": 1792022405000,
+   "exit_ms": 1792031100000,
+   "exit_reason": "STOP",
+   "rationale": "bid-weighted depth imbalance +0.79"
+  },
+  {
+   "id": 4,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "side": "long",
+   "qty": 822.0,
+   "entry_price": 0.33086535,
+   "exit_price": 0.32952464814564003,
+   "stop_initial": 0.32899419156202164,
+   "stop_final": 0.32968949289208604,
+   "margin_usd": 27.19713177,
+   "notional_usd": 271.9713177,
+   "entry_fee_usd": 0.16318279062,
+   "exit_fee_usd": 0.16252155646542965,
+   "funding_usd": -0.011619826524,
+   "net_pnl_usd": -1.4161414448453262,
+   "mfe_pct": 0.43360539264688236,
+   "mae_pct": -0.35221276570665666,
+   "entry_ms": 1792031045000,
+   "exit_ms": 1792067460000,
+   "exit_reason": "STOP",
+   "rationale": "bid-weighted depth imbalance +0.27"
+  },
+  {
+   "id": 5,
+   "strategy": "breakout",
+   "symbol": "BNB/USDT:USDT",
+   "side": "short",
+   "qty": 0.42,
+   "entry_price": 721.4390999999999,
+   "exit_price": 727.5480418000305,
+   "stop_initial": 731.0877499897088,
+   "stop_final": 727.184449575243,
+   "margin_usd": 30.3004422,
+   "notional_usd": 303.004422,
+   "entry_fee_usd": 0.18180265319999997,
+   "exit_fee_usd": 0.1833421065336077,
+   "funding_usd": 0.029816577125999996,
+   "net_pnl_usd": -2.9607168928724628,
+   "mfe_pct": 1.2487679140207386,
+   "mae_pct": -0.7430842048899229,
+   "entry_ms": 1792033205000,
+   "exit_ms": 1792075680000,
+   "exit_reason": "STOP",
+   "rationale": "close broke 48-bar low on 10.8x volume"
+  },
+  {
+   "id": 6,
+   "strategy": "breakout",
+   "symbol": "ETH/USDT:USDT",
+   "side": "short",
+   "qty": 0.08,
+   "entry_price": 2378.2103,
+   "exit_price": 2404.4908314756035,
+   "stop_initial": 2430.399621040286,
+   "stop_final": 2403.2891868821625,
+   "margin_usd": 19.0256824,
+   "notional_usd": 190.25682400000002,
+   "entry_fee_usd": 0.1141540944,
+   "exit_fee_usd": 0.11541555991082897,
+   "funding_usd": -0.013245259552,
+   "net_pnl_usd": -2.318766912807094,
+   "mfe_pct": 2.2790373080126667,
+   "mae_pct": -0.9818181344181276,
+   "entry_ms": 1792033205000,
+   "exit_ms": 1792076640000,
+   "exit_reason": "STOP",
+   "rationale": "close broke 48-bar low on 6.7x volume"
+  }
+ ],
+ "open_at_end": [
+  {
+   "id": 7,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "side": "long",
+   "qty": 467.0,
+   "entry_price": 0.17888939999999998,
+   "stop": 0.1798522827701076,
+   "initial_stop": 0.17491530994055363,
+   "liq_price_est": 0.16219901898,
+   "margin_usd": 8.35413498,
+   "notional_usd": 83.54134979999999,
+   "entry_fee_usd": 0.05012480987999999,
+   "funding_paid_usd": -0.00050886655,
+   "planned_risk_usd": 1.9958543567229765,
+   "opened_ms": 1792067525000,
+   "rationale": "bid-weighted depth imbalance +0.26",
+   "mark": 0.1828,
+   "unrealized_pnl_usd": 1.8262502000000065
+  },
+  {
+   "id": 8,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "side": "short",
+   "qty": 0.001,
+   "entry_price": 81796.6812,
+   "stop": 83179.13830744865,
+   "initial_stop": 83179.13830744865,
+   "liq_price_est": 89706.42027204,
+   "margin_usd": 8.17966812,
+   "notional_usd": 81.79668120000001,
+   "entry_fee_usd": 0.04907800872,
+   "funding_paid_usd": -0.004783313742,
+   "planned_risk_usd": 1.5230571220483216,
+   "opened_ms": 1792076405000,
+   "rationale": "ask-weighted depth imbalance -0.49",
+   "mark": 82190.1,
+   "unrealized_pnl_usd": -0.39341879999999946
+  },
+  {
+   "id": 9,
+   "strategy": "volatility_breakout",
+   "symbol": "ETH/USDT:USDT",
+   "side": "long",
+   "qty": 0.03,
+   "entry_price": 2440.37958,
+   "stop": 2396.292666472112,
+   "initial_stop": 2380.146588968873,
+   "liq_price_est": 2204.394874614,
+   "margin_usd": 7.321138739999999,
+   "notional_usd": 73.21138739999999,
+   "entry_fee_usd": 0.043926832439999994,
+   "funding_paid_usd": 0.0,
+   "planned_risk_usd": 1.9294399794904689,
+   "opened_ms": 1792080005000,
+   "rationale": "break of 20-bar high on 4.0x vol after compression",
+   "mark": 2440.77,
+   "unrealized_pnl_usd": 0.011712600000005294
+  }
+ ],
+ "signals": [
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.03, margin $8.17"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ETH/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.80, margin $9.69"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.98, margin $16.81"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $10.16"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $3.59, margin $49.67"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "trend_pullback",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $27.63"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $4.60"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.50"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.95, margin $9.36"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.33"
+  },
+  {
+   "ts_ms": 1792022405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $8.06"
+  },
+  {
+   "ts_ms": 1792022465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $9.34"
+  },
+  {
+   "ts_ms": 1792022465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.48"
+  },
+  {
+   "ts_ms": 1792023005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.53"
+  },
+  {
+   "ts_ms": 1792023245000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.84, margin $8.36"
+  },
+  {
+   "ts_ms": 1792023725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.09, margin $15.02"
+  },
+  {
+   "ts_ms": 1792023905000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.83"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.80, margin $8.36"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $4.57"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.99, margin $24.34"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.93, margin $9.40"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "trend_pullback",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.93, margin $9.40"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $9.40"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.33"
+  },
+  {
+   "ts_ms": 1792026005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $9.49"
+  },
+  {
+   "ts_ms": 1792026065000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.80"
+  },
+  {
+   "ts_ms": 1792026125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $8.47"
+  },
+  {
+   "ts_ms": 1792026245000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.58"
+  },
+  {
+   "ts_ms": 1792027025000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $10.10"
+  },
+  {
+   "ts_ms": 1792028525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.61"
+  },
+  {
+   "ts_ms": 1792029605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $10.10"
+  },
+  {
+   "ts_ms": 1792029605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.92, margin $4.52"
+  },
+  {
+   "ts_ms": 1792029605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $8.23"
+  },
+  {
+   "ts_ms": 1792029605000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.91, margin $9.37"
+  },
+  {
+   "ts_ms": 1792029605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.38"
+  },
+  {
+   "ts_ms": 1792029665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.80, margin $8.32"
+  },
+  {
+   "ts_ms": 1792029665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $8.27"
+  },
+  {
+   "ts_ms": 1792029725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.91, margin $9.35"
+  },
+  {
+   "ts_ms": 1792030025000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $4.24"
+  },
+  {
+   "ts_ms": 1792030145000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.59"
+  },
+  {
+   "ts_ms": 1792030325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ADA/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.60"
+  },
+  {
+   "ts_ms": 1792030745000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $9.40"
+  },
+  {
+   "ts_ms": 1792030985000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ETH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "ask-weighted depth imbalance -0.67"
+  },
+  {
+   "ts_ms": 1792030985000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "ask-weighted depth imbalance -0.57"
+  },
+  {
+   "ts_ms": 1792031045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $2.00, margin $27.20"
+  },
+  {
+   "ts_ms": 1792031045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.60"
+  },
+  {
+   "ts_ms": 1792031105000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "bid-weighted depth imbalance +0.99"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.20, margin $8.15"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ETH/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $4.50, margin $19.03"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $4.57, margin $30.30"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.61"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.4x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.85, margin $7.23"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.0x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.58, margin $3.34"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.58, margin $3.34"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $7.72"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 7.2x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.40"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.88, margin $8.15"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.88, margin $8.16"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.0x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.21"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $6.15"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "XLM/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "XLM/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.21"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 6.8x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.93, margin $6.59"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $6.59"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 5.1x volume"
+  },
+  {
+   "ts_ms": 1792033205000,
+   "strategy": "volatility_breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.19"
+  },
+  {
+   "ts_ms": 1792033385000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.35"
+  },
+  {
+   "ts_ms": 1792033445000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.58"
+  },
+  {
+   "ts_ms": 1792033505000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.18"
+  },
+  {
+   "ts_ms": 1792033685000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.15"
+  },
+  {
+   "ts_ms": 1792034225000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.84, margin $7.20"
+  },
+  {
+   "ts_ms": 1792034765000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.85"
+  },
+  {
+   "ts_ms": 1792036805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.85, margin $7.17"
+  },
+  {
+   "ts_ms": 1792036805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.36"
+  },
+  {
+   "ts_ms": 1792036805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $8.67"
+  },
+  {
+   "ts_ms": 1792036805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.86"
+  },
+  {
+   "ts_ms": 1792036865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.24, margin $8.08"
+  },
+  {
+   "ts_ms": 1792036865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $6.55"
+  },
+  {
+   "ts_ms": 1792037045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.57, margin $3.31"
+  },
+  {
+   "ts_ms": 1792037345000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.43"
+  },
+  {
+   "ts_ms": 1792037465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.40"
+  },
+  {
+   "ts_ms": 1792037525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ADA/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.05"
+  },
+  {
+   "ts_ms": 1792037765000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.71"
+  },
+  {
+   "ts_ms": 1792038185000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.88, margin $7.57"
+  },
+  {
+   "ts_ms": 1792040405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.92, margin $7.27"
+  },
+  {
+   "ts_ms": 1792040405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.57, margin $3.35"
+  },
+  {
+   "ts_ms": 1792040405000,
+   "strategy": "regime_trend",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $8.76"
+  },
+  {
+   "ts_ms": 1792040465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.29, margin $8.17"
+  },
+  {
+   "ts_ms": 1792040465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.05"
+  },
+  {
+   "ts_ms": 1792040465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.75"
+  },
+  {
+   "ts_ms": 1792040465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.85"
+  },
+  {
+   "ts_ms": 1792040465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.65"
+  },
+  {
+   "ts_ms": 1792040525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.12"
+  },
+  {
+   "ts_ms": 1792040645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.90, margin $7.60"
+  },
+  {
+   "ts_ms": 1792041605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.34"
+  },
+  {
+   "ts_ms": 1792042625000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.02"
+  },
+  {
+   "ts_ms": 1792043405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $3.65"
+  },
+  {
+   "ts_ms": 1792044005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.38, margin $8.05"
+  },
+  {
+   "ts_ms": 1792044005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.62, margin $3.27"
+  },
+  {
+   "ts_ms": 1792044005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $7.30"
+  },
+  {
+   "ts_ms": 1792044005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.90, margin $7.51"
+  },
+  {
+   "ts_ms": 1792044005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.48"
+  },
+  {
+   "ts_ms": 1792044185000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.76, margin $6.10"
+  },
+  {
+   "ts_ms": 1792044185000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $5.97"
+  },
+  {
+   "ts_ms": 1792044305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.41"
+  },
+  {
+   "ts_ms": 1792044365000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $3.59"
+  },
+  {
+   "ts_ms": 1792045325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.57"
+  },
+  {
+   "ts_ms": 1792046645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.87"
+  },
+  {
+   "ts_ms": 1792047605000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.82, margin $9.84"
+  },
+  {
+   "ts_ms": 1792047605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.33"
+  },
+  {
+   "ts_ms": 1792047605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.91, margin $7.52"
+  },
+  {
+   "ts_ms": 1792047605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $6.00"
+  },
+  {
+   "ts_ms": 1792047665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.37, margin $8.10"
+  },
+  {
+   "ts_ms": 1792047665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.61, margin $3.29"
+  },
+  {
+   "ts_ms": 1792047665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.64"
+  },
+  {
+   "ts_ms": 1792047725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.82"
+  },
+  {
+   "ts_ms": 1792048025000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.40"
+  },
+  {
+   "ts_ms": 1792048145000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.74, margin $6.14"
+  },
+  {
+   "ts_ms": 1792049525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.55"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.39, margin $8.15"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.32"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $7.61"
+  },
+  {
+   "ts_ms": 1792051205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $6.68"
+  },
+  {
+   "ts_ms": 1792051325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.31"
+  },
+  {
+   "ts_ms": 1792051385000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.58, margin $3.31"
+  },
+  {
+   "ts_ms": 1792051385000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $7.57"
+  },
+  {
+   "ts_ms": 1792051445000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.04"
+  },
+  {
+   "ts_ms": 1792052045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.62"
+  },
+  {
+   "ts_ms": 1792052045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.74, margin $6.18"
+  },
+  {
+   "ts_ms": 1792053305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.68"
+  },
+  {
+   "ts_ms": 1792054505000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.79"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.36, margin $8.13"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.62, margin $10.03"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.54, margin $3.34"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "trend",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.99, margin $18.48"
+  },
+  {
+   "ts_ms": 1792054805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $6.35"
+  },
+  {
+   "ts_ms": 1792054865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.35"
+  },
+  {
+   "ts_ms": 1792054865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $7.61"
+  },
+  {
+   "ts_ms": 1792054865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.91"
+  },
+  {
+   "ts_ms": 1792054925000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.79"
+  },
+  {
+   "ts_ms": 1792054925000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.94"
+  },
+  {
+   "ts_ms": 1792054985000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $7.24"
+  },
+  {
+   "ts_ms": 1792054985000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $7.62"
+  },
+  {
+   "ts_ms": 1792058405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.31, margin $8.12"
+  },
+  {
+   "ts_ms": 1792058405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.27"
+  },
+  {
+   "ts_ms": 1792058465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.53, margin $3.30"
+  },
+  {
+   "ts_ms": 1792058525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.68"
+  },
+  {
+   "ts_ms": 1792058585000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.92, margin $7.55"
+  },
+  {
+   "ts_ms": 1792058585000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $6.61"
+  },
+  {
+   "ts_ms": 1792058645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.17"
+  },
+  {
+   "ts_ms": 1792058645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.14"
+  },
+  {
+   "ts_ms": 1792059665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $3.76"
+  },
+  {
+   "ts_ms": 1792059965000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $7.13"
+  },
+  {
+   "ts_ms": 1792060265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $8.14"
+  },
+  {
+   "ts_ms": 1792062005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.28, margin $8.11"
+  },
+  {
+   "ts_ms": 1792062005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.54, margin $3.27"
+  },
+  {
+   "ts_ms": 1792062005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.43"
+  },
+  {
+   "ts_ms": 1792062005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.86"
+  },
+  {
+   "ts_ms": 1792062125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $7.49"
+  },
+  {
+   "ts_ms": 1792062125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $7.09"
+  },
+  {
+   "ts_ms": 1792062305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.10"
+  },
+  {
+   "ts_ms": 1792062305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.91, margin $7.15"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.25, margin $8.09"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.22"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.59, margin $9.83"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.53, margin $3.27"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $7.57"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.34"
+  },
+  {
+   "ts_ms": 1792065605000,
+   "strategy": "crash_reversal",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.98, margin $9.56"
+  },
+  {
+   "ts_ms": 1792065665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.59"
+  },
+  {
+   "ts_ms": 1792065665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $6.87"
+  },
+  {
+   "ts_ms": 1792065905000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $8.16"
+  },
+  {
+   "ts_ms": 1792065965000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.86, margin $7.15"
+  },
+  {
+   "ts_ms": 1792066805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.91"
+  },
+  {
+   "ts_ms": 1792067525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XLM/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $2.00, margin $8.35"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.27, margin $8.05"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "volatility_breakout",
+   "symbol": "TRX/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $23.16"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.53, margin $3.26"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.43"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.47"
+  },
+  {
+   "ts_ms": 1792069205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $6.82"
+  },
+  {
+   "ts_ms": 1792069265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.86, margin $7.12"
+  },
+  {
+   "ts_ms": 1792069265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.67"
+  },
+  {
+   "ts_ms": 1792069385000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $8.07"
+  },
+  {
+   "ts_ms": 1792069445000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.98, margin $7.05"
+  },
+  {
+   "ts_ms": 1792071425000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.96, margin $8.14"
+  },
+  {
+   "ts_ms": 1792072625000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $6.36"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.33, margin $8.01"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "crash_reversal",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.62, margin $9.81"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "breakout",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 2.3x volume"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "volatility_breakout",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $7.23"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $7.23"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.33"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position too small after margin/lot constraints",
+   "details": "close broke 48-bar low on 3.0x volume"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.99, margin $6.89"
+  },
+  {
+   "ts_ms": 1792072805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.94, margin $6.55"
+  },
+  {
+   "ts_ms": 1792072865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.54, margin $3.27"
+  },
+  {
+   "ts_ms": 1792072865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.88, margin $6.87"
+  },
+  {
+   "ts_ms": 1792072925000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $7.80"
+  },
+  {
+   "ts_ms": 1792073045000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.88, margin $7.13"
+  },
+  {
+   "ts_ms": 1792073105000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.98, margin $6.95"
+  },
+  {
+   "ts_ms": 1792073465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.96, margin $8.27"
+  },
+  {
+   "ts_ms": 1792075205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.98, margin $3.98"
+  },
+  {
+   "ts_ms": 1792075745000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "ask-weighted depth imbalance -0.64"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BTC/USDT:USDT",
+   "action": "short",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.52, margin $8.18"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.88, margin $10.22"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.23"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.66, margin $3.41"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $6.99"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.29"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "volatility_breakout",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $3.52"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.91, margin $5.77"
+  },
+  {
+   "ts_ms": 1792076405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.91, margin $5.77"
+  },
+  {
+   "ts_ms": 1792076465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.82, margin $6.29"
+  },
+  {
+   "ts_ms": 1792076465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.39"
+  },
+  {
+   "ts_ms": 1792076465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.74"
+  },
+  {
+   "ts_ms": 1792076645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ETH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "re-entry cooldown",
+   "details": "bid-weighted depth imbalance +0.37"
+  },
+  {
+   "ts_ms": 1792076645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $3.54"
+  },
+  {
+   "ts_ms": 1792078325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.03"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "ETH/USDT:USDT",
+   "action": "long",
+   "approved": 1,
+   "reject_reason": null,
+   "details": "risk $1.93, margin $7.32"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "trend",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $4.32, margin $49.70"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "trend_pullback",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $2.00, margin $22.98"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.79, margin $3.54"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.79, margin $3.54"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.36"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.71"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $7.06"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.98, margin $6.15"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.14"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.97, margin $6.06"
+  },
+  {
+   "ts_ms": 1792080005000,
+   "strategy": "volatility_breakout",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "position limit reached (3)",
+   "details": "risk $1.96, margin $7.26"
+  },
+  {
+   "ts_ms": 1792080065000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.09"
+  },
+  {
+   "ts_ms": 1792080185000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.87, margin $10.25"
+  },
+  {
+   "ts_ms": 1792080245000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.85, margin $6.35"
+  },
+  {
+   "ts_ms": 1792080245000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $6.06"
+  },
+  {
+   "ts_ms": 1792080305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $7.27"
+  },
+  {
+   "ts_ms": 1792081625000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $22.98"
+  },
+  {
+   "ts_ms": 1792083605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.88, margin $10.24"
+  },
+  {
+   "ts_ms": 1792083605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.77, margin $3.58"
+  },
+  {
+   "ts_ms": 1792083605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.41"
+  },
+  {
+   "ts_ms": 1792083605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.90, margin $7.07"
+  },
+  {
+   "ts_ms": 1792083605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $6.08"
+  },
+  {
+   "ts_ms": 1792083785000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.24"
+  },
+  {
+   "ts_ms": 1792083785000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.08"
+  },
+  {
+   "ts_ms": 1792083905000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $23.16"
+  },
+  {
+   "ts_ms": 1792083905000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $7.23"
+  },
+  {
+   "ts_ms": 1792084265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.81, margin $6.36"
+  },
+  {
+   "ts_ms": 1792086305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $3.66"
+  },
+  {
+   "ts_ms": 1792087205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.41"
+  },
+  {
+   "ts_ms": 1792087205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "TRX/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $23.70"
+  },
+  {
+   "ts_ms": 1792087205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.85, margin $3.69"
+  },
+  {
+   "ts_ms": 1792087205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.53"
+  },
+  {
+   "ts_ms": 1792087205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.87, margin $7.09"
+  },
+  {
+   "ts_ms": 1792087265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $11.00"
+  },
+  {
+   "ts_ms": 1792087265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.25"
+  },
+  {
+   "ts_ms": 1792087265000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $6.39"
+  },
+  {
+   "ts_ms": 1792087505000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.78, margin $6.33"
+  },
+  {
+   "ts_ms": 1792087565000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $7.23"
+  },
+  {
+   "ts_ms": 1792088525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.66"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $11.01"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.74"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $6.80"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.05"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.63"
+  },
+  {
+   "ts_ms": 1792090805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $6.67"
+  },
+  {
+   "ts_ms": 1792090865000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.79, margin $3.70"
+  },
+  {
+   "ts_ms": 1792091165000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.55"
+  },
+  {
+   "ts_ms": 1792091945000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.87"
+  },
+  {
+   "ts_ms": 1792093325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.73, margin $6.36"
+  },
+  {
+   "ts_ms": 1792093325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $3.74"
+  },
+  {
+   "ts_ms": 1792094405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.95, margin $11.72"
+  },
+  {
+   "ts_ms": 1792094405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.74, margin $3.70"
+  },
+  {
+   "ts_ms": 1792094405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $7.05"
+  },
+  {
+   "ts_ms": 1792094465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $7.63"
+  },
+  {
+   "ts_ms": 1792094465000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.93, margin $6.70"
+  },
+  {
+   "ts_ms": 1792094525000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $7.42"
+  },
+  {
+   "ts_ms": 1792094645000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.92, margin $7.87"
+  },
+  {
+   "ts_ms": 1792094825000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $6.76"
+  },
+  {
+   "ts_ms": 1792095065000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.35"
+  },
+  {
+   "ts_ms": 1792095125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.08"
+  },
+  {
+   "ts_ms": 1792097405000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.77"
+  },
+  {
+   "ts_ms": 1792098005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.74, margin $3.71"
+  },
+  {
+   "ts_ms": 1792098005000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $7.29"
+  },
+  {
+   "ts_ms": 1792098065000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $6.87"
+  },
+  {
+   "ts_ms": 1792098125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.90, margin $11.67"
+  },
+  {
+   "ts_ms": 1792098125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.30"
+  },
+  {
+   "ts_ms": 1792098125000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.96, margin $6.94"
+  },
+  {
+   "ts_ms": 1792098185000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $7.64"
+  },
+  {
+   "ts_ms": 1792098245000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.71"
+  },
+  {
+   "ts_ms": 1792098545000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $7.40"
+  },
+  {
+   "ts_ms": 1792098665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.52"
+  },
+  {
+   "ts_ms": 1792099805000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ADA/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $6.45"
+  },
+  {
+   "ts_ms": 1792100885000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.87, margin $7.89"
+  },
+  {
+   "ts_ms": 1792101605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.71, margin $3.72"
+  },
+  {
+   "ts_ms": 1792101605000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $7.41"
+  },
+  {
+   "ts_ms": 1792101665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $7.16"
+  },
+  {
+   "ts_ms": 1792101665000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $7.26"
+  },
+  {
+   "ts_ms": 1792101725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $12.44"
+  },
+  {
+   "ts_ms": 1792101725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.83, margin $7.43"
+  },
+  {
+   "ts_ms": 1792101725000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $8.22"
+  },
+  {
+   "ts_ms": 1792101965000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.64"
+  },
+  {
+   "ts_ms": 1792102925000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LTC/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.94, margin $8.51"
+  },
+  {
+   "ts_ms": 1792103885000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.84"
+  },
+  {
+   "ts_ms": 1792104305000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.79"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BNB/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $13.12"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XRP/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $9.04"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "SOL/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.46"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "ZEC/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.65, margin $3.69"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "HYPE/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.98, margin $7.72"
+  },
+  {
+   "ts_ms": 1792105205000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "LINK/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $7.50"
+  },
+  {
+   "ts_ms": 1792105325000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "XMR/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.89, margin $8.20"
+  },
+  {
+   "ts_ms": 1792105385000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "BCH/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.97, margin $7.49"
+  },
+  {
+   "ts_ms": 1792106345000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "DOGE/USDT:USDT",
+   "action": "long",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $2.00, margin $8.11"
+  },
+  {
+   "ts_ms": 1792108745000,
+   "strategy": "orderflow_imbalance",
+   "symbol": "NEAR/USDT:USDT",
+   "action": "short",
+   "approved": 0,
+   "reject_reason": "orderflow_imbalance is locked (equity floor / $20 cumulative loss)",
+   "details": "risk $1.99, margin $3.89"
+  }
+ ],
+ "risk_events": [],
+ "equity_curve_hourly": [
+  [
+   1792022405000,
+   499.49573130598
+  ],
+  [
+   1792026005000,
+   499.28473130598
+  ],
+  [
+   1792029605000,
+   498.75133130598
+  ],
+  [
+   1792033205000,
+   494.0133577325688
+  ],
+  [
+   1792036805000,
+   498.7327577325688
+  ],
+  [
+   1792040405000,
+   493.8139577325688
+  ],
+  [
+   1792044005000,
+   500.1987577325688
+  ],
+  [
+   1792047605000,
+   498.4861577325688
+  ],
+  [
+   1792051205000,
+   496.21540624151885
+  ],
+  [
+   1792054805000,
+   495.6028062415188
+  ],
+  [
+   1792058405000,
+   494.9630062415187
+  ],
+  [
+   1792062005000,
+   496.63320624151885
+  ],
+  [
+   1792065605000,
+   496.3548062415188
+  ],
+  [
+   1792069205000,
+   497.1549708508895
+  ],
+  [
+   1792072805000,
+   498.8121708508895
+  ],
+  [
+   1792076405000,
+   491.197854379623
+  ],
+  [
+   1792080005000,
+   490.5895502495159
+  ],
+  [
+   1792083605000,
+   490.44005024951593
+  ],
+  [
+   1792087205000,
+   490.7093502495159
+  ],
+  [
+   1792090805000,
+   490.7869502495159
+  ],
+  [
+   1792094405000,
+   491.0373502495159
+  ],
+  [
+   1792098005000,
+   490.7920502495159
+  ],
+  [
+   1792101605000,
+   490.6629502495159
+  ],
+  [
+   1792105205000,
+   490.3212502495159
+  ],
+  [
+   1792108800000,
+   489.79705024951596
+  ]
+ ],
+ "equity_curve_min": [
+  [
+   1792022405000,
+   499.49573130598
+  ],
+  [
+   1792022465000,
+   499.52503130597995
+  ],
+  [
+   1792022525000,
+   499.44993130597993
+  ],
+  [
+   1792022585000,
+   499.63273130598
+  ],
+  [
+   1792022645000,
+   499.89553130598
+  ],
+  [
+   1792022705000,
+   500.06553130597996
+  ],
+  [
+   1792022765000,
+   499.89463130598
+  ],
+  [
+   1792022825000,
+   499.72593130597994
+  ],
+  [
+   1792022885000,
+   499.74323130598
+  ],
+  [
+   1792022945000,
+   499.57233130597996
+  ],
+  [
+   1792023005000,
+   499.5659313059799
+  ],
+  [
+   1792023065000,
+   499.46123130597994
+  ],
+  [
+   1792023125000,
+   499.66983130598
+  ],
+  [
+   1792023185000,
+   499.79443130598
+  ],
+  [
+   1792023245000,
+   499.8230313059799
+  ],
+  [
+   1792023305000,
+   499.77553130598
+  ],
+  [
+   1792023365000,
+   499.8856313059799
+  ],
+  [
+   1792023425000,
+   499.79353130597997
+  ],
+  [
+   1792023485000,
+   499.72023130597995
+  ],
+  [
+   1792023545000,
+   499.5975313059799
+  ],
+  [
+   1792023605000,
+   499.5636313059799
+  ],
+  [
+   1792023665000,
+   499.60553130598
+  ],
+  [
+   1792023725000,
+   499.9395313059799
+  ],
+  [
+   1792023785000,
+   500.08183130597996
+  ],
+  [
+   1792023845000,
+   500.04563130597995
+  ],
+  [
+   1792023905000,
+   499.9713313059799
+  ],
+  [
+   1792023965000,
+   499.87243130598
+  ],
+  [
+   1792024025000,
+   499.83033130598
+  ],
+  [
+   1792024085000,
+   499.77653130598
+  ],
+  [
+   1792024145000,
+   500.0079313059799
+  ],
+  [
+   1792024205000,
+   500.04923130597996
+  ],
+  [
+   1792024265000,
+   500.06803130597996
+  ],
+  [
+   1792024325000,
+   500.03953130597995
+  ],
+  [
+   1792024385000,
+   499.72243130597997
+  ],
+  [
+   1792024445000,
+   499.92513130597996
+  ],
+  [
+   1792024505000,
+   500.06583130597994
+  ],
+  [
+   1792024565000,
+   499.88213130598
+  ],
+  [
+   1792024625000,
+   499.86193130597997
+  ],
+  [
+   1792024685000,
+   499.66533130598
+  ],
+  [
+   1792024745000,
+   499.57953130597997
+  ],
+  [
+   1792024805000,
+   499.3444313059799
+  ],
+  [
+   1792024865000,
+   499.48953130598
+  ],
+  [
+   1792024925000,
+   499.1343313059799
+  ],
+  [
+   1792024985000,
+   498.9928313059799
+  ],
+  [
+   1792025045000,
+   499.1232313059799
+  ],
+  [
+   1792025105000,
+   499.02033130597994
+  ],
+  [
+   1792025165000,
+   499.0711313059799
+  ],
+  [
+   1792025225000,
+   498.84453130597996
+  ],
+  [
+   1792025285000,
+   498.78553130598
+  ],
+  [
+   1792025345000,
+   498.6271313059799
+  ],
+  [
+   1792025405000,
+   498.63833130598
+  ],
+  [
+   1792025465000,
+   498.5981313059799
+  ],
+  [
+   1792025525000,
+   498.52233130597995
+  ],
+  [
+   1792025585000,
+   498.94553130597996
+  ],
+  [
+   1792025645000,
+   499.31573130598
+  ],
+  [
+   1792025705000,
+   499.11533130598
+  ],
+  [
+   1792025765000,
+   498.78573130597994
+  ],
+  [
+   1792025825000,
+   499.08093130597996
+  ],
+  [
+   1792025885000,
+   499.00583130597994
+  ],
+  [
+   1792025945000,
+   499.0974313059799
+  ],
+  [
+   1792026005000,
+   499.28473130598
+  ],
+  [
+   1792026065000,
+   500.16753130597994
+  ],
+  [
+   1792026125000,
+   500.16543130597995
+  ],
+  [
+   1792026185000,
+   500.12793130598
+  ],
+  [
+   1792026245000,
+   499.91043130598
+  ],
+  [
+   1792026305000,
+   499.72373130598
+  ],
+  [
+   1792026365000,
+   499.74813130597994
+  ],
+  [
+   1792026425000,
+   499.52773130597996
+  ],
+  [
+   1792026485000,
+   499.36003130598
+  ],
+  [
+   1792026545000,
+   499.88243130597994
+  ],
+  [
+   1792026605000,
+   499.96893130597994
+  ],
+  [
+   1792026665000,
+   499.51913130597995
+  ],
+  [
+   1792026725000,
+   499.3675313059799
+  ],
+  [
+   1792026785000,
+   499.14283130597994
+  ],
+  [
+   1792026845000,
+   499.33823130598
+  ],
+  [
+   1792026905000,
+   499.2835313059799
+  ],
+  [
+   1792026965000,
+   498.87523130598
+  ],
+  [
+   1792027025000,
+   499.01993130598
+  ],
+  [
+   1792027085000,
+   499.62203130598
+  ],
+  [
+   1792027145000,
+   499.55983130597997
+  ],
+  [
+   1792027205000,
+   499.3454313059799
+  ],
+  [
+   1792027265000,
+   499.28113130597995
+  ],
+  [
+   1792027325000,
+   498.9587313059799
+  ],
+  [
+   1792027385000,
+   498.8904313059799
+  ],
+  [
+   1792027445000,
+   498.79293130597995
+  ],
+  [
+   1792027505000,
+   498.79533130597997
+  ],
+  [
+   1792027565000,
+   498.38373130597995
+  ],
+  [
+   1792027625000,
+   498.98093130597994
+  ],
+  [
+   1792027685000,
+   498.60883130597995
+  ],
+  [
+   1792027745000,
+   498.47953130597995
+  ],
+  [
+   1792027805000,
+   498.73613130597994
+  ],
+  [
+   1792027865000,
+   499.09563130597996
+  ],
+  [
+   1792027925000,
+   499.4670313059799
+  ],
+  [
+   1792027985000,
+   499.8714313059799
+  ],
+  [
+   1792028045000,
+   499.70593130597996
+  ],
+  [
+   1792028105000,
+   499.58093130597996
+  ],
+  [
+   1792028165000,
+   499.18003130598
+  ],
+  [
+   1792028225000,
+   499.34653130597997
+  ],
+  [
+   1792028285000,
+   499.75233130597996
+  ],
+  [
+   1792028345000,
+   499.38983130598
+  ],
+  [
+   1792028405000,
+   499.36063130597995
+  ],
+  [
+   1792028465000,
+   499.70393130597995
+  ],
+  [
+   1792028525000,
+   499.69703130598
+  ],
+  [
+   1792028585000,
+   499.39053130597995
+  ],
+  [
+   1792028645000,
+   499.34793130597996
+  ],
+  [
+   1792028705000,
+   499.63203130598
+  ],
+  [
+   1792028765000,
+   499.44643130597996
+  ],
+  [
+   1792028825000,
+   499.42243130597996
+  ],
+  [
+   1792028885000,
+   499.2476313059799
+  ],
+  [
+   1792028945000,
+   499.15413130597994
+  ],
+  [
+   1792029005000,
+   499.0732313059799
+  ],
+  [
+   1792029065000,
+   499.43693130597995
+  ],
+  [
+   1792029125000,
+   499.45093130597996
+  ],
+  [
+   1792029185000,
+   499.21923130598
+  ],
+  [
+   1792029245000,
+   499.15233130597994
+  ],
+  [
+   1792029305000,
+   499.10513130597997
+  ],
+  [
+   1792029365000,
+   499.24233130598
+  ],
+  [
+   1792029425000,
+   499.07583130598
+  ],
+  [
+   1792029485000,
+   498.89703130597997
+  ],
+  [
+   1792029545000,
+   498.74563130597994
+  ],
+  [
+   1792029605000,
+   498.75133130598
+  ],
+  [
+   1792029665000,
+   498.33693130597993
+  ],
+  [
+   1792029725000,
+   498.49493130598
+  ],
+  [
+   1792029785000,
+   498.58313130598
+  ],
+  [
+   1792029845000,
+   498.34793130597996
+  ],
+  [
+   1792029905000,
+   498.16483130598
+  ],
+  [
+   1792029965000,
+   498.47303130597993
+  ],
+  [
+   1792030025000,
+   498.37493130597994
+  ],
+  [
+   1792030085000,
+   498.86383130598
+  ],
+  [
+   1792030145000,
+   498.56353130597995
+  ],
+  [
+   1792030205000,
+   498.24863130598
+  ],
+  [
+   1792030265000,
+   498.26053130597995
+  ],
+  [
+   1792030325000,
+   498.42873130597997
+  ],
+  [
+   1792030385000,
+   498.18233130598
+  ],
+  [
+   1792030445000,
+   498.10433130597994
+  ],
+  [
+   1792030505000,
+   497.73763130597996
+  ],
+  [
+   1792030565000,
+   497.69273130598
+  ],
+  [
+   1792030625000,
+   497.7482313059799
+  ],
+  [
+   1792030685000,
+   497.7808313059799
+  ],
+  [
+   1792030745000,
+   497.76473130598
+  ],
+  [
+   1792030805000,
+   498.97173130598
+  ],
+  [
+   1792030865000,
+   498.3682313059799
+  ],
+  [
+   1792030925000,
+   497.79123130598
+  ],
+  [
+   1792030985000,
+   495.62132718119096
+  ],
+  [
+   1792031045000,
+   495.0231266905709
+  ],
+  [
+   1792031105000,
+   494.5580684801688
+  ],
+  [
+   1792031165000,
+   494.5580684801688
+  ],
+  [
+   1792031225000,
+   494.7224684801688
+  ],
+  [
+   1792031285000,
+   494.4758684801688
+  ],
+  [
+   1792031345000,
+   494.1470684801688
+  ],
+  [
+   1792031405000,
+   494.3114684801688
+  ],
+  [
+   1792031465000,
+   494.2292684801688
+  ],
+  [
+   1792031525000,
+   494.1470684801688
+  ],
+  [
+   1792031585000,
+   494.1470684801688
+  ],
+  [
+   1792031645000,
+   494.0648684801688
+  ],
+  [
+   1792031705000,
+   494.2292684801688
+  ],
+  [
+   1792031765000,
+   494.3936684801688
+  ],
+  [
+   1792031825000,
+   494.3114684801688
+  ],
+  [
+   1792031885000,
+   494.5580684801688
+  ],
+  [
+   1792031945000,
+   494.9690684801688
+  ],
+  [
+   1792032005000,
+   494.7224684801688
+  ],
+  [
+   1792032065000,
+   494.5580684801688
+  ],
+  [
+   1792032125000,
+   494.7224684801688
+  ],
+  [
+   1792032185000,
+   494.8046684801688
+  ],
+  [
+   1792032245000,
+   495.1334684801688
+  ],
+  [
+   1792032305000,
+   495.2156684801688
+  ],
+  [
+   1792032365000,
+   494.8868684801688
+  ],
+  [
+   1792032425000,
+   494.9690684801688
+  ],
+  [
+   1792032485000,
+   494.8046684801688
+  ],
+  [
+   1792032545000,
+   494.8046684801688
+  ],
+  [
+   1792032605000,
+   494.8046684801688
+  ],
+  [
+   1792032665000,
+   494.5580684801688
+  ],
+  [
+   1792032725000,
+   494.7224684801688
+  ],
+  [
+   1792032785000,
+   494.7224684801688
+  ],
+  [
+   1792032845000,
+   494.6402684801688
+  ],
+  [
+   1792032905000,
+   494.6402684801688
+  ],
+  [
+   1792032965000,
+   494.8868684801688
+  ],
+  [
+   1792033025000,
+   494.7224684801688
+  ],
+  [
+   1792033085000,
+   494.8046684801688
+  ],
+  [
+   1792033145000,
+   494.6402684801688
+  ],
+  [
+   1792033205000,
+   494.0133577325688
+  ],
+  [
+   1792033265000,
+   494.81395773256884
+  ],
+  [
+   1792033325000,
+   496.26655773256886
+  ],
+  [
+   1792033385000,
+   496.2313577325688
+  ],
+  [
+   1792033445000,
+   496.58815773256885
+  ],
+  [
+   1792033505000,
+   496.2331577325688
+  ],
+  [
+   1792033565000,
+   496.0041577325688
+  ],
+  [
+   1792033625000,
+   496.2617577325688
+  ],
+  [
+   1792033685000,
+   495.4271577325688
+  ],
+  [
+   1792033745000,
+   495.57975773256885
+  ],
+  [
+   1792033805000,
+   495.28515773256885
+  ],
+  [
+   1792033865000,
+   495.9435577325688
+  ],
+  [
+   1792033925000,
+   496.2551577325688
+  ],
+  [
+   1792033985000,
+   496.63455773256885
+  ],
+  [
+   1792034045000,
+   496.32175773256876
+  ],
+  [
+   1792034105000,
+   495.9333577325688
+  ],
+  [
+   1792034165000,
+   495.74535773256883
+  ],
+  [
+   1792034225000,
+   495.3231577325688
+  ],
+  [
+   1792034285000,
+   495.4741577325688
+  ],
+  [
+   1792034345000,
+   495.5493577325688
+  ],
+  [
+   1792034405000,
+   496.0413577325688
+  ],
+  [
+   1792034465000,
+   496.6423577325688
+  ],
+  [
+   1792034525000,
+   496.38315773256886
+  ],
+  [
+   1792034585000,
+   497.33295773256884
+  ],
+  [
+   1792034645000,
+   497.18035773256884
+  ],
+  [
+   1792034705000,
+   497.0259577325688
+  ],
+  [
+   1792034765000,
+   497.0183577325688
+  ],
+  [
+   1792034825000,
+   496.8921577325688
+  ],
+  [
+   1792034885000,
+   497.55935773256886
+  ],
+  [
+   1792034945000,
+   497.6673577325688
+  ],
+  [
+   1792035005000,
+   497.44935773256884
+  ],
+  [
+   1792035065000,
+   497.7359577325688
+  ],
+  [
+   1792035125000,
+   497.45115773256884
+  ],
+  [
+   1792035185000,
+   497.5233577325688
+  ],
+  [
+   1792035245000,
+   497.74195773256884
+  ],
+  [
+   1792035305000,
+   497.7025577325688
+  ],
+  [
+   1792035365000,
+   497.9365577325688
+  ],
+  [
+   1792035425000,
+   498.14935773256883
+  ],
+  [
+   1792035485000,
+   497.98215773256885
+  ],
+  [
+   1792035545000,
+   498.0163577325688
+  ],
+  [
+   1792035605000,
+   498.4883577325688
+  ],
+  [
+   1792035665000,
+   498.2085577325688
+  ],
+  [
+   1792035725000,
+   497.9591577325688
+  ],
+  [
+   1792035785000,
+   497.88055773256883
+  ],
+  [
+   1792035845000,
+   498.7753577325688
+  ],
+  [
+   1792035905000,
+   498.62935773256885
+  ],
+  [
+   1792035965000,
+   498.2807577325688
+  ],
+  [
+   1792036025000,
+   498.7087577325688
+  ],
+  [
+   1792036085000,
+   498.8141577325688
+  ],
+  [
+   1792036145000,
+   498.8533577325688
+  ],
+  [
+   1792036205000,
+   498.98415773256886
+  ],
+  [
+   1792036265000,
+   499.1127577325688
+  ],
+  [
+   1792036325000,
+   499.0519577325689
+  ],
+  [
+   1792036385000,
+   498.8997577325688
+  ],
+  [
+   1792036445000,
+   499.21575773256876
+  ],
+  [
+   1792036505000,
+   499.2105577325688
+  ],
+  [
+   1792036565000,
+   499.2241577325688
+  ],
+  [
+   1792036625000,
+   498.6727577325688
+  ],
+  [
+   1792036685000,
+   498.66015773256885
+  ],
+  [
+   1792036745000,
+   498.7685577325688
+  ],
+  [
+   1792036805000,
+   498.7327577325688
+  ],
+  [
+   1792036865000,
+   498.48755773256886
+  ],
+  [
+   1792036925000,
+   498.3515577325688
+  ],
+  [
+   1792036985000,
+   497.5229577325688
+  ],
+  [
+   1792037045000,
+   497.8593577325688
+  ],
+  [
+   1792037105000,
+   497.7751577325688
+  ],
+  [
+   1792037165000,
+   497.8271577325688
+  ],
+  [
+   1792037225000,
+   497.5333577325688
+  ],
+  [
+   1792037285000,
+   497.89735773256876
+  ],
+  [
+   1792037345000,
+   498.00455773256874
+  ],
+  [
+   1792037405000,
+   497.61555773256885
+  ],
+  [
+   1792037465000,
+   497.4747577325689
+  ],
+  [
+   1792037525000,
+   497.5867577325688
+  ],
+  [
+   1792037585000,
+   497.7689577325689
+  ],
+  [
+   1792037645000,
+   497.63295773256885
+  ],
+  [
+   1792037705000,
+   497.87675773256876
+  ],
+  [
+   1792037765000,
+   497.60255773256887
+  ],
+  [
+   1792037825000,
+   497.8323577325688
+  ],
+  [
+   1792037885000,
+   497.36815773256876
+  ],
+  [
+   1792037945000,
+   497.1577577325688
+  ],
+  [
+   1792038005000,
+   496.8071577325688
+  ],
+  [
+   1792038065000,
+   496.79835773256883
+  ],
+  [
+   1792038125000,
+   496.8323577325688
+  ],
+  [
+   1792038185000,
+   496.50375773256883
+  ],
+  [
+   1792038245000,
+   496.13335773256887
+  ],
+  [
+   1792038305000,
+   495.81075773256885
+  ],
+  [
+   1792038365000,
+   496.14255773256883
+  ],
+  [
+   1792038425000,
+   496.0209577325688
+  ],
+  [
+   1792038485000,
+   495.6765577325688
+  ],
+  [
+   1792038545000,
+   495.73955773256876
+  ],
+  [
+   1792038605000,
+   495.38655773256886
+  ],
+  [
+   1792038665000,
+   494.85555773256885
+  ],
+  [
+   1792038725000,
+   494.78815773256883
+  ],
+  [
+   1792038785000,
+   494.3965577325688
+  ],
+  [
+   1792038845000,
+   494.70275773256884
+  ],
+  [
+   1792038905000,
+   494.8719577325688
+  ],
+  [
+   1792038965000,
+   494.3919577325688
+  ],
+  [
+   1792039025000,
+   493.7167577325688
+  ],
+  [
+   1792039085000,
+   494.1269577325688
+  ],
+  [
+   1792039145000,
+   494.52435773256883
+  ],
+  [
+   1792039205000,
+   494.41675773256884
+  ],
+  [
+   1792039265000,
+   493.9755577325688
+  ],
+  [
+   1792039325000,
+   493.9087577325688
+  ],
+  [
+   1792039385000,
+   493.7717577325688
+  ],
+  [
+   1792039445000,
+   493.8777577325688
+  ],
+  [
+   1792039505000,
+   493.67675773256883
+  ],
+  [
+   1792039565000,
+   493.9115577325688
+  ],
+  [
+   1792039625000,
+   494.0267577325688
+  ],
+  [
+   1792039685000,
+   493.6857577325688
+  ],
+  [
+   1792039745000,
+   493.5829577325688
+  ],
+  [
+   1792039805000,
+   493.9703577325688
+  ],
+  [
+   1792039865000,
+   493.9881577325689
+  ],
+  [
+   1792039925000,
+   493.91355773256885
+  ],
+  [
+   1792039985000,
+   493.8115577325688
+  ],
+  [
+   1792040045000,
+   493.4455577325688
+  ],
+  [
+   1792040105000,
+   493.6661577325688
+  ],
+  [
+   1792040165000,
+   493.64415773256883
+  ],
+  [
+   1792040225000,
+   493.5681577325688
+  ],
+  [
+   1792040285000,
+   493.5617577325688
+  ],
+  [
+   1792040345000,
+   493.48215773256885
+  ],
+  [
+   1792040405000,
+   493.8139577325688
+  ],
+  [
+   1792040465000,
+   493.63515773256887
+  ],
+  [
+   1792040525000,
+   493.9447577325688
+  ],
+  [
+   1792040585000,
+   494.2667577325688
+  ],
+  [
+   1792040645000,
+   494.3401577325688
+  ],
+  [
+   1792040705000,
+   493.8117577325688
+  ],
+  [
+   1792040765000,
+   494.3327577325688
+  ],
+  [
+   1792040825000,
+   494.8951577325688
+  ],
+  [
+   1792040885000,
+   495.08655773256885
+  ],
+  [
+   1792040945000,
+   495.14135773256885
+  ],
+  [
+   1792041005000,
+   495.27855773256886
+  ],
+  [
+   1792041065000,
+   495.6107577325688
+  ],
+  [
+   1792041125000,
+   495.7073577325688
+  ],
+  [
+   1792041185000,
+   496.0701577325688
+  ],
+  [
+   1792041245000,
+   495.8001577325688
+  ],
+  [
+   1792041305000,
+   496.2039577325688
+  ],
+  [
+   1792041365000,
+   496.31555773256883
+  ],
+  [
+   1792041425000,
+   496.4265577325688
+  ],
+  [
+   1792041485000,
+   496.2353577325688
+  ],
+  [
+   1792041545000,
+   496.5223577325688
+  ],
+  [
+   1792041605000,
+   496.2711577325688
+  ],
+  [
+   1792041665000,
+   496.4685577325688
+  ],
+  [
+   1792041725000,
+   496.8369577325688
+  ],
+  [
+   1792041785000,
+   496.6783577325688
+  ],
+  [
+   1792041845000,
+   496.82975773256874
+  ],
+  [
+   1792041905000,
+   496.6377577325688
+  ],
+  [
+   1792041965000,
+   496.79315773256883
+  ],
+  [
+   1792042025000,
+   497.02975773256884
+  ],
+  [
+   1792042085000,
+   497.0565577325689
+  ],
+  [
+   1792042145000,
+   497.16875773256885
+  ],
+  [
+   1792042205000,
+   497.1177577325688
+  ],
+  [
+   1792042265000,
+   497.3765577325688
+  ],
+  [
+   1792042325000,
+   497.8239577325688
+  ],
+  [
+   1792042385000,
+   497.8451577325688
+  ],
+  [
+   1792042445000,
+   497.80595773256886
+  ],
+  [
+   1792042505000,
+   498.11655773256877
+  ],
+  [
+   1792042565000,
+   497.8471577325688
+  ],
+  [
+   1792042625000,
+   497.55955773256875
+  ],
+  [
+   1792042685000,
+   497.6231577325688
+  ],
+  [
+   1792042745000,
+   497.57415773256884
+  ],
+  [
+   1792042805000,
+   497.3551577325688
+  ],
+  [
+   1792042865000,
+   497.10815773256877
+  ],
+  [
+   1792042925000,
+   497.4263577325689
+  ],
+  [
+   1792042985000,
+   497.60015773256885
+  ],
+  [
+   1792043045000,
+   497.7587577325688
+  ],
+  [
+   1792043105000,
+   498.0025577325688
+  ],
+  [
+   1792043165000,
+   498.2089577325688
+  ],
+  [
+   1792043225000,
+   498.36895773256884
+  ],
+  [
+   1792043285000,
+   498.9253577325688
+  ],
+  [
+   1792043345000,
+   499.1641577325688
+  ],
+  [
+   1792043405000,
+   499.3097577325688
+  ],
+  [
+   1792043465000,
+   498.6431577325688
+  ],
+  [
+   1792043525000,
+   499.9471577325688
+  ],
+  [
+   1792043585000,
+   500.06035773256883
+  ],
+  [
+   1792043645000,
+   499.9577577325688
+  ],
+  [
+   1792043705000,
+   500.12415773256885
+  ],
+  [
+   1792043765000,
+   499.90115773256883
+  ],
+  [
+   1792043825000,
+   500.2371577325688
+  ],
+  [
+   1792043885000,
+   500.4787577325688
+  ],
+  [
+   1792043945000,
+   499.99855773256877
+  ],
+  [
+   1792044005000,
+   500.1987577325688
+  ],
+  [
+   1792044065000,
+   499.99255773256886
+  ],
+  [
+   1792044125000,
+   499.9559577325689
+  ],
+  [
+   1792044185000,
+   500.2775577325688
+  ],
+  [
+   1792044245000,
+   500.1763577325689
+  ],
+  [
+   1792044305000,
+   500.33135773256885
+  ],
+  [
+   1792044365000,
+   500.9401577325688
+  ],
+  [
+   1792044425000,
+   499.8669577325688
+  ],
+  [
+   1792044485000,
+   499.80895773256884
+  ],
+  [
+   1792044545000,
+   500.00955773256885
+  ],
+  [
+   1792044605000,
+   499.61215773256885
+  ],
+  [
+   1792044665000,
+   499.37075773256885
+  ],
+  [
+   1792044725000,
+   499.52555773256887
+  ],
+  [
+   1792044785000,
+   500.0017577325688
+  ],
+  [
+   1792044845000,
+   500.0609577325688
+  ],
+  [
+   1792044905000,
+   499.7293577325688
+  ],
+  [
+   1792044965000,
+   498.92595773256886
+  ],
+  [
+   1792045025000,
+   498.9915577325689
+  ],
+  [
+   1792045085000,
+   498.6461577325688
+  ],
+  [
+   1792045145000,
+   498.49935773256885
+  ],
+  [
+   1792045205000,
+   498.2497577325688
+  ],
+  [
+   1792045265000,
+   498.77955773256883
+  ],
+  [
+   1792045325000,
+   498.8063577325688
+  ],
+  [
+   1792045385000,
+   498.92335773256883
+  ],
+  [
+   1792045445000,
+   499.3163577325688
+  ],
+  [
+   1792045505000,
+   499.19935773256884
+  ],
+  [
+   1792045565000,
+   498.8233577325688
+  ],
+  [
+   1792045625000,
+   498.4431577325688
+  ],
+  [
+   1792045685000,
+   498.2073577325688
+  ],
+  [
+   1792045745000,
+   498.10195773256885
+  ],
+  [
+   1792045805000,
+   497.9961577325688
+  ],
+  [
+   1792045865000,
+   498.0855577325688
+  ],
+  [
+   1792045925000,
+   498.3369577325688
+  ],
+  [
+   1792045985000,
+   498.1851577325688
+  ],
+  [
+   1792046045000,
+   497.9841577325688
+  ],
+  [
+   1792046105000,
+   497.7471577325688
+  ],
+  [
+   1792046165000,
+   498.04835773256883
+  ],
+  [
+   1792046225000,
+   497.72475773256883
+  ],
+  [
+   1792046285000,
+   497.7627577325688
+  ],
+  [
+   1792046345000,
+   497.52615773256883
+  ],
+  [
+   1792046405000,
+   497.9711577325688
+  ],
+  [
+   1792046465000,
+   497.9365577325688
+  ],
+  [
+   1792046525000,
+   497.8331577325688
+  ],
+  [
+   1792046585000,
+   497.6381577325688
+  ],
+  [
+   1792046645000,
+   497.98895773256885
+  ],
+  [
+   1792046705000,
+   498.18815773256887
+  ],
+  [
+   1792046765000,
+   498.2393577325688
+  ],
+  [
+   1792046825000,
+   499.05215773256884
+  ],
+  [
+   1792046885000,
+   499.1285577325688
+  ],
+  [
+   1792046945000,
+   499.06035773256883
+  ],
+  [
+   1792047005000,
+   499.1195577325688
+  ],
+  [
+   1792047065000,
+   498.89255773256883
+  ],
+  [
+   1792047125000,
+   499.0573577325688
+  ],
+  [
+   1792047185000,
+   498.64775773256883
+  ],
+  [
+   1792047245000,
+   498.8987577325688
+  ],
+  [
+   1792047305000,
+   498.98115773256876
+  ],
+  [
+   1792047365000,
+   498.9375577325688
+  ],
+  [
+   1792047425000,
+   499.12415773256885
+  ],
+  [
+   1792047485000,
+   498.5137577325688
+  ],
+  [
+   1792047545000,
+   498.4933577325688
+  ],
+  [
+   1792047605000,
+   498.4861577325688
+  ],
+  [
+   1792047665000,
+   497.9197577325688
+  ],
+  [
+   1792047725000,
+   498.4089577325688
+  ],
+  [
+   1792047785000,
+   498.25255773256885
+  ],
+  [
+   1792047845000,
+   498.54335773256884
+  ],
+  [
+   1792047905000,
+   498.47315773256884
+  ],
+  [
+   1792047965000,
+   498.5851577325688
+  ],
+  [
+   1792048025000,
+   498.4971577325688
+  ],
+  [
+   1792048085000,
+   498.7765577325688
+  ],
+  [
+   1792048145000,
+   498.3577577325688
+  ],
+  [
+   1792048205000,
+   498.5707577325688
+  ],
+  [
+   1792048265000,
+   497.9407577325688
+  ],
+  [
+   1792048325000,
+   498.37215773256884
+  ],
+  [
+   1792048385000,
+   497.99915773256885
+  ],
+  [
+   1792048445000,
+   497.8903577325689
+  ],
+  [
+   1792048505000,
+   497.8639577325688
+  ],
+  [
+   1792048565000,
+   497.31775773256885
+  ],
+  [
+   1792048625000,
+   497.3853577325688
+  ],
+  [
+   1792048685000,
+   497.3785577325688
+  ],
+  [
+   1792048745000,
+   496.8849577325688
+  ],
+  [
+   1792048805000,
+   497.51915773256883
+  ],
+  [
+   1792048865000,
+   497.7159577325688
+  ],
+  [
+   1792048925000,
+   497.4193577325688
+  ],
+  [
+   1792048985000,
+   497.0499577325688
+  ],
+  [
+   1792049045000,
+   497.02135773256884
+  ],
+  [
+   1792049105000,
+   496.60275773256876
+  ],
+  [
+   1792049165000,
+   496.68055773256884
+  ],
+  [
+   1792049225000,
+   496.54215773256874
+  ],
+  [
+   1792049285000,
+   496.6035577325688
+  ],
+  [
+   1792049345000,
+   496.8975577325688
+  ],
+  [
+   1792049405000,
+   497.13395773256883
+  ],
+  [
+   1792049465000,
+   497.0565577325689
+  ],
+  [
+   1792049525000,
+   497.31075773256885
+  ],
+  [
+   1792049585000,
+   497.02615773256883
+  ],
+  [
+   1792049645000,
+   497.20255773256883
+  ],
+  [
+   1792049705000,
+   497.1349577325688
+  ],
+  [
+   1792049765000,
+   497.4499577325688
+  ],
+  [
+   1792049825000,
+   497.2757577325688
+  ],
+  [
+   1792049885000,
+   497.3325577325689
+  ],
+  [
+   1792049945000,
+   496.8671577325688
+  ],
+  [
+   1792050005000,
+   496.7979577325688
+  ],
+  [
+   1792050065000,
+   496.66735773256886
+  ],
+  [
+   1792050125000,
+   496.66335773256884
+  ],
+  [
+   1792050185000,
+   496.2971577325688
+  ],
+  [
+   1792050245000,
+   496.2141577325689
+  ],
+  [
+   1792050305000,
+   496.4677577325688
+  ],
+  [
+   1792050365000,
+   496.7851577325688
+  ],
+  [
+   1792050425000,
+   497.0293577325688
+  ],
+  [
+   1792050485000,
+   497.09455773256883
+  ],
+  [
+   1792050545000,
+   497.2309577325688
+  ],
+  [
+   1792050605000,
+   497.1473577325688
+  ],
+  [
+   1792050665000,
+   497.48375773256885
+  ],
+  [
+   1792050725000,
+   497.3671577325688
+  ],
+  [
+   1792050785000,
+   497.1201577325688
+  ],
+  [
+   1792050845000,
+   496.9945577325688
+  ],
+  [
+   1792050905000,
+   496.35015773256885
+  ],
+  [
+   1792050965000,
+   496.4063577325688
+  ],
+  [
+   1792051025000,
+   496.2951577325687
+  ],
+  [
+   1792051085000,
+   496.33595773256883
+  ],
+  [
+   1792051145000,
+   496.62695773256877
+  ],
+  [
+   1792051205000,
+   496.21540624151885
+  ],
+  [
+   1792051265000,
+   496.0410062415188
+  ],
+  [
+   1792051325000,
+   496.2500062415188
+  ],
+  [
+   1792051385000,
+   496.48880624151883
+  ],
+  [
+   1792051445000,
+   496.66360624151883
+  ],
+  [
+   1792051505000,
+   496.55920624151884
+  ],
+  [
+   1792051565000,
+   496.65300624151877
+  ],
+  [
+   1792051625000,
+   496.5444062415188
+  ],
+  [
+   1792051685000,
+   497.02300624151883
+  ],
+  [
+   1792051745000,
+   497.16080624151874
+  ],
+  [
+   1792051805000,
+   497.4624062415188
+  ],
+  [
+   1792051865000,
+   497.8072062415188
+  ],
+  [
+   1792051925000,
+   497.57860624151874
+  ],
+  [
+   1792051985000,
+   497.23100624151874
+  ],
+  [
+   1792052045000,
+   497.2946062415188
+  ],
+  [
+   1792052105000,
+   497.1724062415188
+  ],
+  [
+   1792052165000,
+   497.29740624151873
+  ],
+  [
+   1792052225000,
+   497.1464062415188
+  ],
+  [
+   1792052285000,
+   497.3884062415188
+  ],
+  [
+   1792052345000,
+   497.7114062415188
+  ],
+  [
+   1792052405000,
+   497.25760624151883
+  ],
+  [
+   1792052465000,
+   497.17280624151874
+  ],
+  [
+   1792052525000,
+   497.3908062415188
+  ],
+  [
+   1792052585000,
+   496.93020624151876
+  ],
+  [
+   1792052645000,
+   497.1900062415188
+  ],
+  [
+   1792052705000,
+   496.9362062415188
+  ],
+  [
+   1792052765000,
+   496.31180624151887
+  ],
+  [
+   1792052825000,
+   496.3772062415189
+  ],
+  [
+   1792052885000,
+   496.6542062415188
+  ],
+  [
+   1792052945000,
+   496.73580624151873
+  ],
+  [
+   1792053005000,
+   496.4136062415188
+  ],
+  [
+   1792053065000,
+   496.10760624151885
+  ],
+  [
+   1792053125000,
+   496.0526062415188
+  ],
+  [
+   1792053185000,
+   495.9226062415188
+  ],
+  [
+   1792053245000,
+   496.06040624151876
+  ],
+  [
+   1792053305000,
+   496.30600624151873
+  ],
+  [
+   1792053365000,
+   496.1398062415188
+  ],
+  [
+   1792053425000,
+   496.2694062415188
+  ],
+  [
+   1792053485000,
+   496.0304062415188
+  ],
+  [
+   1792053545000,
+   496.0652062415188
+  ],
+  [
+   1792053605000,
+   496.14380624151875
+  ],
+  [
+   1792053665000,
+   496.2514062415188
+  ],
+  [
+   1792053725000,
+   496.3070062415188
+  ],
+  [
+   1792053785000,
+   496.3424062415188
+  ],
+  [
+   1792053845000,
+   496.24280624151885
+  ],
+  [
+   1792053905000,
+   495.9682062415188
+  ],
+  [
+   1792053965000,
+   495.9184062415188
+  ],
+  [
+   1792054025000,
+   495.7326062415188
+  ],
+  [
+   1792054085000,
+   495.51640624151884
+  ],
+  [
+   1792054145000,
+   495.33040624151874
+  ],
+  [
+   1792054205000,
+   495.5030062415188
+  ],
+  [
+   1792054265000,
+   495.8610062415188
+  ],
+  [
+   1792054325000,
+   495.7114062415188
+  ],
+  [
+   1792054385000,
+   495.63960624151883
+  ],
+  [
+   1792054445000,
+   495.55100624151885
+  ],
+  [
+   1792054505000,
+   495.6140062415188
+  ],
+  [
+   1792054565000,
+   495.4864062415188
+  ],
+  [
+   1792054625000,
+   495.7602062415188
+  ],
+  [
+   1792054685000,
+   495.7946062415188
+  ],
+  [
+   1792054745000,
+   495.7034062415188
+  ],
+  [
+   1792054805000,
+   495.6028062415188
+  ],
+  [
+   1792054865000,
+   495.6910062415188
+  ],
+  [
+   1792054925000,
+   495.93880624151876
+  ],
+  [
+   1792054985000,
+   495.51680624151885
+  ],
+  [
+   1792055045000,
+   495.6246062415188
+  ],
+  [
+   1792055105000,
+   495.4752062415188
+  ],
+  [
+   1792055165000,
+   495.6188062415188
+  ],
+  [
+   1792055225000,
+   495.40480624151877
+  ],
+  [
+   1792055285000,
+   495.4962062415188
+  ],
+  [
+   1792055345000,
+   494.98260624151885
+  ],
+  [
+   1792055405000,
+   494.8808062415188
+  ],
+  [
+   1792055465000,
+   494.8522062415188
+  ],
+  [
+   1792055525000,
+   494.9244062415188
+  ],
+  [
+   1792055585000,
+   494.90260624151875
+  ],
+  [
+   1792055645000,
+   494.9470062415188
+  ],
+  [
+   1792055705000,
+   494.8116062415188
+  ],
+  [
+   1792055765000,
+   495.34680624151883
+  ],
+  [
+   1792055825000,
+   495.8350062415188
+  ],
+  [
+   1792055885000,
+   495.5296062415188
+  ],
+  [
+   1792055945000,
+   495.5890062415188
+  ],
+  [
+   1792056005000,
+   495.52280624151877
+  ],
+  [
+   1792056065000,
+   495.3498062415187
+  ],
+  [
+   1792056125000,
+   495.2062062415188
+  ],
+  [
+   1792056185000,
+   495.2850062415189
+  ],
+  [
+   1792056245000,
+   495.36900624151883
+  ],
+  [
+   1792056305000,
+   495.19760624151877
+  ],
+  [
+   1792056365000,
+   495.0342062415188
+  ],
+  [
+   1792056425000,
+   494.7852062415188
+  ],
+  [
+   1792056485000,
+   494.9672062415188
+  ],
+  [
+   1792056545000,
+   495.17500624151876
+  ],
+  [
+   1792056605000,
+   495.1178062415188
+  ],
+  [
+   1792056665000,
+   495.3340062415188
+  ],
+  [
+   1792056725000,
+   495.3222062415188
+  ],
+  [
+   1792056785000,
+   495.1908062415188
+  ],
+  [
+   1792056845000,
+   495.1054062415188
+  ],
+  [
+   1792056905000,
+   495.2440062415188
+  ],
+  [
+   1792056965000,
+   494.97400624151885
+  ],
+  [
+   1792057025000,
+   495.1140062415188
+  ],
+  [
+   1792057085000,
+   495.04140624151876
+  ],
+  [
+   1792057145000,
+   494.93600624151884
+  ],
+  [
+   1792057205000,
+   494.90840624151883
+  ],
+  [
+   1792057265000,
+   494.7216062415188
+  ],
+  [
+   1792057325000,
+   494.6162062415188
+  ],
+  [
+   1792057385000,
+   495.00480624151885
+  ],
+  [
+   1792057445000,
+   495.0410062415188
+  ],
+  [
+   1792057505000,
+   495.48660624151887
+  ],
+  [
+   1792057565000,
+   495.4486062415188
+  ],
+  [
+   1792057625000,
+   495.5084062415188
+  ],
+  [
+   1792057685000,
+   495.31880624151887
+  ],
+  [
+   1792057745000,
+   495.5018062415188
+  ],
+  [
+   1792057805000,
+   495.3912062415188
+  ],
+  [
+   1792057865000,
+   495.28680624151883
+  ],
+  [
+   1792057925000,
+   494.6874062415188
+  ],
+  [
+   1792057985000,
+   494.8320062415188
+  ],
+  [
+   1792058045000,
+   494.99920624151883
+  ],
+  [
+   1792058105000,
+   495.0772062415188
+  ],
+  [
+   1792058165000,
+   495.1786062415188
+  ],
+  [
+   1792058225000,
+   495.0112062415188
+  ],
+  [
+   1792058285000,
+   494.85780624151886
+  ],
+  [
+   1792058345000,
+   495.0416062415188
+  ],
+  [
+   1792058405000,
+   494.9630062415187
+  ],
+  [
+   1792058465000,
+   494.86400624151884
+  ],
+  [
+   1792058525000,
+   494.84960624151876
+  ],
+  [
+   1792058585000,
+   495.04340624151877
+  ],
+  [
+   1792058645000,
+   494.8554062415188
+  ],
+  [
+   1792058705000,
+   495.4018062415188
+  ],
+  [
+   1792058765000,
+   495.15000624151884
+  ],
+  [
+   1792058825000,
+   495.4772062415188
+  ],
+  [
+   1792058885000,
+   495.67180624151877
+  ],
+  [
+   1792058945000,
+   496.07580624151876
+  ],
+  [
+   1792059005000,
+   495.9436062415188
+  ],
+  [
+   1792059065000,
+   496.49280624151885
+  ],
+  [
+   1792059125000,
+   496.28320624151877
+  ],
+  [
+   1792059185000,
+   496.3484062415188
+  ],
+  [
+   1792059245000,
+   496.3960062415188
+  ],
+  [
+   1792059305000,
+   496.7436062415188
+  ],
+  [
+   1792059365000,
+   496.7048062415188
+  ],
+  [
+   1792059425000,
+   496.60200624151884
+  ],
+  [
+   1792059485000,
+   495.84020624151884
+  ],
+  [
+   1792059545000,
+   496.0186062415188
+  ],
+  [
+   1792059605000,
+   496.4298062415188
+  ],
+  [
+   1792059665000,
+   496.69180624151886
+  ],
+  [
+   1792059725000,
+   497.29000624151877
+  ],
+  [
+   1792059785000,
+   497.3252062415188
+  ],
+  [
+   1792059845000,
+   498.0212062415187
+  ],
+  [
+   1792059905000,
+   498.01820624151884
+  ],
+  [
+   1792059965000,
+   497.73380624151883
+  ],
+  [
+   1792060025000,
+   497.79580624151885
+  ],
+  [
+   1792060085000,
+   497.63300624151884
+  ],
+  [
+   1792060145000,
+   497.7336062415188
+  ],
+  [
+   1792060205000,
+   497.6300062415188
+  ],
+  [
+   1792060265000,
+   497.3744062415188
+  ],
+  [
+   1792060325000,
+   497.19100624151883
+  ],
+  [
+   1792060385000,
+   496.8016062415188
+  ],
+  [
+   1792060445000,
+   496.5298062415188
+  ],
+  [
+   1792060505000,
+   496.5380062415188
+  ],
+  [
+   1792060565000,
+   496.53940624151875
+  ],
+  [
+   1792060625000,
+   496.53620624151876
+  ],
+  [
+   1792060685000,
+   496.1980062415188
+  ],
+  [
+   1792060745000,
+   496.3210062415188
+  ],
+  [
+   1792060805000,
+   496.1818062415188
+  ],
+  [
+   1792060865000,
+   496.4126062415188
+  ],
+  [
+   1792060925000,
+   497.0000062415188
+  ],
+  [
+   1792060985000,
+   497.0616062415188
+  ],
+  [
+   1792061045000,
+   497.07140624151884
+  ],
+  [
+   1792061105000,
+   497.4256062415188
+  ],
+  [
+   1792061165000,
+   497.59120624151876
+  ],
+  [
+   1792061225000,
+   497.6790062415188
+  ],
+  [
+   1792061285000,
+   497.3972062415188
+  ],
+  [
+   1792061345000,
+   497.70220624151887
+  ],
+  [
+   1792061405000,
+   497.47180624151883
+  ],
+  [
+   1792061465000,
+   497.5448062415188
+  ],
+  [
+   1792061525000,
+   497.3906062415188
+  ],
+  [
+   1792061585000,
+   497.3880062415188
+  ],
+  [
+   1792061645000,
+   497.08780624151876
+  ],
+  [
+   1792061705000,
+   496.9044062415188
+  ],
+  [
+   1792061765000,
+   496.5686062415188
+  ],
+  [
+   1792061825000,
+   496.72820624151876
+  ],
+  [
+   1792061885000,
+   496.75280624151884
+  ],
+  [
+   1792061945000,
+   496.5720062415188
+  ],
+  [
+   1792062005000,
+   496.63320624151885
+  ],
+  [
+   1792062065000,
+   496.60660624151876
+  ],
+  [
+   1792062125000,
+   497.3724062415188
+  ],
+  [
+   1792062185000,
+   497.7682062415188
+  ],
+  [
+   1792062245000,
+   498.0226062415188
+  ],
+  [
+   1792062305000,
+   498.0310062415188
+  ],
+  [
+   1792062365000,
+   497.3962062415188
+  ],
+  [
+   1792062425000,
+   497.5236062415188
+  ],
+  [
+   1792062485000,
+   497.3778062415188
+  ],
+  [
+   1792062545000,
+   497.22600624151886
+  ],
+  [
+   1792062605000,
+   497.27940624151876
+  ],
+  [
+   1792062665000,
+   497.3320062415188
+  ],
+  [
+   1792062725000,
+   496.8942062415188
+  ],
+  [
+   1792062785000,
+   497.3184062415188
+  ],
+  [
+   1792062845000,
+   497.0790062415188
+  ],
+  [
+   1792062905000,
+   497.0070062415188
+  ],
+  [
+   1792062965000,
+   497.0994062415187
+  ],
+  [
+   1792063025000,
+   497.00360624151875
+  ],
+  [
+   1792063085000,
+   496.84940624151875
+  ],
+  [
+   1792063145000,
+   496.7510062415188
+  ],
+  [
+   1792063205000,
+   497.0946062415188
+  ],
+  [
+   1792063265000,
+   497.2254062415187
+  ],
+  [
+   1792063325000,
+   497.0054062415187
+  ],
+  [
+   1792063385000,
+   497.2690062415188
+  ],
+  [
+   1792063445000,
+   497.5548062415188
+  ],
+  [
+   1792063505000,
+   497.3036062415188
+  ],
+  [
+   1792063565000,
+   497.2382062415188
+  ],
+  [
+   1792063625000,
+   497.0024062415188
+  ],
+  [
+   1792063685000,
+   497.12260624151884
+  ],
+  [
+   1792063745000,
+   496.68240624151883
+  ],
+  [
+   1792063805000,
+   497.0668062415188
+  ],
+  [
+   1792063865000,
+   497.2092062415188
+  ],
+  [
+   1792063925000,
+   496.6074062415188
+  ],
+  [
+   1792063985000,
+   496.4800062415188
+  ],
+  [
+   1792064045000,
+   496.72020624151884
+  ],
+  [
+   1792064105000,
+   496.7112062415188
+  ],
+  [
+   1792064165000,
+   495.9260062415188
+  ],
+  [
+   1792064225000,
+   495.6234062415188
+  ],
+  [
+   1792064285000,
+   495.0614062415188
+  ],
+  [
+   1792064345000,
+   495.3852062415188
+  ],
+  [
+   1792064405000,
+   495.4026062415188
+  ],
+  [
+   1792064465000,
+   495.2362062415188
+  ],
+  [
+   1792064525000,
+   495.39620624151877
+  ],
+  [
+   1792064585000,
+   495.4948062415188
+  ],
+  [
+   1792064645000,
+   495.68260624151884
+  ],
+  [
+   1792064705000,
+   495.5674062415188
+  ],
+  [
+   1792064765000,
+   495.7650062415188
+  ],
+  [
+   1792064825000,
+   495.6712062415188
+  ],
+  [
+   1792064885000,
+   495.4856062415188
+  ],
+  [
+   1792064945000,
+   495.51660624151884
+  ],
+  [
+   1792065005000,
+   495.9390062415188
+  ],
+  [
+   1792065065000,
+   496.2420062415188
+  ],
+  [
+   1792065125000,
+   496.00220624151876
+  ],
+  [
+   1792065185000,
+   496.14640624151883
+  ],
+  [
+   1792065245000,
+   495.9058062415188
+  ],
+  [
+   1792065305000,
+   495.94160624151885
+  ],
+  [
+   1792065365000,
+   495.9596062415188
+  ],
+  [
+   1792065425000,
+   496.0478062415188
+  ],
+  [
+   1792065485000,
+   496.15320624151883
+  ],
+  [
+   1792065545000,
+   496.2986062415188
+  ],
+  [
+   1792065605000,
+   496.3548062415188
+  ],
+  [
+   1792065665000,
+   496.7208062415188
+  ],
+  [
+   1792065725000,
+   496.7214062415188
+  ],
+  [
+   1792065785000,
+   496.68940624151884
+  ],
+  [
+   1792065845000,
+   496.69780624151883
+  ],
+  [
+   1792065905000,
+   496.3920062415188
+  ],
+  [
+   1792065965000,
+   496.68500624151886
+  ],
+  [
+   1792066025000,
+   496.13400624151876
+  ],
+  [
+   1792066085000,
+   496.2846062415188
+  ],
+  [
+   1792066145000,
+   496.4194062415188
+  ],
+  [
+   1792066205000,
+   496.4070062415188
+  ],
+  [
+   1792066265000,
+   496.5398062415188
+  ],
+  [
+   1792066325000,
+   496.6694062415188
+  ],
+  [
+   1792066385000,
+   496.09240624151874
+  ],
+  [
+   1792066445000,
+   495.84180624151884
+  ],
+  [
+   1792066505000,
+   495.9400062415188
+  ],
+  [
+   1792066565000,
+   495.51180624151874
+  ],
+  [
+   1792066625000,
+   495.65900624151885
+  ],
+  [
+   1792066685000,
+   495.6186062415188
+  ],
+  [
+   1792066745000,
+   495.3462062415188
+  ],
+  [
+   1792066805000,
+   495.8376062415188
+  ],
+  [
+   1792066865000,
+   495.76880624151886
+  ],
+  [
+   1792066925000,
+   495.7036062415188
+  ],
+  [
+   1792066985000,
+   495.74800624151885
+  ],
+  [
+   1792067045000,
+   496.0284062415188
+  ],
+  [
+   1792067105000,
+   494.89800624151883
+  ],
+  [
+   1792067165000,
+   495.3690062415188
+  ],
+  [
+   1792067225000,
+   495.40580624151886
+  ],
+  [
+   1792067285000,
+   495.5072062415188
+  ],
+  [
+   1792067345000,
+   495.1930062415188
+  ],
+  [
+   1792067405000,
+   495.0292062415188
+  ],
+  [
+   1792067465000,
+   496.1357454607695
+  ],
+  [
+   1792067525000,
+   497.88267085088955
+  ],
+  [
+   1792067585000,
+   497.2008708508895
+  ],
+  [
+   1792067645000,
+   496.0489708508895
+  ],
+  [
+   1792067705000,
+   496.8075708508894
+  ],
+  [
+   1792067765000,
+   496.5774708508895
+  ],
+  [
+   1792067825000,
+   496.3069708508895
+  ],
+  [
+   1792067885000,
+   496.24397085088947
+  ],
+  [
+   1792067945000,
+   496.60457085088944
+  ],
+  [
+   1792068005000,
+   495.2933708508895
+  ],
+  [
+   1792068065000,
+   495.3156708508895
+  ],
+  [
+   1792068125000,
+   495.55167085088954
+  ],
+  [
+   1792068185000,
+   496.13667085088946
+  ],
+  [
+   1792068245000,
+   495.88127085088945
+  ],
+  [
+   1792068305000,
+   496.28987085088954
+  ],
+  [
+   1792068365000,
+   496.1605708508895
+  ],
+  [
+   1792068425000,
+   496.4614708508895
+  ],
+  [
+   1792068485000,
+   496.18127085088946
+  ],
+  [
+   1792068545000,
+   496.2176708508895
+  ],
+  [
+   1792068605000,
+   496.6290708508895
+  ],
+  [
+   1792068665000,
+   496.67267085088946
+  ],
+  [
+   1792068725000,
+   495.9430708508895
+  ],
+  [
+   1792068785000,
+   496.0003708508895
+  ],
+  [
+   1792068845000,
+   496.13607085088944
+  ],
+  [
+   1792068905000,
+   496.64597085088946
+  ],
+  [
+   1792068965000,
+   496.5058708508895
+  ],
+  [
+   1792069025000,
+   496.5954708508895
+  ],
+  [
+   1792069085000,
+   497.2567708508895
+  ],
+  [
+   1792069145000,
+   497.0038708508895
+  ],
+  [
+   1792069205000,
+   497.1549708508895
+  ],
+  [
+   1792069265000,
+   496.80897085088947
+  ],
+  [
+   1792069325000,
+   496.7018708508895
+  ],
+  [
+   1792069385000,
+   496.8012708508895
+  ],
+  [
+   1792069445000,
+   496.8821708508895
+  ],
+  [
+   1792069505000,
+   496.7360708508895
+  ],
+  [
+   1792069565000,
+   496.6470708508895
+  ],
+  [
+   1792069625000,
+   496.5085708508895
+  ],
+  [
+   1792069685000,
+   496.5180708508895
+  ],
+  [
+   1792069745000,
+   497.18267085088945
+  ],
+  [
+   1792069805000,
+   496.8173708508895
+  ],
+  [
+   1792069865000,
+   496.7354708508895
+  ],
+  [
+   1792069925000,
+   497.03417085088955
+  ],
+  [
+   1792069985000,
+   496.8254708508895
+  ],
+  [
+   1792070045000,
+   496.35807085088953
+  ],
+  [
+   1792070105000,
+   496.4848708508895
+  ],
+  [
+   1792070165000,
+   496.6191708508895
+  ],
+  [
+   1792070225000,
+   497.0232708508895
+  ],
+  [
+   1792070285000,
+   496.7973708508894
+  ],
+  [
+   1792070345000,
+   496.98797085088955
+  ],
+  [
+   1792070405000,
+   497.1224708508895
+  ],
+  [
+   1792070465000,
+   497.6228708508895
+  ],
+  [
+   1792070525000,
+   497.3233708508895
+  ],
+  [
+   1792070585000,
+   497.41647085088954
+  ],
+  [
+   1792070645000,
+   497.1484708508895
+  ],
+  [
+   1792070705000,
+   497.12497085088944
+  ],
+  [
+   1792070765000,
+   497.3950708508895
+  ],
+  [
+   1792070825000,
+   497.66277085088944
+  ],
+  [
+   1792070885000,
+   497.9217708508895
+  ],
+  [
+   1792070945000,
+   498.0603708508895
+  ],
+  [
+   1792071005000,
+   498.22387085088945
+  ],
+  [
+   1792071065000,
+   498.4775708508895
+  ],
+  [
+   1792071125000,
+   497.9442708508895
+  ],
+  [
+   1792071185000,
+   497.0735708508895
+  ],
+  [
+   1792071245000,
+   497.8480708508895
+  ],
+  [
+   1792071305000,
+   497.9720708508895
+  ],
+  [
+   1792071365000,
+   498.8148708508895
+  ],
+  [
+   1792071425000,
+   498.77707085088946
+  ],
+  [
+   1792071485000,
+   497.97807085088954
+  ],
+  [
+   1792071545000,
+   497.86517085088946
+  ],
+  [
+   1792071605000,
+   496.69997085088954
+  ],
+  [
+   1792071665000,
+   497.2941708508895
+  ],
+  [
+   1792071725000,
+   497.0193708508895
+  ],
+  [
+   1792071785000,
+   496.93767085088945
+  ],
+  [
+   1792071845000,
+   496.7454708508895
+  ],
+  [
+   1792071905000,
+   496.89397085088945
+  ],
+  [
+   1792071965000,
+   497.29877085088947
+  ],
+  [
+   1792072025000,
+   497.98717085088947
+  ],
+  [
+   1792072085000,
+   497.4673708508895
+  ],
+  [
+   1792072145000,
+   497.23227085088945
+  ],
+  [
+   1792072205000,
+   497.87527085088954
+  ],
+  [
+   1792072265000,
+   498.5113708508895
+  ],
+  [
+   1792072325000,
+   498.8335708508895
+  ],
+  [
+   1792072385000,
+   498.93847085088953
+  ],
+  [
+   1792072445000,
+   499.8734708508895
+  ],
+  [
+   1792072505000,
+   500.4308708508895
+  ],
+  [
+   1792072565000,
+   498.6524708508895
+  ],
+  [
+   1792072625000,
+   498.61297085088955
+  ],
+  [
+   1792072685000,
+   499.14097085088946
+  ],
+  [
+   1792072745000,
+   498.6911708508895
+  ],
+  [
+   1792072805000,
+   498.8121708508895
+  ],
+  [
+   1792072865000,
+   499.1674708508895
+  ],
+  [
+   1792072925000,
+   498.5665708508895
+  ],
+  [
+   1792072985000,
+   498.1291708508895
+  ],
+  [
+   1792073045000,
+   497.7875708508895
+  ],
+  [
+   1792073105000,
+   497.4437708508895
+  ],
+  [
+   1792073165000,
+   497.0611708508895
+  ],
+  [
+   1792073225000,
+   496.6213708508895
+  ],
+  [
+   1792073285000,
+   496.2353708508895
+  ],
+  [
+   1792073345000,
+   495.9639708508895
+  ],
+  [
+   1792073405000,
+   495.2959708508895
+  ],
+  [
+   1792073465000,
+   494.24217085088947
+  ],
+  [
+   1792073525000,
+   493.81677085088944
+  ],
+  [
+   1792073585000,
+   494.2147708508895
+  ],
+  [
+   1792073645000,
+   494.63787085088944
+  ],
+  [
+   1792073705000,
+   495.03817085088946
+  ],
+  [
+   1792073765000,
+   495.5156708508895
+  ],
+  [
+   1792073825000,
+   495.0026708508895
+  ],
+  [
+   1792073885000,
+   494.6490708508895
+  ],
+  [
+   1792073945000,
+   494.32377085088945
+  ],
+  [
+   1792074005000,
+   493.9639708508895
+  ],
+  [
+   1792074065000,
+   494.3084708508895
+  ],
+  [
+   1792074125000,
+   494.72077085088944
+  ],
+  [
+   1792074185000,
+   494.55547085088944
+  ],
+  [
+   1792074245000,
+   494.0707708508895
+  ],
+  [
+   1792074305000,
+   494.3050708508895
+  ],
+  [
+   1792074365000,
+   493.8802708508895
+  ],
+  [
+   1792074425000,
+   494.25217085088946
+  ],
+  [
+   1792074485000,
+   494.4961708508894
+  ],
+  [
+   1792074545000,
+   494.4182708508894
+  ],
+  [
+   1792074605000,
+   494.4849708508895
+  ],
+  [
+   1792074665000,
+   494.99047085088944
+  ],
+  [
+   1792074725000,
+   495.2454708508895
+  ],
+  [
+   1792074785000,
+   494.7904708508895
+  ],
+  [
+   1792074845000,
+   494.2040708508895
+  ],
+  [
+   1792074905000,
+   493.85887085088956
+  ],
+  [
+   1792074965000,
+   493.81597085088947
+  ],
+  [
+   1792075025000,
+   494.0607708508895
+  ],
+  [
+   1792075085000,
+   493.85237085088954
+  ],
+  [
+   1792075145000,
+   493.51667085088945
+  ],
+  [
+   1792075205000,
+   492.8499708508895
+  ],
+  [
+   1792075265000,
+   492.74827085088947
+  ],
+  [
+   1792075325000,
+   492.3543708508895
+  ],
+  [
+   1792075385000,
+   492.00847085088947
+  ],
+  [
+   1792075445000,
+   492.0293708508895
+  ],
+  [
+   1792075505000,
+   492.40417085088944
+  ],
+  [
+   1792075565000,
+   492.1615708508895
+  ],
+  [
+   1792075625000,
+   492.2427708508895
+  ],
+  [
+   1792075685000,
+   491.612451188343
+  ],
+  [
+   1792075745000,
+   491.413451188343
+  ],
+  [
+   1792075805000,
+   491.596551188343
+  ],
+  [
+   1792075865000,
+   491.6878511883431
+  ],
+  [
+   1792075925000,
+   491.443951188343
+  ],
+  [
+   1792075985000,
+   491.581851188343
+  ],
+  [
+   1792076045000,
+   491.46375118834305
+  ],
+  [
+   1792076105000,
+   491.408151188343
+  ],
+  [
+   1792076165000,
+   491.529451188343
+  ],
+  [
+   1792076225000,
+   491.349851188343
+  ],
+  [
+   1792076285000,
+   491.1484511883431
+  ],
+  [
+   1792076345000,
+   491.19975118834304
+  ],
+  [
+   1792076405000,
+   491.197854379623
+  ],
+  [
+   1792076465000,
+   490.997554379623
+  ],
+  [
+   1792076525000,
+   491.32605437962303
+  ],
+  [
+   1792076585000,
+   490.984254379623
+  ],
+  [
+   1792076645000,
+   490.55277230166394
+  ],
+  [
+   1792076705000,
+   490.5380723016639
+  ],
+  [
+   1792076765000,
+   490.61397230166386
+  ],
+  [
+   1792076825000,
+   490.7305723016639
+  ],
+  [
+   1792076885000,
+   490.7616723016639
+  ],
+  [
+   1792076945000,
+   490.70587230166393
+  ],
+  [
+   1792077005000,
+   490.69477230166393
+  ],
+  [
+   1792077065000,
+   490.75417230166397
+  ],
+  [
+   1792077125000,
+   490.66977230166395
+  ],
+  [
+   1792077185000,
+   490.7445723016639
+  ],
+  [
+   1792077245000,
+   490.75537230166395
+  ],
+  [
+   1792077305000,
+   490.78057230166394
+  ],
+  [
+   1792077365000,
+   490.8082723016639
+  ],
+  [
+   1792077425000,
+   490.7509723016639
+  ],
+  [
+   1792077485000,
+   490.7762723016639
+  ],
+  [
+   1792077545000,
+   490.70787230166394
+  ],
+  [
+   1792077605000,
+   490.67567230166395
+  ],
+  [
+   1792077665000,
+   490.71667230166395
+  ],
+  [
+   1792077725000,
+   490.6799723016639
+  ],
+  [
+   1792077785000,
+   490.63357230166395
+  ],
+  [
+   1792077845000,
+   490.51927230166393
+  ],
+  [
+   1792077905000,
+   490.5547723016639
+  ],
+  [
+   1792077965000,
+   490.653172301664
+  ],
+  [
+   1792078025000,
+   490.6470723016639
+  ],
+  [
+   1792078085000,
+   490.75727230166393
+  ],
+  [
+   1792078145000,
+   490.7355723016639
+  ],
+  [
+   1792078205000,
+   490.7338723016639
+  ],
+  [
+   1792078265000,
+   490.6731723016639
+  ],
+  [
+   1792078325000,
+   490.75557230166396
+  ],
+  [
+   1792078385000,
+   490.73857230166396
+  ],
+  [
+   1792078445000,
+   490.7915723016639
+  ],
+  [
+   1792078505000,
+   490.9249723016639
+  ],
+  [
+   1792078565000,
+   490.9002723016639
+  ],
+  [
+   1792078625000,
+   490.79707230166395
+  ],
+  [
+   1792078685000,
+   490.8671723016639
+  ],
+  [
+   1792078745000,
+   490.9116723016639
+  ],
+  [
+   1792078805000,
+   491.02487230166395
+  ],
+  [
+   1792078865000,
+   490.96197230166393
+  ],
+  [
+   1792078925000,
+   490.9056723016639
+  ],
+  [
+   1792078985000,
+   490.9042723016639
+  ],
+  [
+   1792079045000,
+   490.83897230166394
+  ],
+  [
+   1792079105000,
+   490.87707230166393
+  ],
+  [
+   1792079165000,
+   490.7998723016639
+  ],
+  [
+   1792079225000,
+   490.7319723016639
+  ],
+  [
+   1792079285000,
+   490.7415723016639
+  ],
+  [
+   1792079345000,
+   490.7002723016639
+  ],
+  [
+   1792079405000,
+   490.8333723016639
+  ],
+  [
+   1792079465000,
+   490.81567230166394
+  ],
+  [
+   1792079525000,
+   490.76807230166395
+  ],
+  [
+   1792079585000,
+   490.6941723016639
+  ],
+  [
+   1792079645000,
+   490.70557230166395
+  ],
+  [
+   1792079705000,
+   490.7339723016639
+  ],
+  [
+   1792079765000,
+   490.6899723016639
+  ],
+  [
+   1792079825000,
+   490.7954723016639
+  ],
+  [
+   1792079885000,
+   490.67867230166394
+  ],
+  [
+   1792079945000,
+   490.6609723016639
+  ],
+  [
+   1792080005000,
+   490.5895502495159
+  ],
+  [
+   1792080065000,
+   490.47395024951584
+  ],
+  [
+   1792080125000,
+   490.5667502495159
+  ],
+  [
+   1792080185000,
+   490.3921502495159
+  ],
+  [
+   1792080245000,
+   490.48975024951596
+  ],
+  [
+   1792080305000,
+   490.4727502495159
+  ],
+  [
+   1792080365000,
+   490.5184502495159
+  ],
+  [
+   1792080425000,
+   490.74205024951596
+  ],
+  [
+   1792080485000,
+   490.6889502495159
+  ],
+  [
+   1792080545000,
+   490.6302502495159
+  ],
+  [
+   1792080605000,
+   490.72095024951597
+  ],
+  [
+   1792080665000,
+   490.71645024951596
+  ],
+  [
+   1792080725000,
+   490.61255024951595
+  ],
+  [
+   1792080785000,
+   490.5133502495159
+  ],
+  [
+   1792080845000,
+   490.5263502495159
+  ],
+  [
+   1792080905000,
+   490.4196502495159
+  ],
+  [
+   1792080965000,
+   490.27665024951597
+  ],
+  [
+   1792081025000,
+   490.2784502495159
+  ],
+  [
+   1792081085000,
+   490.2266502495159
+  ],
+  [
+   1792081145000,
+   490.1759502495159
+  ],
+  [
+   1792081205000,
+   490.1577502495159
+  ],
+  [
+   1792081265000,
+   490.2561502495159
+  ],
+  [
+   1792081325000,
+   490.1680502495159
+  ],
+  [
+   1792081385000,
+   490.0594502495159
+  ],
+  [
+   1792081445000,
+   489.9918502495159
+  ],
+  [
+   1792081505000,
+   490.0026502495159
+  ],
+  [
+   1792081565000,
+   489.99155024951597
+  ],
+  [
+   1792081625000,
+   489.7523502495159
+  ],
+  [
+   1792081685000,
+   489.74405024951596
+  ],
+  [
+   1792081745000,
+   489.8309502495159
+  ],
+  [
+   1792081805000,
+   489.80525024951595
+  ],
+  [
+   1792081865000,
+   489.80935024951594
+  ],
+  [
+   1792081925000,
+   489.6701502495159
+  ],
+  [
+   1792081985000,
+   489.7721502495159
+  ],
+  [
+   1792082045000,
+   489.6932502495159
+  ],
+  [
+   1792082105000,
+   489.86915024951594
+  ],
+  [
+   1792082165000,
+   489.9428502495159
+  ],
+  [
+   1792082225000,
+   490.0216502495159
+  ],
+  [
+   1792082285000,
+   489.9636502495159
+  ],
+  [
+   1792082345000,
+   490.05235024951594
+  ],
+  [
+   1792082405000,
+   490.049050249516
+  ],
+  [
+   1792082465000,
+   490.1719502495159
+  ],
+  [
+   1792082525000,
+   490.2989502495159
+  ],
+  [
+   1792082585000,
+   490.2789502495159
+  ],
+  [
+   1792082645000,
+   490.2816502495159
+  ],
+  [
+   1792082705000,
+   490.26095024951593
+  ],
+  [
+   1792082765000,
+   490.3309502495159
+  ],
+  [
+   1792082825000,
+   490.2939502495159
+  ],
+  [
+   1792082885000,
+   490.2438502495159
+  ],
+  [
+   1792082945000,
+   490.26385024951594
+  ],
+  [
+   1792083005000,
+   490.36685024951595
+  ],
+  [
+   1792083065000,
+   490.34185024951586
+  ],
+  [
+   1792083125000,
+   490.22665024951596
+  ],
+  [
+   1792083185000,
+   490.3247502495159
+  ],
+  [
+   1792083245000,
+   490.3364502495159
+  ],
+  [
+   1792083305000,
+   490.3323502495159
+  ],
+  [
+   1792083365000,
+   490.3389502495159
+  ],
+  [
+   1792083425000,
+   490.4710502495159
+  ],
+  [
+   1792083485000,
+   490.4256502495159
+  ],
+  [
+   1792083545000,
+   490.43145024951593
+  ],
+  [
+   1792083605000,
+   490.44005024951593
+  ],
+  [
+   1792083665000,
+   490.5736502495159
+  ],
+  [
+   1792083725000,
+   490.4733502495159
+  ],
+  [
+   1792083785000,
+   490.47075024951596
+  ],
+  [
+   1792083845000,
+   490.40355024951594
+  ],
+  [
+   1792083905000,
+   490.32365024951594
+  ],
+  [
+   1792083965000,
+   490.5013502495159
+  ],
+  [
+   1792084025000,
+   490.50475024951595
+  ],
+  [
+   1792084085000,
+   490.4557502495159
+  ],
+  [
+   1792084145000,
+   490.45885024951593
+  ],
+  [
+   1792084205000,
+   490.52905024951593
+  ],
+  [
+   1792084265000,
+   490.5190502495159
+  ],
+  [
+   1792084325000,
+   490.5717502495159
+  ],
+  [
+   1792084385000,
+   490.42475024951585
+  ],
+  [
+   1792084445000,
+   490.5139502495159
+  ],
+  [
+   1792084505000,
+   490.57115024951594
+  ],
+  [
+   1792084565000,
+   490.5631502495159
+  ],
+  [
+   1792084625000,
+   490.83435024951586
+  ],
+  [
+   1792084685000,
+   490.7626502495159
+  ],
+  [
+   1792084745000,
+   490.87055024951593
+  ],
+  [
+   1792084805000,
+   490.93795024951595
+  ],
+  [
+   1792084865000,
+   490.906750249516
+  ],
+  [
+   1792084925000,
+   491.1496502495159
+  ],
+  [
+   1792084985000,
+   491.1806502495159
+  ],
+  [
+   1792085045000,
+   491.00935024951593
+  ],
+  [
+   1792085105000,
+   490.7760502495159
+  ],
+  [
+   1792085165000,
+   490.866250249516
+  ],
+  [
+   1792085225000,
+   490.7799502495159
+  ],
+  [
+   1792085285000,
+   490.76965024951596
+  ],
+  [
+   1792085345000,
+   490.69295024951595
+  ],
+  [
+   1792085405000,
+   490.6867502495159
+  ],
+  [
+   1792085465000,
+   490.66805024951594
+  ],
+  [
+   1792085525000,
+   490.6702502495159
+  ],
+  [
+   1792085585000,
+   490.73005024951595
+  ],
+  [
+   1792085645000,
+   490.67715024951593
+  ],
+  [
+   1792085705000,
+   490.67785024951587
+  ],
+  [
+   1792085765000,
+   490.6115502495159
+  ],
+  [
+   1792085825000,
+   490.60655024951586
+  ],
+  [
+   1792085885000,
+   490.6300502495159
+  ],
+  [
+   1792085945000,
+   490.6583502495159
+  ],
+  [
+   1792086005000,
+   490.7048502495159
+  ],
+  [
+   1792086065000,
+   490.69335024951596
+  ],
+  [
+   1792086125000,
+   490.76715024951596
+  ],
+  [
+   1792086185000,
+   490.83285024951584
+  ],
+  [
+   1792086245000,
+   490.7752502495159
+  ],
+  [
+   1792086305000,
+   490.73355024951593
+  ],
+  [
+   1792086365000,
+   490.7520502495159
+  ],
+  [
+   1792086425000,
+   490.7942502495159
+  ],
+  [
+   1792086485000,
+   490.8340502495159
+  ],
+  [
+   1792086545000,
+   490.85185024951585
+  ],
+  [
+   1792086605000,
+   490.83525024951587
+  ],
+  [
+   1792086665000,
+   490.8547502495159
+  ],
+  [
+   1792086725000,
+   490.80645024951593
+  ],
+  [
+   1792086785000,
+   490.7771502495159
+  ],
+  [
+   1792086845000,
+   490.7470502495159
+  ],
+  [
+   1792086905000,
+   490.68765024951597
+  ],
+  [
+   1792086965000,
+   490.635050249516
+  ],
+  [
+   1792087025000,
+   490.6962502495159
+  ],
+  [
+   1792087085000,
+   490.7386502495159
+  ],
+  [
+   1792087145000,
+   490.7534502495159
+  ],
+  [
+   1792087205000,
+   490.7093502495159
+  ],
+  [
+   1792087265000,
+   490.5859502495159
+  ],
+  [
+   1792087325000,
+   490.5214502495159
+  ],
+  [
+   1792087385000,
+   490.5444502495159
+  ],
+  [
+   1792087445000,
+   490.5560502495159
+  ],
+  [
+   1792087505000,
+   490.5603502495159
+  ],
+  [
+   1792087565000,
+   490.5369502495159
+  ],
+  [
+   1792087625000,
+   490.65005024951597
+  ],
+  [
+   1792087685000,
+   490.627350249516
+  ],
+  [
+   1792087745000,
+   490.5760502495159
+  ],
+  [
+   1792087805000,
+   490.65075024951597
+  ],
+  [
+   1792087865000,
+   490.6225502495159
+  ],
+  [
+   1792087925000,
+   490.46825024951596
+  ],
+  [
+   1792087985000,
+   490.46445024951595
+  ],
+  [
+   1792088045000,
+   490.4986502495159
+  ],
+  [
+   1792088105000,
+   490.533650249516
+  ],
+  [
+   1792088165000,
+   490.56415024951593
+  ],
+  [
+   1792088225000,
+   490.5014502495159
+  ],
+  [
+   1792088285000,
+   490.6177502495159
+  ],
+  [
+   1792088345000,
+   490.60515024951593
+  ],
+  [
+   1792088405000,
+   490.57355024951596
+  ],
+  [
+   1792088465000,
+   490.5714502495159
+  ],
+  [
+   1792088525000,
+   490.4762502495159
+  ],
+  [
+   1792088585000,
+   490.4955502495159
+  ],
+  [
+   1792088645000,
+   490.46545024951587
+  ],
+  [
+   1792088705000,
+   490.4643502495159
+  ],
+  [
+   1792088765000,
+   490.5082502495159
+  ],
+  [
+   1792088825000,
+   490.46365024951587
+  ],
+  [
+   1792088885000,
+   490.4758502495159
+  ],
+  [
+   1792088945000,
+   490.51855024951595
+  ],
+  [
+   1792089005000,
+   490.5027502495159
+  ],
+  [
+   1792089065000,
+   490.57285024951597
+  ],
+  [
+   1792089125000,
+   490.4727502495159
+  ],
+  [
+   1792089185000,
+   490.5723502495159
+  ],
+  [
+   1792089245000,
+   490.56765024951596
+  ],
+  [
+   1792089305000,
+   490.5993502495159
+  ],
+  [
+   1792089365000,
+   490.71795024951587
+  ],
+  [
+   1792089425000,
+   490.6393502495159
+  ],
+  [
+   1792089485000,
+   490.69615024951594
+  ],
+  [
+   1792089545000,
+   490.6434502495159
+  ],
+  [
+   1792089605000,
+   490.5954502495159
+  ],
+  [
+   1792089665000,
+   490.6520502495159
+  ],
+  [
+   1792089725000,
+   490.69925024951596
+  ],
+  [
+   1792089785000,
+   490.6547502495159
+  ],
+  [
+   1792089845000,
+   490.8138502495159
+  ],
+  [
+   1792089905000,
+   490.8201502495159
+  ],
+  [
+   1792089965000,
+   490.80495024951585
+  ],
+  [
+   1792090025000,
+   490.8178502495159
+  ],
+  [
+   1792090085000,
+   490.7598502495159
+  ],
+  [
+   1792090145000,
+   490.7766502495159
+  ],
+  [
+   1792090205000,
+   490.77565024951593
+  ],
+  [
+   1792090265000,
+   490.7253502495159
+  ],
+  [
+   1792090325000,
+   490.7137502495159
+  ],
+  [
+   1792090385000,
+   490.7632502495159
+  ],
+  [
+   1792090445000,
+   490.68485024951593
+  ],
+  [
+   1792090505000,
+   490.7354502495159
+  ],
+  [
+   1792090565000,
+   490.73555024951594
+  ],
+  [
+   1792090625000,
+   490.72175024951594
+  ],
+  [
+   1792090685000,
+   490.7268502495159
+  ],
+  [
+   1792090745000,
+   490.7211502495159
+  ],
+  [
+   1792090805000,
+   490.7869502495159
+  ],
+  [
+   1792090865000,
+   490.77365024951587
+  ],
+  [
+   1792090925000,
+   490.84835024951593
+  ],
+  [
+   1792090985000,
+   490.8816502495159
+  ],
+  [
+   1792091045000,
+   490.9394502495159
+  ],
+  [
+   1792091105000,
+   490.9090502495159
+  ],
+  [
+   1792091165000,
+   490.9654502495159
+  ],
+  [
+   1792091225000,
+   491.00475024951595
+  ],
+  [
+   1792091285000,
+   490.8352502495159
+  ],
+  [
+   1792091345000,
+   490.77645024951596
+  ],
+  [
+   1792091405000,
+   490.77645024951596
+  ],
+  [
+   1792091465000,
+   490.7195502495159
+  ],
+  [
+   1792091525000,
+   490.78515024951594
+  ],
+  [
+   1792091585000,
+   490.7574502495159
+  ],
+  [
+   1792091645000,
+   490.7976502495159
+  ],
+  [
+   1792091705000,
+   490.7737502495159
+  ],
+  [
+   1792091765000,
+   490.8411502495159
+  ],
+  [
+   1792091825000,
+   490.9255502495159
+  ],
+  [
+   1792091885000,
+   490.9362502495159
+  ],
+  [
+   1792091945000,
+   490.94325024951587
+  ],
+  [
+   1792092005000,
+   491.03605024951594
+  ],
+  [
+   1792092065000,
+   491.02415024951597
+  ],
+  [
+   1792092125000,
+   491.10035024951594
+  ],
+  [
+   1792092185000,
+   491.06145024951593
+  ],
+  [
+   1792092245000,
+   491.0748502495159
+  ],
+  [
+   1792092305000,
+   491.03715024951595
+  ],
+  [
+   1792092365000,
+   490.96905024951593
+  ],
+  [
+   1792092425000,
+   491.0367502495159
+  ],
+  [
+   1792092485000,
+   490.98315024951586
+  ],
+  [
+   1792092545000,
+   491.0174502495159
+  ],
+  [
+   1792092605000,
+   490.9312502495159
+  ],
+  [
+   1792092665000,
+   490.8853502495159
+  ],
+  [
+   1792092725000,
+   490.87795024951595
+  ],
+  [
+   1792092785000,
+   490.92105024951593
+  ],
+  [
+   1792092845000,
+   490.91715024951594
+  ],
+  [
+   1792092905000,
+   490.87585024951596
+  ],
+  [
+   1792092965000,
+   490.89895024951596
+  ],
+  [
+   1792093025000,
+   490.911550249516
+  ],
+  [
+   1792093085000,
+   490.9628502495159
+  ],
+  [
+   1792093145000,
+   490.9765502495159
+  ],
+  [
+   1792093205000,
+   491.0406502495159
+  ],
+  [
+   1792093265000,
+   491.0664502495159
+  ],
+  [
+   1792093325000,
+   491.09315024951593
+  ],
+  [
+   1792093385000,
+   491.1104502495159
+  ],
+  [
+   1792093445000,
+   490.9915502495159
+  ],
+  [
+   1792093505000,
+   491.0794502495159
+  ],
+  [
+   1792093565000,
+   491.08705024951587
+  ],
+  [
+   1792093625000,
+   491.1078502495159
+  ],
+  [
+   1792093685000,
+   491.147950249516
+  ],
+  [
+   1792093745000,
+   491.160650249516
+  ],
+  [
+   1792093805000,
+   491.2202502495159
+  ],
+  [
+   1792093865000,
+   491.0443502495159
+  ],
+  [
+   1792093925000,
+   491.1057502495159
+  ],
+  [
+   1792093985000,
+   491.1735502495159
+  ],
+  [
+   1792094045000,
+   491.2166502495159
+  ],
+  [
+   1792094105000,
+   491.15485024951596
+  ],
+  [
+   1792094165000,
+   491.0277502495159
+  ],
+  [
+   1792094225000,
+   491.0555502495159
+  ],
+  [
+   1792094285000,
+   491.0457502495159
+  ],
+  [
+   1792094345000,
+   491.0610502495159
+  ],
+  [
+   1792094405000,
+   491.0373502495159
+  ],
+  [
+   1792094465000,
+   490.9252502495159
+  ],
+  [
+   1792094525000,
+   490.9026502495159
+  ],
+  [
+   1792094585000,
+   490.98285024951593
+  ],
+  [
+   1792094645000,
+   491.01995024951594
+  ],
+  [
+   1792094705000,
+   491.1011502495159
+  ],
+  [
+   1792094765000,
+   490.961850249516
+  ],
+  [
+   1792094825000,
+   491.0193502495159
+  ],
+  [
+   1792094885000,
+   490.9544502495159
+  ],
+  [
+   1792094945000,
+   491.01695024951596
+  ],
+  [
+   1792095005000,
+   491.0566502495159
+  ],
+  [
+   1792095065000,
+   490.9836502495159
+  ],
+  [
+   1792095125000,
+   490.9828502495159
+  ],
+  [
+   1792095185000,
+   490.9264502495159
+  ],
+  [
+   1792095245000,
+   490.9770502495159
+  ],
+  [
+   1792095305000,
+   490.9413502495159
+  ],
+  [
+   1792095365000,
+   491.0255502495159
+  ],
+  [
+   1792095425000,
+   491.0017502495159
+  ],
+  [
+   1792095485000,
+   491.10735024951595
+  ],
+  [
+   1792095545000,
+   491.11595024951595
+  ],
+  [
+   1792095605000,
+   491.27065024951594
+  ],
+  [
+   1792095665000,
+   491.2304502495159
+  ],
+  [
+   1792095725000,
+   491.2805502495159
+  ],
+  [
+   1792095785000,
+   491.17025024951596
+  ],
+  [
+   1792095845000,
+   491.1563502495159
+  ],
+  [
+   1792095905000,
+   491.1957502495159
+  ],
+  [
+   1792095965000,
+   491.21195024951595
+  ],
+  [
+   1792096025000,
+   491.2917502495159
+  ],
+  [
+   1792096085000,
+   491.29665024951595
+  ],
+  [
+   1792096145000,
+   491.1593502495159
+  ],
+  [
+   1792096205000,
+   491.0984502495159
+  ],
+  [
+   1792096265000,
+   491.0630502495159
+  ],
+  [
+   1792096325000,
+   491.0835502495159
+  ],
+  [
+   1792096385000,
+   491.0264502495159
+  ],
+  [
+   1792096445000,
+   490.98105024951593
+  ],
+  [
+   1792096505000,
+   491.0309502495159
+  ],
+  [
+   1792096565000,
+   491.11995024951585
+  ],
+  [
+   1792096625000,
+   491.0556502495159
+  ],
+  [
+   1792096685000,
+   491.1460502495159
+  ],
+  [
+   1792096745000,
+   491.1419502495159
+  ],
+  [
+   1792096805000,
+   491.0562502495159
+  ],
+  [
+   1792096865000,
+   490.9551502495159
+  ],
+  [
+   1792096925000,
+   491.0112502495159
+  ],
+  [
+   1792096985000,
+   490.946850249516
+  ],
+  [
+   1792097045000,
+   490.98395024951594
+  ],
+  [
+   1792097105000,
+   491.05055024951594
+  ],
+  [
+   1792097165000,
+   491.0452502495159
+  ],
+  [
+   1792097225000,
+   491.0555502495159
+  ],
+  [
+   1792097285000,
+   491.163850249516
+  ],
+  [
+   1792097345000,
+   491.1051502495159
+  ],
+  [
+   1792097405000,
+   491.0549502495159
+  ],
+  [
+   1792097465000,
+   490.97185024951585
+  ],
+  [
+   1792097525000,
+   490.92805024951593
+  ],
+  [
+   1792097585000,
+   490.93025024951595
+  ],
+  [
+   1792097645000,
+   490.83285024951596
+  ],
+  [
+   1792097705000,
+   490.8327502495159
+  ],
+  [
+   1792097765000,
+   490.7391502495159
+  ],
+  [
+   1792097825000,
+   490.688750249516
+  ],
+  [
+   1792097885000,
+   490.83015024951595
+  ],
+  [
+   1792097945000,
+   490.76065024951595
+  ],
+  [
+   1792098005000,
+   490.7920502495159
+  ],
+  [
+   1792098065000,
+   490.7438502495159
+  ],
+  [
+   1792098125000,
+   490.73155024951586
+  ],
+  [
+   1792098185000,
+   490.7578502495159
+  ],
+  [
+   1792098245000,
+   490.7281502495159
+  ],
+  [
+   1792098305000,
+   490.777750249516
+  ],
+  [
+   1792098365000,
+   490.68435024951594
+  ],
+  [
+   1792098425000,
+   490.7086502495159
+  ],
+  [
+   1792098485000,
+   490.5981502495159
+  ],
+  [
+   1792098545000,
+   490.7148502495159
+  ],
+  [
+   1792098605000,
+   490.65035024951595
+  ],
+  [
+   1792098665000,
+   490.6760502495159
+  ],
+  [
+   1792098725000,
+   490.7508502495159
+  ],
+  [
+   1792098785000,
+   490.68285024951587
+  ],
+  [
+   1792098845000,
+   490.6482502495159
+  ],
+  [
+   1792098905000,
+   490.6869502495159
+  ],
+  [
+   1792098965000,
+   490.6820502495159
+  ],
+  [
+   1792099025000,
+   490.71625024951595
+  ],
+  [
+   1792099085000,
+   490.725450249516
+  ],
+  [
+   1792099145000,
+   490.6641502495159
+  ],
+  [
+   1792099205000,
+   490.77195024951595
+  ],
+  [
+   1792099265000,
+   490.72895024951595
+  ],
+  [
+   1792099325000,
+   490.83155024951594
+  ],
+  [
+   1792099385000,
+   490.77875024951595
+  ],
+  [
+   1792099445000,
+   490.8374502495159
+  ],
+  [
+   1792099505000,
+   490.72245024951593
+  ],
+  [
+   1792099565000,
+   490.71515024951594
+  ],
+  [
+   1792099625000,
+   490.7219502495159
+  ],
+  [
+   1792099685000,
+   490.81665024951593
+  ],
+  [
+   1792099745000,
+   490.82405024951595
+  ],
+  [
+   1792099805000,
+   490.8960502495159
+  ],
+  [
+   1792099865000,
+   490.90405024951593
+  ],
+  [
+   1792099925000,
+   490.9712502495159
+  ],
+  [
+   1792099985000,
+   490.8842502495159
+  ],
+  [
+   1792100045000,
+   490.8169502495159
+  ],
+  [
+   1792100105000,
+   490.85235024951595
+  ],
+  [
+   1792100165000,
+   490.84515024951594
+  ],
+  [
+   1792100225000,
+   490.89695024951595
+  ],
+  [
+   1792100285000,
+   490.9179502495159
+  ],
+  [
+   1792100345000,
+   490.85305024951595
+  ],
+  [
+   1792100405000,
+   490.8608502495159
+  ],
+  [
+   1792100465000,
+   490.9069502495159
+  ],
+  [
+   1792100525000,
+   490.8916502495159
+  ],
+  [
+   1792100585000,
+   490.89695024951595
+  ],
+  [
+   1792100645000,
+   490.823050249516
+  ],
+  [
+   1792100705000,
+   490.80475024951596
+  ],
+  [
+   1792100765000,
+   490.7102502495159
+  ],
+  [
+   1792100825000,
+   490.70465024951585
+  ],
+  [
+   1792100885000,
+   490.70815024951594
+  ],
+  [
+   1792100945000,
+   490.7249502495159
+  ],
+  [
+   1792101005000,
+   490.7700502495159
+  ],
+  [
+   1792101065000,
+   490.7175502495159
+  ],
+  [
+   1792101125000,
+   490.6445502495159
+  ],
+  [
+   1792101185000,
+   490.6053502495159
+  ],
+  [
+   1792101245000,
+   490.65045024951587
+  ],
+  [
+   1792101305000,
+   490.684650249516
+  ],
+  [
+   1792101365000,
+   490.69855024951596
+  ],
+  [
+   1792101425000,
+   490.72255024951596
+  ],
+  [
+   1792101485000,
+   490.6887502495159
+  ],
+  [
+   1792101545000,
+   490.5961502495159
+  ],
+  [
+   1792101605000,
+   490.6629502495159
+  ],
+  [
+   1792101665000,
+   490.75405024951596
+  ],
+  [
+   1792101725000,
+   490.84705024951586
+  ],
+  [
+   1792101785000,
+   490.7365502495159
+  ],
+  [
+   1792101845000,
+   490.8296502495159
+  ],
+  [
+   1792101905000,
+   490.79625024951594
+  ],
+  [
+   1792101965000,
+   490.74315024951596
+  ],
+  [
+   1792102025000,
+   490.6717502495159
+  ],
+  [
+   1792102085000,
+   490.73525024951596
+  ],
+  [
+   1792102145000,
+   490.6861502495159
+  ],
+  [
+   1792102205000,
+   490.6903502495159
+  ],
+  [
+   1792102265000,
+   490.58725024951593
+  ],
+  [
+   1792102325000,
+   490.6583502495159
+  ],
+  [
+   1792102385000,
+   490.63405024951595
+  ],
+  [
+   1792102445000,
+   490.6408502495159
+  ],
+  [
+   1792102505000,
+   490.63935024951587
+  ],
+  [
+   1792102565000,
+   490.58855024951595
+  ],
+  [
+   1792102625000,
+   490.61595024951595
+  ],
+  [
+   1792102685000,
+   490.52295024951593
+  ],
+  [
+   1792102745000,
+   490.5895502495159
+  ],
+  [
+   1792102805000,
+   490.5832502495159
+  ],
+  [
+   1792102865000,
+   490.5200502495159
+  ],
+  [
+   1792102925000,
+   490.5238502495159
+  ],
+  [
+   1792102985000,
+   490.5302502495159
+  ],
+  [
+   1792103045000,
+   490.51895024951597
+  ],
+  [
+   1792103105000,
+   490.55725024951596
+  ],
+  [
+   1792103165000,
+   490.4863502495159
+  ],
+  [
+   1792103225000,
+   490.58745024951594
+  ],
+  [
+   1792103285000,
+   490.56185024951594
+  ],
+  [
+   1792103345000,
+   490.51085024951595
+  ],
+  [
+   1792103405000,
+   490.5317502495159
+  ],
+  [
+   1792103465000,
+   490.5730502495159
+  ],
+  [
+   1792103525000,
+   490.53095024951585
+  ],
+  [
+   1792103585000,
+   490.4300502495159
+  ],
+  [
+   1792103645000,
+   490.4881502495159
+  ],
+  [
+   1792103705000,
+   490.5610502495159
+  ],
+  [
+   1792103765000,
+   490.5653502495159
+  ],
+  [
+   1792103825000,
+   490.57125024951586
+  ],
+  [
+   1792103885000,
+   490.5310502495159
+  ],
+  [
+   1792103945000,
+   490.4703502495159
+  ],
+  [
+   1792104005000,
+   490.4980502495159
+  ],
+  [
+   1792104065000,
+   490.5056502495159
+  ],
+  [
+   1792104125000,
+   490.4834502495159
+  ],
+  [
+   1792104185000,
+   490.4448502495159
+  ],
+  [
+   1792104245000,
+   490.4781502495159
+  ],
+  [
+   1792104305000,
+   490.5240502495159
+  ],
+  [
+   1792104365000,
+   490.4934502495159
+  ],
+  [
+   1792104425000,
+   490.44195024951597
+  ],
+  [
+   1792104485000,
+   490.47065024951587
+  ],
+  [
+   1792104545000,
+   490.39675024951595
+  ],
+  [
+   1792104605000,
+   490.4386502495159
+  ],
+  [
+   1792104665000,
+   490.3853502495159
+  ],
+  [
+   1792104725000,
+   490.38855024951596
+  ],
+  [
+   1792104785000,
+   490.38285024951597
+  ],
+  [
+   1792104845000,
+   490.4167502495159
+  ],
+  [
+   1792104905000,
+   490.3609502495159
+  ],
+  [
+   1792104965000,
+   490.4004502495159
+  ],
+  [
+   1792105025000,
+   490.3620502495159
+  ],
+  [
+   1792105085000,
+   490.3687502495159
+  ],
+  [
+   1792105145000,
+   490.31175024951597
+  ],
+  [
+   1792105205000,
+   490.3212502495159
+  ],
+  [
+   1792105265000,
+   490.2361502495159
+  ],
+  [
+   1792105325000,
+   490.1461502495159
+  ],
+  [
+   1792105385000,
+   490.1262502495159
+  ],
+  [
+   1792105445000,
+   490.0280502495159
+  ],
+  [
+   1792105505000,
+   490.1176502495159
+  ],
+  [
+   1792105565000,
+   490.1591502495159
+  ],
+  [
+   1792105625000,
+   490.02665024951597
+  ],
+  [
+   1792105685000,
+   490.16735024951595
+  ],
+  [
+   1792105745000,
+   490.1106502495159
+  ],
+  [
+   1792105805000,
+   490.1017502495159
+  ],
+  [
+   1792105865000,
+   490.05685024951595
+  ],
+  [
+   1792105925000,
+   489.99665024951594
+  ],
+  [
+   1792105985000,
+   489.92505024951595
+  ],
+  [
+   1792106045000,
+   489.8423502495159
+  ],
+  [
+   1792106105000,
+   489.8323502495159
+  ],
+  [
+   1792106165000,
+   489.7974502495159
+  ],
+  [
+   1792106225000,
+   489.8251502495159
+  ],
+  [
+   1792106285000,
+   489.71335024951594
+  ],
+  [
+   1792106345000,
+   489.7607502495159
+  ],
+  [
+   1792106405000,
+   489.7613502495159
+  ],
+  [
+   1792106465000,
+   489.7085502495159
+  ],
+  [
+   1792106525000,
+   489.6705502495159
+  ],
+  [
+   1792106585000,
+   489.69595024951593
+  ],
+  [
+   1792106645000,
+   489.6276502495159
+  ],
+  [
+   1792106705000,
+   489.6451502495159
+  ],
+  [
+   1792106765000,
+   489.6849502495159
+  ],
+  [
+   1792106825000,
+   489.76675024951595
+  ],
+  [
+   1792106885000,
+   489.7818502495159
+  ],
+  [
+   1792106945000,
+   489.7714502495159
+  ],
+  [
+   1792107005000,
+   489.8143502495159
+  ],
+  [
+   1792107065000,
+   489.8752502495159
+  ],
+  [
+   1792107125000,
+   489.8930502495159
+  ],
+  [
+   1792107185000,
+   489.8921502495159
+  ],
+  [
+   1792107245000,
+   489.93615024951595
+  ],
+  [
+   1792107305000,
+   489.7788502495159
+  ],
+  [
+   1792107365000,
+   489.7531502495159
+  ],
+  [
+   1792107425000,
+   489.76105024951596
+  ],
+  [
+   1792107485000,
+   489.74845024951594
+  ],
+  [
+   1792107545000,
+   489.74335024951597
+  ],
+  [
+   1792107605000,
+   489.8015502495159
+  ],
+  [
+   1792107665000,
+   489.7945502495159
+  ],
+  [
+   1792107725000,
+   489.79395024951594
+  ],
+  [
+   1792107785000,
+   489.7857502495159
+  ],
+  [
+   1792107845000,
+   489.84315024951593
+  ],
+  [
+   1792107905000,
+   489.83905024951594
+  ],
+  [
+   1792107965000,
+   489.8323502495159
+  ],
+  [
+   1792108025000,
+   489.8437502495159
+  ],
+  [
+   1792108085000,
+   489.89305024951597
+  ],
+  [
+   1792108145000,
+   489.84625024951595
+  ],
+  [
+   1792108205000,
+   489.91735024951595
+  ],
+  [
+   1792108265000,
+   489.8637502495159
+  ],
+  [
+   1792108325000,
+   489.8639502495159
+  ],
+  [
+   1792108385000,
+   489.83155024951594
+  ],
+  [
+   1792108445000,
+   489.93025024951595
+  ],
+  [
+   1792108505000,
+   489.8611502495159
+  ],
+  [
+   1792108565000,
+   489.8024502495159
+  ],
+  [
+   1792108625000,
+   489.92225024951597
+  ],
+  [
+   1792108685000,
+   489.87885024951595
+  ],
+  [
+   1792108745000,
+   489.8681502495159
+  ],
+  [
+   1792108800000,
+   489.79705024951596
+  ]
+ ],
+ "timeframe": "1h"
+}
