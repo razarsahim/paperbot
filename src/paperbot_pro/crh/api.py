@@ -98,7 +98,8 @@ def build_router(store: RunStore, jobs: JobManager, cache: Cache,
         slim = {k: v for k, v in res.items() if k not in ("equity_curve", "candidates", "near_misses")}
         curve = res["equity_curve"]
         step = max(1, len(curve) // 3000)
-        slim["equity_curve"] = [p[:2] + [p[5], p[6]] for p in curve[::step]] + ([curve[-1][:2] + [curve[-1][5], curve[-1][6]]] if curve else [])
+        sampled = curve[::step] + ([curve[-1]] if curve and (len(curve) - 1) % step else [])
+        slim["equity_curve"] = [p[:2] + [p[5], p[6]] for p in sampled]
         slim["candidates"] = {k: len(v) for k, v in res["candidates"].items()}
         slim["near_misses"] = {k: len(v) for k, v in res["near_misses"].items()}
         return slim

@@ -126,8 +126,11 @@ export function MultiLineChart({
     const el = ref.current;
     if (!el || series.length === 0) return;
     const chart = createChart(el, baseChartOptions(colors));
+    // lightweight-charts requires strictly ascending times (seconds)
+    const dedupe = (pts: [number, number][]) =>
+      pts.filter(([t], i, arr) => i === 0 || Math.floor(t / 1000) > Math.floor(arr[i - 1][0] / 1000));
     for (const s of series) {
-      const pts = s.points.filter(([t]) => t <= cursorMs);
+      const pts = dedupe(s.points.filter(([t]) => t <= cursorMs));
       if (pts.length === 0) continue;
       const line = chart.addSeries(LineSeries, {
         color: s.color,
@@ -139,7 +142,7 @@ export function MultiLineChart({
       line.setData(pts.map(([t, v]) => ({ time: (t / 1000) as UTCTimestamp, value: v })));
     }
     if (threshold) {
-      const pts = threshold.filter(([t]) => t <= cursorMs);
+      const pts = dedupe(threshold.filter(([t]) => t <= cursorMs));
       if (pts.length) {
         const limit = chart.addSeries(LineSeries, {
           color: colors.red,
