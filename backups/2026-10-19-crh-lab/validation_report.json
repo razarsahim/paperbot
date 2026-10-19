@@ -1,0 +1,385 @@
+{
+  "artifact_version": 2,
+  "generated_at_utc": "2026-10-16T23:00:10+00:00",
+  "params_fingerprint": "41b4cfd8eade50bf",
+  "outcome": "NEGATIVE",
+  "strategy_params": {
+    "ema_fast": 20,
+    "ema_slow": 50,
+    "atr_period": 14,
+    "rsi_period": 14,
+    "allow_short": true,
+    "min_bars": 60
+  },
+  "markets": [
+    {
+      "symbol": "BTC/USDT:USDT",
+      "bars": 17519,
+      "trades": 93,
+      "net_return_pct": -2.898913034227757,
+      "max_drawdown_pct": 5.36604379114988,
+      "win_rate_pct": 34.40860215053764,
+      "profit_factor": 0.885034720450653,
+      "locked_total": true,
+      "buy_hold_return_pct": 20.20497972864117,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 37,
+          "net_return_pct": 0.3506129979379935,
+          "max_drawdown_pct": 2.891439965852907,
+          "win_rate_pct": 37.83783783783784,
+          "buy_hold_return_pct": 37.7208380527817
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 52,
+          "net_return_pct": -3.1327382497961187,
+          "max_drawdown_pct": 5.093459796965853,
+          "win_rate_pct": 32.69230769230769,
+          "buy_hold_return_pct": -6.551477636334225
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 55,
+          "net_return_pct": -3.2856057117366166,
+          "max_drawdown_pct": 5.3314188373613085,
+          "win_rate_pct": 32.72727272727273,
+          "buy_hold_return_pct": -7.009310543858427
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "ETH/USDT:USDT",
+      "bars": 17519,
+      "trades": 91,
+      "net_return_pct": -2.430313774498305,
+      "max_drawdown_pct": 5.072870283501895,
+      "win_rate_pct": 34.065934065934066,
+      "profit_factor": 0.9141217965451862,
+      "locked_total": true,
+      "buy_hold_return_pct": -8.044427639760665,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 31,
+          "net_return_pct": -1.4057727841561785,
+          "max_drawdown_pct": 4.069714060820755,
+          "win_rate_pct": 32.25806451612903,
+          "buy_hold_return_pct": 27.013700959260724
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 60,
+          "net_return_pct": -0.7131657844311468,
+          "max_drawdown_pct": 5.016669730292784,
+          "win_rate_pct": 35.0,
+          "buy_hold_return_pct": -11.139433960192235
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 32,
+          "net_return_pct": -3.058475739132338,
+          "max_drawdown_pct": 5.256032485125991,
+          "win_rate_pct": 28.125,
+          "buy_hold_return_pct": -18.883816449875045
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "BNB/USDT:USDT",
+      "bars": 17519,
+      "trades": 48,
+      "net_return_pct": -4.771163403937672,
+      "max_drawdown_pct": 5.1752370670456935,
+      "win_rate_pct": 29.166666666666668,
+      "profit_factor": 0.7110410629725403,
+      "locked_total": true,
+      "buy_hold_return_pct": 19.39852903695922,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 45,
+          "net_return_pct": -3.3225612672215132,
+          "max_drawdown_pct": 4.690858351457818,
+          "win_rate_pct": 31.11111111111111,
+          "buy_hold_return_pct": 16.229535712823285
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 82,
+          "net_return_pct": -4.7978538850212304,
+          "max_drawdown_pct": 5.173711911171833,
+          "win_rate_pct": 32.926829268292686,
+          "buy_hold_return_pct": 22.74959652644202
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 16,
+          "net_return_pct": -4.105831287732609,
+          "max_drawdown_pct": 5.072262133113261,
+          "win_rate_pct": 18.75,
+          "buy_hold_return_pct": -16.679569796058978
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "XRP/USDT:USDT",
+      "bars": 17519,
+      "trades": 40,
+      "net_return_pct": 0.6776540443426793,
+      "max_drawdown_pct": 5.364957061909416,
+      "win_rate_pct": 37.5,
+      "profit_factor": 1.0513562036627488,
+      "locked_total": true,
+      "buy_hold_return_pct": 136.55439325552067,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 35,
+          "net_return_pct": 3.1790259732163317,
+          "max_drawdown_pct": 3.75452966177625,
+          "win_rate_pct": 42.857142857142854,
+          "buy_hold_return_pct": 277.56988475256696
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 11,
+          "net_return_pct": -5.360921950325482,
+          "max_drawdown_pct": 5.360921950325484,
+          "win_rate_pct": 0.0,
+          "buy_hold_return_pct": -11.806739436027492
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 26,
+          "net_return_pct": -0.40477870879078726,
+          "max_drawdown_pct": 5.439070681805458,
+          "win_rate_pct": 34.61538461538461,
+          "buy_hold_return_pct": -29.272651810143312
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "SOL/USDT:USDT",
+      "bars": 17519,
+      "trades": 37,
+      "net_return_pct": -3.0495502670147445,
+      "max_drawdown_pct": 5.075858333313033,
+      "win_rate_pct": 29.72972972972973,
+      "profit_factor": 0.7509678206459963,
+      "locked_total": true,
+      "buy_hold_return_pct": -32.865264412789806,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 37,
+          "net_return_pct": -3.0495502670147445,
+          "max_drawdown_pct": 5.075858333313033,
+          "win_rate_pct": 29.72972972972973,
+          "buy_hold_return_pct": 21.982280274744692
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 23,
+          "net_return_pct": -2.675680222549659,
+          "max_drawdown_pct": 5.368336854939171,
+          "win_rate_pct": 26.08695652173913,
+          "buy_hold_return_pct": -34.274340293112296
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 53,
+          "net_return_pct": -1.6379218811567897,
+          "max_drawdown_pct": 5.241825574003949,
+          "win_rate_pct": 33.9622641509434,
+          "buy_hold_return_pct": -16.630982235330592
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "TRX/USDT:USDT",
+      "bars": 17519,
+      "trades": 58,
+      "net_return_pct": 0.15818829348361874,
+      "max_drawdown_pct": 5.08631262826229,
+      "win_rate_pct": 37.93103448275862,
+      "profit_factor": 1.0085759833470216,
+      "locked_total": true,
+      "buy_hold_return_pct": 108.69599648231065,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 38,
+          "net_return_pct": 2.117040127746095,
+          "max_drawdown_pct": 3.214624250466315,
+          "win_rate_pct": 42.10526315789473,
+          "buy_hold_return_pct": 58.60023309857536
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 45,
+          "net_return_pct": -4.978612915569746,
+          "max_drawdown_pct": 5.434612532799534,
+          "win_rate_pct": 28.888888888888886,
+          "buy_hold_return_pct": 11.494648331140468
+        },
+        {
+          "period": "2026",
+          "bars": 6934,
+          "trades": 95,
+          "net_return_pct": -5.0625956704782205,
+          "max_drawdown_pct": 5.07551711912703,
+          "win_rate_pct": 37.89473684210527,
+          "buy_hold_return_pct": 17.502032268179548
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T21:00:00+00:00"
+    },
+    {
+      "symbol": "ZEC/USDT:USDT",
+      "bars": 17520,
+      "trades": 95,
+      "net_return_pct": 3.3220639561889254,
+      "max_drawdown_pct": 5.322680496009944,
+      "win_rate_pct": 37.89473684210527,
+      "profit_factor": 1.1063795482356318,
+      "locked_total": true,
+      "buy_hold_return_pct": 2990.4090766445106,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 1825,
+          "trades": 48,
+          "net_return_pct": 6.943564646219325,
+          "max_drawdown_pct": 2.572033537039963,
+          "win_rate_pct": 43.75,
+          "buy_hold_return_pct": 51.92276870678807
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 48,
+          "net_return_pct": -3.2493324504088816,
+          "max_drawdown_pct": 5.3293939396152155,
+          "win_rate_pct": 31.25,
+          "buy_hold_return_pct": 806.5616068063769
+        },
+        {
+          "period": "2026",
+          "bars": 6935,
+          "trades": 33,
+          "net_return_pct": -3.5226463604929314,
+          "max_drawdown_pct": 5.128818477581354,
+          "win_rate_pct": 27.27272727272727,
+          "buy_hold_return_pct": 123.40088283189456
+        }
+      ],
+      "first_bar": "2024-10-16T23:00:00+00:00",
+      "last_bar": "2026-10-16T22:00:00+00:00"
+    },
+    {
+      "symbol": "HYPE/USDT:USDT",
+      "bars": 16331,
+      "trades": 12,
+      "net_return_pct": -5.021060928880916,
+      "max_drawdown_pct": 5.2332664897827685,
+      "win_rate_pct": 8.333333333333332,
+      "profit_factor": 0.16069757971650028,
+      "locked_total": true,
+      "buy_hold_return_pct": 478.75432386693467,
+      "regimes": [
+        {
+          "period": "2024",
+          "bars": 636,
+          "trades": 7,
+          "net_return_pct": -2.531804107594726,
+          "max_drawdown_pct": 2.7495712608364813,
+          "win_rate_pct": 14.285714285714285,
+          "buy_hold_return_pct": 74.20328725358627
+        },
+        {
+          "period": "2025",
+          "bars": 8760,
+          "trades": 10,
+          "net_return_pct": -5.247374829162499,
+          "max_drawdown_pct": 5.247374829162505,
+          "win_rate_pct": 0.0,
+          "buy_hold_return_pct": 5.387781156661764
+        },
+        {
+          "period": "2026",
+          "bars": 6935,
+          "trades": 19,
+          "net_return_pct": -2.7461345198362075,
+          "max_drawdown_pct": 5.141379228048044,
+          "win_rate_pct": 26.31578947368421,
+          "buy_hold_return_pct": 213.86055996241993
+        }
+      ],
+      "first_bar": "2024-12-05T12:00:00+00:00",
+      "last_bar": "2026-10-16T22:00:00+00:00"
+    }
+  ],
+  "combined": {
+    "total_trades": 474,
+    "markets_profitable": 3,
+    "mean_return_pct": -1.7516368893180214
+  },
+  "benchmarks": {
+    "cash_return_pct": 0.0,
+    "note": "buy-and-hold shown per market/regime with round-trip costs"
+  },
+  "warnings": [
+    "Simulated perp backtest with modeled costs; results are an approximation and NOT evidence of future profitability.",
+    "Per-market tests run independently: portfolio concurrency caps (3 slots, 1.5% combined risk) are NOT modeled in the aggregate; treat combined figures as an upper bound on activity.",
+    "Funding approximated at a constant 0.0100%/8h.",
+    "Strategy parameters are FROZEN (never fitted to this data); no optimization was performed against any holdout."
+  ],
+  "summary": "8 markets, 474 trades, 3/8 profitable, mean return -1.75% \u2014 NEGATIVE/UNPROVEN evidence; not predictive.",
+  "data_provenance": {
+    "source": "ccxt public fetch_ohlcv (paginated)",
+    "requested_days": 730,
+    "timeframe": "1h",
+    "bars_per_market": {
+      "BTC/USDT:USDT": 17519,
+      "ETH/USDT:USDT": 17519,
+      "BNB/USDT:USDT": 17519,
+      "XRP/USDT:USDT": 17519,
+      "SOL/USDT:USDT": 17519,
+      "TRX/USDT:USDT": 17519,
+      "ZEC/USDT:USDT": 17520,
+      "HYPE/USDT:USDT": 16331
+    },
+    "markets": 8,
+    "no_live_execution": true
+  }
+}

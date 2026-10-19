@@ -12,3 +12,6 @@ state/
 logs/
 launcher/run/
 archives/
+
+cache/
+state/crh_runs/

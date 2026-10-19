@@ -61,6 +61,9 @@ def main():
         description="PaperBot Pro: multi-asset SIMULATED perp paper trading. NO real orders.")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("api", help="Serve the read-only dashboard API on 127.0.0.1")
+    crh = sub.add_parser("crh-api", help="Serve the CRH Lab API (paper backtests) on 127.0.0.1:8778")
+    crh.add_argument("--port", type=int, default=8778)
+    crh.add_argument("--seed", action="store_true", help="seed the cache from research/*/data first")
     sub.add_parser("universe", help="Refresh top-20 universe and perp instrument eligibility")
     sub.add_parser("scan-once", help="One bounded scan/manage cycle, then exit")
     sub.add_parser("run", help="Continuous paper engine (universe daily, scan per interval)")
@@ -131,6 +134,16 @@ def main():
         return
     if args.command == "reset-lab":
         _reset_lab(args, cfg)
+        return
+    if args.command == "crh-api":
+        import uvicorn
+        from .crh.api import create_crh_app
+        from .crh.data import Cache
+        cache = Cache()
+        if args.seed:
+            print("seeding cache from research/:", cache.seed_from_research())
+        print(f"PAPER ONLY CRH Lab API on http://127.0.0.1:{args.port} — never expose publicly")
+        uvicorn.run(create_crh_app(cache=cache), host="127.0.0.1", port=args.port, log_level="info")
         return
     if args.command == "api":
         import uvicorn

@@ -1,0 +1,1 @@
+{"ts_ms": 1792260149603, "exchange_ts_ms": null, "breached": false, "locked": false, "positions": [], "capital": {"initial_usd": 250.0, "equity_usd": 250.0, "cash_usd": 250.0, "margin_used_usd": 0, "unrealized_usd": 0.0, "realized_usd": 0.0, "peak_equity_usd": 250.0, "threshold_usd": 200.0, "remaining_allowance_usd": 50.0, "complete": true}, "published_at_ms": 1792260149604}
