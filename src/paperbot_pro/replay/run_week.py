@@ -32,11 +32,23 @@ def main(argv: list[str] | None = None) -> None:
                     help="JSON {YYYY-MM-DD: [ccxt symbols in rank order]} (daily membership)")
     ap.add_argument("--extra-instruments", default=None,
                     help="JSON list of instrument metadata for symbols absent from the main DB")
+    ap.add_argument("--timeframe", choices=("1h", "1m"), default="1h",
+                    help="signal candle timeframe (1m = research variant; strategy "
+                         "bar counts are unchanged, so lookbacks shrink 60x)")
+    ap.add_argument("--variant", default=None,
+                    help="replay-only labelled strategy variant (see replay/variants.py)")
     ap.add_argument("--no-orderbook", action="store_true",
                     help="as-deployed wiring: MarketData has no orderbook() hook")
     ap.add_argument("--t0", type=int, default=1791676800000)   # 2026-10-11 00:00 UTC
     ap.add_argument("--t1", type=int, default=1792281600000)   # 2026-10-18 00:00 UTC
     a = ap.parse_args(argv)
+    variant = None
+    if a.variant:
+        from .variants import VARIANTS, apply_variant
+        variant = apply_variant(a.variant)
+        a.timeframe = variant["timeframe"]
+        a.strategies = VARIANTS[a.variant]["strategies"]
+        print(f"[{a.run_id}] {variant['label']}", flush=True)
 
     instruments = instruments_from_main_db(a.main_db, a.symbols)
     if a.extra_instruments:
@@ -53,12 +65,14 @@ def main(argv: list[str] | None = None) -> None:
         data[sym] = load_symbol(Path(a.data), sym, Path(a.books),
                                 top_n=10 if needs_depth else 1)
     market = HistoricalMarket(data, with_orderbook=not a.no_orderbook)
+    if variant:
+        market.min_candle_limit = variant["min_candle_limit"]
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     db_path = out / f"{a.run_id}.sqlite"
     provider = (daily_universe_provider(market, universe, {i["symbol"]: i for i in instruments})
                 if universe else instruments)
-    engine = make_engine(db_path, market, provider, a.strategies)
+    engine = make_engine(db_path, market, provider, a.strategies, timeframe=a.timeframe)
     print(f"[{a.run_id}] {len(instruments)} instruments, strategies="
           f"{a.strategies or 'ALL 10'}, orderbook={'off' if a.no_orderbook else 'archived'}",
           flush=True)
@@ -67,6 +81,10 @@ def main(argv: list[str] | None = None) -> None:
                          kind="A_independent" if a.strategies else "B_combined",
                          strategies=a.strategies, with_orderbook=not a.no_orderbook,
                          t0=a.t0, t1=a.t1, instruments=instruments)
+    result["timeframe"] = a.timeframe
+    if variant:
+        result["variant"] = variant
+        result["label"] = "HISTORICAL BACKTEST - " + variant["label"]
     dump_json(out / f"{a.run_id}.json", result)
     print(f"[{a.run_id}] done in {summary['elapsed_s']}s: "
           f"{len(result['trades'])} trades, final equity "

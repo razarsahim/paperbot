@@ -62,6 +62,7 @@ class HistoricalMarket:
         self.now_ms = 0
         self.with_orderbook = with_orderbook
         self.max_ts_served = 0     # leakage audit: newest data timestamp handed out
+        self.min_candle_limit = 0  # variants needing longer lookbacks than the engine asks for
 
     def set_now(self, now_ms: int) -> None:
         self.now_ms = now_ms
@@ -80,8 +81,11 @@ class HistoricalMarket:
 
     # -- MarketData surface ------------------------------------------------
     def candles(self, exchange: str, symbol: str, tf: str, limit: int = 300):
+        limit = max(limit, self.min_candle_limit)
+        if tf == "1m":
+            return self._candles_1m(symbol, limit), 0.0
         if tf != "1h":
-            raise ValueError("replay serves 1h signal candles only")
+            raise ValueError("replay serves 1h or 1m signal candles only")
         sd = self._sd(symbol)
         now = self.now_ms
         hour_start = now - now % HOUR_MS
@@ -106,6 +110,17 @@ class HistoricalMarket:
             forming = None
         raw = closed + ([forming] if forming else [])
         return raw[-limit:], 0.0
+
+    def _candles_1m(self, symbol: str, limit: int) -> list[list]:
+        """Fully-closed 1m bars only (ts + 60s <= now). The archive has no
+        sub-minute prints, so no forming 1m bar is ever synthesised."""
+        sd = self._sd(symbol)
+        now = self.now_ms
+        j = bisect.bisect_left(sd.k1m_ts, now - now % MIN_MS)   # bars that closed by now
+        rows = [r[:6] for r in sd.k1m[max(0, j - limit):j]]
+        for r in rows:
+            self._served(r[0] + MIN_MS)
+        return rows
 
     def last_trade(self, symbol: str) -> float | None:
         sd = self._sd(symbol)

@@ -195,3 +195,47 @@ def test_daily_universe_follows_simulated_day_and_skips_unknown_metadata():
     assert [i["symbol"] for i in prov()] == ["A/USDT:USDT"]
     mkt.set_now(day)
     assert [i["symbol"] for i in prov()] == ["B/USDT:USDT"]
+
+
+def test_1m_candles_are_closed_bars_only():
+    mkt = HistoricalMarket(flat_data())
+    mkt.set_now(T0 + 30 * M + 5_000)
+    raw, _ = mkt.candles("bybit", SYM, "1m", 200)
+    assert raw[-1][0] == T0 + 29 * M                  # bar [29m,30m) closed at 30m <= now
+    assert all(r[0] + M <= mkt.now_ms for r in raw) and len(raw) == 90
+    assert mkt.max_ts_served <= mkt.now_ms
+
+
+def test_1m_engine_config_uses_minute_bars(tmp_path):
+    mkt = HistoricalMarket(flat_data())
+    eng = make_engine(tmp_path / "r.sqlite", mkt, [INST], ["crash_reversal"], timeframe="1m")
+    assert eng.cfg.candle_timeframe == "1m" and eng.cfg.timeframe_ms == 60_000
+    out = run(eng, mkt, T0, T0 + 2 * H)
+    assert out["max_data_ts_served"] <= out["final_now"]
+    assert reconcile_lab(eng.db, eng.cfg)["discrepancies"] == []
+
+
+def test_variant_overrides_are_recorded_and_feed_long_lookback(monkeypatch):
+    import paperbot_pro.lab.strategies as strat
+    from paperbot_pro.replay.variants import apply_variant
+    monkeypatch.setattr(strat, "CRASH_WINDOW", strat.CRASH_WINDOW)   # restored after test
+    rec = apply_variant("crh_1m_24h")
+    assert strat.CRASH_WINDOW == 1440
+    assert rec["overrides"] == [{"module": "paperbot_pro.lab.strategies", "name": "CRASH_WINDOW",
+                                 "deployed": 24, "variant": 1440}]
+    data = flat_data(minutes_after=0)
+    sd = data["TSTUSDT"]
+    # 2,000 closed 1m bars before T0
+    sd.k1m = [[T0 - (2000 - j) * M, 100.0, 100.1, 99.9, 100.0, 1.0, 0.0] for j in range(2000)]
+    sd.k1m_ts = [r[0] for r in sd.k1m]
+    mkt = HistoricalMarket(data)
+    mkt.min_candle_limit = rec["min_candle_limit"]
+    mkt.set_now(T0 + 5_000)
+    raw, _ = mkt.candles("bybit", SYM, "1m", 200)            # engine still asks for 200
+    assert len(raw) == 1442 and raw[-1][0] + M <= mkt.now_ms
+
+
+def test_deployed_crash_window_is_unchanged_on_disk():
+    import importlib
+    import paperbot_pro.lab.strategies as strat
+    assert importlib.reload(strat).CRASH_WINDOW == 24

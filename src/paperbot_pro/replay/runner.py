@@ -81,7 +81,8 @@ def emulate_ticks(engine: LabEngine, market: HistoricalMarket, minute_start: int
 
 
 def make_engine(db_path: Path, market: HistoricalMarket, instruments,
-                strategies: list[str] | None, capital_per_strategy: float = 50.0):
+                strategies: list[str] | None, capital_per_strategy: float = 50.0,
+                timeframe: str = "1h"):
     """Fresh isolated LabStore/LabEngine. strategies=None -> all 10 sleeves
     (combined portfolio); a subset -> independent sleeve(s) only.
     instruments: a fixed list, or a zero-arg callable returning the universe
@@ -96,7 +97,8 @@ def make_engine(db_path: Path, market: HistoricalMarket, instruments,
     store = LabStore(str(db_path), base)        # validates the stock config
     cfg = replace(base, starting_capital_usd=capital, db_path=str(db_path),
                   ws_enabled=False, live_state_path=str(db_path) + ".live.json",
-                  auto_entry=True)
+                  auto_entry=True, candle_timeframe=timeframe,
+                  timeframe_ms={"1h": 3_600_000, "1m": 60_000}[timeframe])
     store.cfg = cfg
     with store.conn:
         store.conn.execute(
